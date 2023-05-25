@@ -1,3 +1,3 @@
 from models.user import insert_user
 
-insert_user("962797207603", "hussein@sitech.me", "Yasta")
+insert_user("962795704964", "omar@sitech.me", "Omar")

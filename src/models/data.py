@@ -39,7 +39,6 @@ class OrdersTable(Base):
     month = Column(Integer, primary_key=True)
     year = Column(Integer, primary_key=True)
     cashflow = Column(Float)
-    # historical_or_forecast = Column(String(255))
 
 
 def insert_data(csv_name, table_name, engine):

@@ -1,25 +1,22 @@
 from gpt_api import send_to_gpt
 from helpers.vars import (
-    for_more_info,
-    specific_menu,
     general_menu,
     intent_prompt,
     gpt_prompt,
-    predefined_report_prompt,
     sorry_instruction,
     sorry_words,
 )
-from helpers.static_prompts import (
-    pricing_last_week_every_category,
-    supply_last_week_total_purchases_per_category,
-    mexico_weather_forecast_4_weeks,
-    pricing_forecast_every_category_4_weeks,
-    demand_last_week_every_distribution_center,
-    demand_forecast_every_distribution_center_total,
-    specific_size_total_demand_last_week,
-    specific_size_average_price_last_n_weeks,
-    specific_supply_overview,
-)
+# from helpers.static_prompts import (
+#     pricing_last_week_every_category,
+#     supply_last_week_total_purchases_per_category,
+#     mexico_weather_forecast_4_weeks,
+#     pricing_forecast_every_category_4_weeks,
+#     demand_last_week_every_distribution_center,
+#     demand_forecast_every_distribution_center_total,
+#     specific_size_total_demand_last_week,
+#     specific_size_average_price_last_n_weeks,
+#     specific_supply_overview,
+# )
 from helpers.utils import edit_response, edit_prompt, get_formatted_intent
 from helpers.predefined_report import get_general_report
 from helpers.DatabaseChain import get_db_session
@@ -93,7 +90,7 @@ def process_message(
     sql_result = None
     is_gpt_answer = False
 
-    if incoming_msg.lower() in ["menu", "specific", "exit"] or incoming_msg.isdigit():
+    if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"
     else:
         intent_prompt_ = intent_prompt.replace("{prompt}", incoming_msg)
@@ -104,130 +101,39 @@ def process_message(
     edited_intent = get_formatted_intent(intent=intent)
 
     response = ""
-
-    if user_context == "general" and incoming_msg.lower() == "specific":
-        response = f"""\n\n\U0001F951 *DELMONTE Expert Bot* \U0001F951\n\nYou have entered the specific menu {username}!"""
-
-        response += specific_menu
-        user_context = "specific"
-
-    elif user_context == "specific" and incoming_msg.lower() == "specific":
-        response = 'You are already in the "specific" menu, type "exit" to go back to the main menu'
-        user_context = "specific"
-
-    elif user_context == "general" and incoming_msg.lower() == "exit":
-        response = 'You can not exit the main menu, type "specific" to go to a more specific menu'
-        user_context = "general"
-
-    elif user_context == "specific" and incoming_msg.lower() == "exit":
+    if "greeting" in intent:
         response = general_menu
-        user_context = "general"
 
-    elif user_context == "specific" and incoming_msg.lower() == "menu":
-        response = specific_menu
-        user_context = "specific"
+    elif "farewell" in intent:
+        response = "Thank you! Have a nice day! \U0001F44B \U0001F44B\n"
 
-    elif user_context == "general" and incoming_msg.lower() == "menu":
-        response = general_menu
-        user_context = "general"
-
-    elif user_context == "first_time_user":
-        response = f"""\n\n\U0001F951 *DELMONTE Expert Bot* \U0001F951\n\nHello {username} \U0001F44B! I am Lex, I am an AI Bot expert in Avocado Supply Chain specifically for Del Monte. You can ask me anything related to the Avocados. If you don't have a question in mind you can type "menu" to get a list of quick answers I can provide. """
-
-        user_context = "general"
-
-    elif user_context == "general":
-        if "greeting" in intent:
-            response = general_menu
-
-        elif "farewell" in intent:
-            response = "Thank you! Have a nice day! \U0001F44B \U0001F44B\n"
-
-        elif incoming_msg.isdigit():
-            match int(incoming_msg):
-                case 1:
-                    response = (
-                        f"Last week average price for every category of avocado: \n"
-                    )
-                    response += pricing_last_week_every_category()
-                case 2:
-                    response = "Last Week total Purchases per category: \n"
-                    response += supply_last_week_total_purchases_per_category()
-                case 3:
-                    response = (
-                        "Average weather forecast for the next 4 weeks in Mexico: \n"
-                    )
-                    response += mexico_weather_forecast_4_weeks()
-                case 4:
-                    response = "Forecasted average price for the next 4 weeks for every category of avocado: \n"
-                    response += pricing_forecast_every_category_4_weeks()
-                case 5:
-                    response = "Last week average demand quantities for every Distribution Center Region: \n"
-                    response += demand_last_week_every_distribution_center()
-                case 6:
-                    response = "Forecasted total demand quantities for every Distribution Center Region over the next 4 weeks: \n"
-                    response += demand_forecast_every_distribution_center_total()
-                case _:
-                    response = "You entered an option that is not in the list."
-
-        else:
-            (
-                response,
-                message_type,
-                error_flag,
-                error_description,
-                edited_intent,
-                sql_cmd,
-                sql_result,
-                is_gpt_answer,
-            ) = process_send_gpt(
-                edited_intent,
-                gpt_sql_engine,
-                include_tables,
-                llm,
-                PROMPT_SQL,
-                incoming_msg,
-                message_type,
-                error_flag,
-                error_description,
-                sql_cmd,
-                sql_result,
-                is_gpt_answer,
-            )
-
-    elif user_context == "specific":
-        if "greeting" in intent:
-            response = f"""\n\n\U0001F951 *DELMONTE Expert Bot* \U0001F951\n\nYou have entered the specific menu {username}: (write the digit only)"""
-            response += specific_menu
-
-        elif "farewell" in intent:
-            response = "Thank you! Have a nice day! \U0001F44B \U0001F44B\n"
-
-        elif incoming_msg.isdigit():
-            match int(incoming_msg):
-                case 1:
-                    response = f"Last week average price for every size:\n"
-                    response += specific_size_average_price_last_n_weeks(weeks=1)
-                case 2:
-                    response = f"Last 2 weeks average price for every size:\n"
-                    response += specific_size_average_price_last_n_weeks(weeks=2)
-
-                case 3:
-                    response = f"Last 3 weeks average price for every size:\n"
-                    response += specific_size_average_price_last_n_weeks(weeks=3)
-
-                case 4:
-                    response = f"Last 4 weeks average price for every size:\n"
-                    response += specific_size_average_price_last_n_weeks(weeks=4)
-                case 5:
-                    response = f"Last week total demand for every size:\n"
-                    response += specific_size_total_demand_last_week()
-                case 6:
-                    response = f"Supply Overview\n"
-                    response += specific_supply_overview()
-                case _:
-                    response = "You entered an option that is not in the list."
-        else:
+    # elif incoming_msg.isdigit():
+    #     match int(incoming_msg):
+    #         case 1:
+    #             response = (
+    #                 f"Last week average price for every category of avocado: \n"
+    #             )
+    #             response += pricing_last_week_every_category()
+    #         case 2:
+    #             response = "Last Week total Purchases per category: \n"
+    #             response += supply_last_week_total_purchases_per_category()
+    #         case 3:
+    #             response = (
+    #                 "Average weather forecast for the next 4 weeks in Mexico: \n"
+    #             )
+    #             response += mexico_weather_forecast_4_weeks()
+    #         case 4:
+    #             response = "Forecasted average price for the next 4 weeks for every category of avocado: \n"
+    #             response += pricing_forecast_every_category_4_weeks()
+    #         case 5:
+    #             response = "Last week average demand quantities for every Distribution Center Region: \n"
+    #             response += demand_last_week_every_distribution_center()
+    #         case 6:
+    #             response = "Forecasted total demand quantities for every Distribution Center Region over the next 4 weeks: \n"
+    #             response += demand_forecast_every_distribution_center_total()
+    #         case _:
+    #             response = "You entered an option that is not in the list."
+    else:
             (
                 response,
                 message_type,

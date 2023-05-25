@@ -4,15 +4,15 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="lex_sitech_bot",
+    name="foodics_chicks_bot",
     version="0.1",
     packages=find_packages(),
     install_requires=requirements,
     entry_points={},
     author="Omar Alhory",
     author_email="omar@sitech.me",
-    description="A package for the lex sitech bot, it utilizes GPT with Database Chaining to answer SQL queries.",
-    url="https://github.com/OmarHory/gpt_whatsapp",
+    description="A package for the foodics chicks bot, it utilizes GPT with Database Chaining to answer SQL queries.",
+    url="https://github.com/OmarHory/foodics_gpt",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

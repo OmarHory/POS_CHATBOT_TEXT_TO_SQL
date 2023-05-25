@@ -1,4 +1,13 @@
-redis_config = dict(host="localhost", port=6379, db=0, timeout=86400, otp_timeout=300)
+config_business = dict(
+
+    business_name="Shawarma 4 Chicks",
+    # business_address="1234 Main Street, Anytown, USA",
+    # business_phone_number="+1 123-456-7890",
+    # business_email="info@lexchicks",
+
+)
+
+redis_config = dict(host="localhost", port=6379, db=1, timeout=86400, otp_timeout=300)
 
 config_mysql = dict(
     user="chicks_mysql",

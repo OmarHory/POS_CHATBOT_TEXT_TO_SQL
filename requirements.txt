@@ -1,4 +1,5 @@
 # openai-whisper
+python-dotenv
 pandas==1.5.3
 twilio==7.16.5
 openai
