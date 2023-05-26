@@ -42,16 +42,20 @@ def gpt_sql_prompt():
         1- Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
         Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
-
+        Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
+        Today's date is {today}, the current hour is {hour}.
+        
         2- Tables Schemas and description:
 
         - "orders_gpt": Sales orders table, contains the following columns:
-                - create_date:date of the order created. (Primary Key)
-                - create_hour: date of the order created. (Primary Key)
-                - create_day_name: day name of the date. (Primary Key)
+                - date:date of the order created. (Primary Key)
+                - hour: date of the order created. (Primary Key)
+                - day_name: day name of the date. (Primary Key)
                 - is_weekend: is the order on the weekend or not. (Primary Key)
                 - month: month of year. (Primary Key)
                 - year: year. (Primary Key)
+                - type: type of order, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru]. (Primary Key)
+                - source: source of order, can be one of the following: [Cashier, API, Call Center]. (Primary Key)
                 - cashflow: cash flow on the specified date and hour in Jordanian Dinars or JD.
 
         3- Use the following format:

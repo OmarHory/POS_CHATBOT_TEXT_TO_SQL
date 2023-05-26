@@ -1,4 +1,4 @@
-from sqlalchemy import engine, Column, Integer, String, Float, Date, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -22,7 +22,7 @@ db_link = config_gpt_sqlchemy["database"].format(
 )
 
 print("SQL Engine created for Data...")
-data_engine = engine(db_link)
+data_engine = create_engine(db_link)
 
 # create a session factory
 Session = sessionmaker(bind=data_engine)
@@ -38,9 +38,9 @@ class OrdersTable(Base):
     is_weekend = Column(String(5), primary_key=True)
     month = Column(Integer, primary_key=True)
     year = Column(Integer, primary_key=True)
-    type = Column(String(10), primary_key=True)
-    source = Column(String(10), primary_key=True)
-    cashflow = Column(Float)
+    type = Column(String(20), primary_key=True)
+    source = Column(String(20), primary_key=True)
+    cashflow = Column(Float(precision=2))
 
 
 def insert_data(csv_name, table_name, engine):
@@ -70,5 +70,5 @@ def insert_data(csv_name, table_name, engine):
     session.commit()
     session.close()
 
-Base.metadata.drop_all(data_engine)
-Base.metadata.all(data_engine)
+
+Base.metadata.create_all(data_engine)
