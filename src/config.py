@@ -36,7 +36,7 @@ config_twilio = dict(
 
 
 config_gpt = dict(
-    api_key="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",
+    api_key="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",
     model_name="gpt-3.5-turbo",
     temperature=0.0,
     max_tokens=300,
