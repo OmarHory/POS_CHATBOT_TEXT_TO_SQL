@@ -81,8 +81,12 @@ def append_data(csv_name, table_name, engine):
 
     if table_name == "orders_gpt":
         for index, row in df.iterrows():
-            insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, cashflow) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['cashflow']}')"
-            session.execute(insert_query)
+            try:
+                insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, cashflow) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['cashflow']}')"
+                session.execute(insert_query)
+            except Exception as e_:
+                print(e_)
+    
 
     session.commit()
     session.close()
