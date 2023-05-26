@@ -48,6 +48,7 @@ def gpt_sql_prompt():
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
         Expect the quesion to be sometimes in Arabic (either MSA or Dialict).
+        Do not use escape characters in the SQL queries.
 
         Examples of Questions and SQL Queries:
 
