@@ -47,7 +47,7 @@ def gpt_sql_prompt():
         Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
-        Do not use escape characters in the SQL queries.
+        Expect the quesion to be sometimes in Arabic (either MSA or Dialict) then return the answer in Arabic only.
 
         Examples of Questions and SQL Queries:
 
@@ -86,7 +86,7 @@ def gpt_sql_prompt():
         - Question: "Question here"
         - SQLQuery: "SQL Query to run"
         - SQLResult: "Result of the SQLQuery"
-        - Answer: "Final answer here in the same language as the question"
+        - Answer: "Final answer here"
         """
 
         prompt_temp += '\n\n\tQuestion: {input}'
