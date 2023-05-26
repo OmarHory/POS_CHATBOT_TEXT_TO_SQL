@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Boolean
+from sqlalchemy import engine, Column, Integer, String, Float, Date, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -22,7 +22,7 @@ db_link = config_gpt_sqlchemy["database"].format(
 )
 
 print("SQL Engine created for Data...")
-data_engine = create_engine(db_link)
+data_engine = engine(db_link)
 
 # create a session factory
 Session = sessionmaker(bind=data_engine)
@@ -32,12 +32,14 @@ Base = declarative_base()
 
 class OrdersTable(Base):
     __tablename__ = "orders_gpt"
-    create_date = Column(Date, primary_key=True)
-    create_hour = Column(Integer, primary_key=True)
-    create_day_name = Column(String(10), primary_key=True)
+    date = Column(Date, primary_key=True)
+    hour = Column(Integer, primary_key=True)
+    day_name = Column(String(10), primary_key=True)
     is_weekend = Column(String(5), primary_key=True)
     month = Column(Integer, primary_key=True)
     year = Column(Integer, primary_key=True)
+    type = Column(String(10), primary_key=True)
+    source = Column(String(10), primary_key=True)
     cashflow = Column(Float)
 
 
@@ -53,12 +55,14 @@ def insert_data(csv_name, table_name, engine):
         for index, row in df.iterrows():
             session.add(
                 OrdersTable(
-                    create_date=pd.to_datetime(row["create_date"]),
-                    create_hour=row["create_hour"],
-                    create_day_name=row["create_day_name"],
+                    date=pd.to_datetime(row["date"]),
+                    hour=row["hour"],
+                    day_name=row["day_name"],
                     is_weekend=row["is_weekend"],
                     month=row["month"],
                     year=row["year"],
+                    type=row["type"],
+                    source=row["source"],
                     cashflow=row["cashflow"]
                 )
             )
@@ -66,5 +70,5 @@ def insert_data(csv_name, table_name, engine):
     session.commit()
     session.close()
 
-
-Base.metadata.create_all(data_engine)
+Base.metadata.drop_all(data_engine)
+Base.metadata.all(data_engine)
