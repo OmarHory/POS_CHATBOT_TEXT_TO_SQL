@@ -91,6 +91,7 @@ def process_message(
     sql_cmd = None
     sql_result = None
     is_gpt_answer = False
+    
     lang = detect(incoming_msg)
     print("lang is:", lang)
     if lang == "ar":

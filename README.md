@@ -51,7 +51,7 @@ This chatbot is released under the MIT License. See the LICENSE file for more de
 - Omar Alhory (@OmarHory)
 - Zeid Husban ()
 - Wadi Hawi ()
-- Zaid Farekh (@zaidfarekh)
+- Zaid Farekh (@zaidfarekh) 
 
 ## Acknowledgments
 
