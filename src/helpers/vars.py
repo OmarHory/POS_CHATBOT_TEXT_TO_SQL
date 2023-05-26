@@ -47,7 +47,7 @@ def gpt_sql_prompt():
         Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
-        Expect the quesion to be sometimes in Arabic (either MSA or Dialict) then return the answer in Arabic only.
+        If the question is in Arabic, translate it to English, then answer it in Arabic, otherwise keep the question in English and answer it in English.
 
         Examples of Questions and SQL Queries:
 
