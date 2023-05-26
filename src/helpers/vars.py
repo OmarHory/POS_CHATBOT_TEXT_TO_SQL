@@ -33,7 +33,7 @@ gpt_prompt = """{prompt}"""
 
 def gpt_sql_prompt():
         import datetime
-        from datetime import datetime, date
+        from datetime import datetime, date, timedelta
         import pandas as pd
         today_ = date.today()
         today = today_.strftime("%Y-%m-%d")
