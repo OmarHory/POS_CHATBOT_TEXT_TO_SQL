@@ -27,9 +27,9 @@ config_databases = dict(
 
 
 config_twilio = dict(
-    account_sid="ACf3c95d5cac6bde8f4cade4ddcab27e1d",
-    auth_token="9e4adfb56f4f7131fa9f48e5381916b2",
-    twilio_phone_number="whatsapp:+14346036659",
+    account_sid="ACaf651020fa33a079954846f95fb22822",
+    auth_token="827238ee1b4abe23eaabc9081c939545",
+    twilio_phone_number="whatsapp:+14155238886",
     avocado_robot_image="https://i.ibb.co/ZGyZ0Gz/avocado-robot.png",
     avocado_smile_image="https://i.ibb.co/FXMQfm6/smile-avocado.png",
 )

@@ -4,7 +4,7 @@ for_more_info = ""
 
 list_of_approved_emails = ["o_hawary@hotmail.com", "omar@sitech.me"]
 
-general_menu = """Hello there, I am your Favorite bot on the General Menu"""
+general_menu = """Hello there, I am Bash Mohandes, I am here to help you with your questions about Shawarma 4 Chicks.\nAsk any question you would like about Sales / Orders."""
 
 
 intent_prompt = """What is the intent of this sentence:
