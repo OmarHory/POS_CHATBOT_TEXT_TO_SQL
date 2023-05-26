@@ -71,4 +71,22 @@ def insert_data(csv_name, table_name, engine):
     session.close()
 
 
+def append_data(csv_name, table_name, engine):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    dirname = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    filename = os.path.join(dirname, f"data/processed/{csv_name}")
+    print(filename)
+    df = pd.read_csv(filename)
+
+    if table_name == "orders_gpt":
+        for index, row in df.iterrows():
+            insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, cashflow) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['cashflow']}')"
+            session.execute(insert_query)
+
+    session.commit()
+    session.close()
+
+
+
 Base.metadata.create_all(data_engine)
