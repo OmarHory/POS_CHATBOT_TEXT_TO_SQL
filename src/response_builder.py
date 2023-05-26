@@ -95,6 +95,7 @@ def process_message(
     print("lang is:", lang)
     if lang == "ar":
         incoming_msg = send_to_gpt(translate_ar_prompt_.format(incoming_msg))
+        print(incoming_msg)
 
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"
