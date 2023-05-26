@@ -47,6 +47,7 @@ def gpt_sql_prompt():
         Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
+        Expect the quesion to be sometimes in Arabic (either MSA or Dialict).
 
         Examples of Questions and SQL Queries:
 
@@ -63,10 +64,10 @@ def gpt_sql_prompt():
         - SQLQuery: "SELECT date, hour, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 13 AND type = 'Dine In' GROUP BY date, hour, type"
 
         - Question: "Compare the total cash flow on {yesterday} at 4 PM for Dine In orders and Pick Up orders?"
-        - SQLQuery: "SELECT date, hour, type, SUM(cashflow) FROM orders_gpt WHERE date = {yesterday} and hour = 16 AND (type = 'Dine In' OR type = 'Pick Up') GROUP BY date, hour, type"
+        - SQLQuery: "SELECT date, hour, type, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' and hour = 16 AND (type = 'Dine In' OR type = 'Pick Up') GROUP BY date, hour, type"
         
         - Question: "Compare the cash flow between April and May in 2023?"
-        - SQLQuery: "SELECT SUM(cashflow),  month, year FROM orders_gpt WHERE month=4 OR month=5 AND year=2023 GROUP BY month, year"
+        - SQLQuery: "SELECT month, year, SUM(cashflow) FROM orders_gpt WHERE month=4 OR month=5 AND year=2023 GROUP BY month, year"
 
         2- Tables Schemas and description:
 
