@@ -37,7 +37,7 @@ def gpt_sql_prompt():
         import pandas as pd
         today_ = date.today()
         today = today_.strftime("%Y-%m-%d")
-        yesterday = (today_ - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        yesterday = (today_ - timedelta(days=1)).strftime("%Y-%m-%d")
         hour = datetime.now().hour
 
 
