@@ -48,7 +48,8 @@ def gpt_sql_prompt():
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
         If the question is in Arabic, translate it to English, then answer it in Arabic, otherwise keep the question in English and answer it in English.
-
+        Return the answer in a readable format, do not return the SQL query, return the answer only.
+        
         Examples of Questions and SQL Queries:
 
         - Question: What is the cash flow yesterday?
