@@ -14,15 +14,16 @@ intent_prompt = """What is the intent of this sentence:
 Work as an intent classifier that works for a restaurant called [Shawarma 4 Chicks]. Classify the intent of the above prompt, return the output without formatting, just the intent.
 
 Please choose one of the following intents, do not generate your own intents:
-- Intent: Greeting 
+- Greeting 
         When the user says hello, hi, hello there, etc.
 
-- Intent: Orders
+- Orders
         When the user intention is to know information about the orders or sales.
-- Intent: Farewell 
+
+- Farewell 
         When the user says goodbye, have a good one, see ya, etc..
 
-- Intent: Undefined 
+- Undefined 
         When the user says something that is not totally related to the above intents.
 
 If the prompt has mix intents, choose the intent that has the higher weight."""
@@ -32,7 +33,7 @@ gpt_prompt = """{prompt}"""
 
 def gpt_sql_prompt():
         import datetime
-        from datetime import timedelta,datetime, date
+        from datetime import datetime, date
         import pandas as pd
 
         today = date.today().strftime("%Y-%m-%d")
@@ -51,14 +52,14 @@ def gpt_sql_prompt():
                 - is_weekend: is the order on the weekend or not. (Primary Key)
                 - month: month of year. (Primary Key)
                 - year: year. (Primary Key)
-                - cashflow: cash flow on the specified date and hour in Jordanian Dinars or JD (Primary Key)
+                - cashflow: cash flow on the specified date and hour in Jordanian Dinars or JD.
 
         3- Use the following format:
         - Question: "Question here"
         - SQLQuery: "SQL Query to run"
         - SQLResult: "Result of the SQLQuery"
         - Answer: "Final answer here"
-        - Recommendations: "Provide recommendations and actions to take based on the data."""
+        """
 
         prompt_temp += '\n\n\tQuestion: {input}'
         print(prompt_temp)
