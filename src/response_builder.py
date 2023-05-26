@@ -5,6 +5,7 @@ from helpers.vars import (
     gpt_prompt,
     sorry_instruction,
     sorry_words,
+    translate_ar_prompt_,
 )
 # from helpers.static_prompts import (
 #     pricing_last_week_every_category,
@@ -20,6 +21,7 @@ from helpers.vars import (
 from helpers.utils import edit_response, edit_prompt, get_formatted_intent
 from helpers.predefined_report import get_general_report
 from helpers.DatabaseChain import get_db_session
+from langdetect import detect
 import time
 
 
@@ -89,6 +91,10 @@ def process_message(
     sql_cmd = None
     sql_result = None
     is_gpt_answer = False
+    lang = detect(incoming_msg)
+    print("lang is:", lang)
+    if lang == "ar":
+        incoming_msg = send_to_gpt(translate_ar_prompt_.format(incoming_msg))
 
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"

@@ -128,3 +128,7 @@ sorry_words = [
     "خطأي",
     "عذرا"
 ]
+
+translate_ar_prompt_ = """Translate the following Arabic (MSA or Dialect) to English:
+
+                        {}"""
