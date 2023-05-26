@@ -9,8 +9,8 @@ sys.path.append(parent_dir)
 
 from models.data import *
 
-Base.metadata.drop_all(data_engine)
-Base.metadata.create_all(data_engine)
+# Base.metadata.drop_all(data_engine)
+# Base.metadata.create_all(data_engine)
 
 append_data("orders_updated.csv", "orders_gpt", data_engine)
 
