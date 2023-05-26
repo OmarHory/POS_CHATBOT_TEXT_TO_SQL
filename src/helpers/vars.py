@@ -51,13 +51,13 @@ def gpt_sql_prompt():
         Examples of Questions and SQL Queries:
 
         - Question: "What is the cash flow yesterday?"
-        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}'"
+        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' GROUP BY date"
 
         - Question: "What is the total cash flow on {yesterday} at 9 PM?"
-        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 21"
+        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 21 GROUP BY date, hour"
 
         - Question: "What is the total cash flow on {yesterday} at 9 AM?"
-        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 9"
+        - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 9 GROUP BY date, hour"
 
         - Question: "What is the cash flow on {yesterday} at 1 PM for Dine In orders?"
         - SQLQuery: "SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 13 AND type = 'Dine In'"
