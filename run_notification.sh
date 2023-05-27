@@ -1,4 +1,4 @@
-cd /home/ubuntu/lex_project/gpt_whatsapp/
+cd /home/ubuntu/chicks_project/foodics_gpt/
 . .venv/bin/activate
 
 
