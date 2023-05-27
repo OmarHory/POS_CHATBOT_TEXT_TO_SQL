@@ -6,8 +6,6 @@ def get_wsd(dd):
     start = dt - timedelta(days=dt.weekday())
     return start
 
-
-
 def get_wsd_string(today):
     day = today.strftime("%d")
     if day in ["11", "12", "13"]:
@@ -29,12 +27,6 @@ def get_wsd_string(today):
 def edit_prompt(prompt: str):
     if prompt[-1] != "?":
         prompt = prompt + "?"
-    prompt = (
-        prompt.lower()
-        .replace(" prices ", " border cost ")
-        .replace(" price ", " border cost ")
-        .replace(" pricing ", " border cost ")
-    )
     return prompt
 
 
@@ -46,19 +38,14 @@ def edit_response(edit_response: str):
 
 def get_formatted_intent(intent):
     intent = intent.lower()
-    if "demand of avocado".lower() in intent:
-        intent = "Demand of Avocado"
-    elif "pricing of avocado".lower() in intent:
-        intent = "Pricing of Avocado"
+    if "orders".lower() in intent:
+        intent = "Orders"
 
-    elif "supply of avocado".lower() in intent:
-        intent = "Supply of Avocado"
+    if "Greeting".lower() in intent:
+        intent = "Greeting"
 
-    elif "weather of us and mexico".lower() in intent:
-        intent = "Weather of US and Mexico"
-
-    elif "Holidays and Events".lower() in intent:
-        intent = "Holidays and Events"
+    if "Farewell".lower() in intent:
+        intent = "Farewell"
 
     elif "Undefined".lower() in intent:
         intent = "Undefined"

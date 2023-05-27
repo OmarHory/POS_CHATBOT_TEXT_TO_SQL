@@ -93,14 +93,6 @@ def gpt_sql_prompt():
         print(prompt_temp)
         return prompt_temp
 
-
-predefined_report_prompt = """You are tasked with summarizing two texts, 
-you are working at Del Monte's avocado market. 
-When necessary; do your best to find a relationship between the first text and the second text, 
-and try to justify the first text by the second text. Do not return the original texts. 
-Read both texts and create a summary of the texts, include all the necessary numbers as bullet points. 
-Provide a title for the summarized text. Remove any words related to SQLResults or SQL in general."""
-
 sorry_instruction = """Say sorry if you do not know the answer to the question, 
 otherwise answer the question. do not mention "an AI language model" sort of response, 
 just answer the question with clarifications.
