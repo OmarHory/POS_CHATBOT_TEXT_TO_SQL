@@ -121,7 +121,10 @@ sorry_words = [
     "عذرا",
     "للأسف",
     "لا أعلم",
+    "عفوًا",
+    "لا أعرف",
 ]
+
 
 translate_ar_prompt_ = """Translate the following Arabic (MSA or Dialect) to English:
 
