@@ -33,7 +33,7 @@ from twilio.rest import Client
 import requests, io
 from pydub import AudioSegment
 import tempfile
-# import whisper
+import whisper
 
 
 
@@ -91,7 +91,7 @@ PROMPT_SQL = PromptTemplate(
 
 app = Flask(__name__)
 
-# model = whisper.load_model("base")
+model = whisper.load_model("base")
 
 @app.route("/bot", methods=["POST"])
 def bot():
@@ -103,39 +103,39 @@ def bot():
     recording_url = request.form.get("MediaUrl0")
     if recording_url:
         pass
-        # print("in audio")
-        # response = requests.get(recording_url)
-        # ogg_bytes = response.content
-        # opus_data = io.BytesIO(ogg_bytes)
-        # print("Audio Segment from file")
-        # sound = AudioSegment.from_file(opus_data, codec="opus")
-        # print("Finished Audio Segment from file")
-        # pcm_segment = (
-        #     sound.set_sample_width(sound.sample_width)
-        #     .set_channels(sound.channels)
-        #     .set_frame_rate(sound.frame_rate)
-        # )
-        # print("Finished PCM Segment from file")
-        # print("Start Set Directory and writing to temp file")
-        # # Set the directory for the temporary file
-        # temp_dir = "temp_dir/"
-        # if not os.path.exists(temp_dir):
-        #     os.makedirs(temp_dir)
+        print("in audio")
+        response = requests.get(recording_url)
+        ogg_bytes = response.content
+        opus_data = io.BytesIO(ogg_bytes)
+        print("Audio Segment from file")
+        sound = AudioSegment.from_file(opus_data, codec="opus")
+        print("Finished Audio Segment from file")
+        pcm_segment = (
+            sound.set_sample_width(sound.sample_width)
+            .set_channels(sound.channels)
+            .set_frame_rate(sound.frame_rate)
+        )
+        print("Finished PCM Segment from file")
+        print("Start Set Directory and writing to temp file")
+        # Set the directory for the temporary file
+        temp_dir = "temp_dir/"
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
 
-        # # Create a temporary file in the specified directory
-        # with tempfile.NamedTemporaryFile(
-        #     mode="wb", dir=temp_dir, suffix=".mp3"
-        # ) as temp_file:
-        #     pcm_segment.export(temp_file.name, format="mp3")
-        #     print("Finished exporting to temp file")
-        #     # mp3_file = open(temp_file.name, "rb")
-        #     # print("Start transcribing")
-        #     # transcript = Audio.transcribe("whisper-1", mp3_file, language='en')
-        #     transcript = model.transcribe(temp_file.name)
-        #     incoming_msg = transcript["text"].strip()
-        #     print("Finish transcribing")
-        #     # mp3_file.close()
-        # input_type = 'audio'
+        # Create a temporary file in the specified directory
+        with tempfile.NamedTemporaryFile(
+            mode="wb", dir=temp_dir, suffix=".mp3"
+        ) as temp_file:
+            pcm_segment.export(temp_file.name, format="mp3")
+            print("Finished exporting to temp file")
+            # mp3_file = open(temp_file.name, "rb")
+            # print("Start transcribing")
+            # transcript = Audio.transcribe("whisper-1", mp3_file, language='en')
+            transcript = model.transcribe(temp_file.name)
+            incoming_msg = transcript["text"].strip()
+            print("Finish transcribing")
+            # mp3_file.close()
+        input_type = 'audio'
     else:
         print("in text")
         input_type = 'text'
