@@ -48,6 +48,7 @@ def gpt_sql_prompt():
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
         Return the answer in a readable format, do not return the SQL query, return the answer only.
+        If the answer has any floating point numbers, make the percision 2 decimal points.
 
         Examples:
 
