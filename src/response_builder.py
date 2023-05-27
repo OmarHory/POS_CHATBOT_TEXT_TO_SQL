@@ -5,8 +5,10 @@ from helpers.vars import (
     gpt_prompt,
     sorry_instruction,
     sorry_words,
+    language_map,
     translate_ar_prompt_,
 )
+
 # from helpers.static_prompts import (
 #     pricing_last_week_every_category,
 #     supply_last_week_total_purchases_per_category,
@@ -18,10 +20,11 @@ from helpers.vars import (
 #     specific_size_average_price_last_n_weeks,
 #     specific_supply_overview,
 # )
-from helpers.utils import edit_response, edit_prompt, get_formatted_intent
-from helpers.predefined_report import get_general_report
+from helpers.utils import edit_response, edit_prompt, get_formatted_intent, translate_message
+# from helpers.predefined_report import get_general_report
 from helpers.DatabaseChain import get_db_session
-from langdetect import detect
+from langchain.prompts.prompt import PromptTemplate
+from helpers.vars import gpt_sql_prompt
 import time
 
 
@@ -32,7 +35,6 @@ def prepare_response(
     redis_client,
     redis_config,
     llm,
-    PROMPT_SQL,
     gpt_sql_engine,
     include_tables,
 ):
@@ -56,7 +58,6 @@ def prepare_response(
         user_context=user_context,
         username=username,
         llm=llm,
-        PROMPT_SQL=PROMPT_SQL,
         gpt_sql_engine=gpt_sql_engine,
         include_tables=include_tables,
     )
@@ -81,7 +82,6 @@ def process_message(
     user_context,
     username,
     llm,
-    PROMPT_SQL,
     gpt_sql_engine,
     include_tables,
 ):
@@ -91,12 +91,8 @@ def process_message(
     sql_cmd = None
     sql_result = None
     is_gpt_answer = False
-    
-    lang = detect(incoming_msg)
-    print("lang is:", lang)
-    if lang == "ar":
-        incoming_msg = send_to_gpt(translate_ar_prompt_.format(incoming_msg))
-        print(incoming_msg)
+
+    incoming_msg, user_language = translate_message(incoming_msg, language_map, translate_ar_prompt_)
 
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"
@@ -130,7 +126,7 @@ def process_message(
                 gpt_sql_engine,
                 include_tables,
                 llm,
-                PROMPT_SQL,
+                user_language,
                 incoming_msg,
                 message_type,
                 error_flag,
@@ -163,7 +159,7 @@ def process_send_gpt(
     gpt_sql_engine,
     include_tables,
     llm,
-    PROMPT_SQL,
+    user_language,
     incoming_msg,
     message_type,
     error_flag,
@@ -181,7 +177,7 @@ def process_send_gpt(
 
     response = send_to_gpt(
         "\nIntent: {edited_intent}\n\n"
-        + edit_prompt(sorry_instruction.format(incoming_msg))
+        + edit_prompt(sorry_instruction.format(user_language, incoming_msg))
         + "\n"
     )
     print("First GPT response: ", response)
@@ -195,6 +191,9 @@ def process_send_gpt(
 
         # Record the start time
         start_time = time.time()
+        PROMPT_SQL = PromptTemplate(
+        input_variables=["input"],
+        template=gpt_sql_prompt(user_language))
         db_chain_session = get_db_session(
             gpt_sql_engine, include_tables, llm, PROMPT_SQL
         )

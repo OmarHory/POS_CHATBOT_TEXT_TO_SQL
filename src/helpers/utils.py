@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-
+from langdetect import detect
+from gpt_api import send_to_gpt
 
 def get_wsd(dd):
     dt = datetime.strptime(dd, "%Y-%m-%d")
@@ -51,3 +52,18 @@ def get_formatted_intent(intent):
         intent = "Undefined"
 
     return intent
+
+
+def translate_message(incoming_msg, language_map, prompt):
+        lang = detect(incoming_msg)
+        if lang not in language_map.keys():
+            user_language = 'en'
+
+        user_language = language_map[lang]
+        print("user_language is:", user_language)
+
+        if lang != "en":
+            incoming_msg = send_to_gpt(prompt.format(incoming_msg))
+            print(incoming_msg)
+        
+        return incoming_msg, user_language

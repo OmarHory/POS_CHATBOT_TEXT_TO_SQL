@@ -50,3 +50,4 @@ config_gpt_sqlchemy = dict(
         "orders_gpt",
     ],
 )
+

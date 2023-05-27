@@ -14,7 +14,6 @@ from config import (
     config_twilio,
     config_databases,
 )
-from helpers.vars import gpt_sql_prompt
 
 # Initialize the engines
 from models import user, log_message
@@ -26,7 +25,7 @@ from models.user import fetch_user
 from sqlalchemy import create_engine
 
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts.prompt import PromptTemplate
+
 
 from twilio.rest import Client
 # from openai import Audio
@@ -83,11 +82,6 @@ llm = ChatOpenAI(
     max_tokens=config_gpt["max_tokens"],
     temperature=config_gpt["temperature"],
 )
-PROMPT_SQL = PromptTemplate(
-    input_variables=["input"],
-    template=gpt_sql_prompt(),
-)
-
 
 app = Flask(__name__)
 
@@ -175,7 +169,6 @@ def bot():
             redis_config=redis_config,
             username=username,
             llm=llm,
-            PROMPT_SQL=PROMPT_SQL,
             gpt_sql_engine=gpt_sql_engine,
             include_tables=config_gpt_sqlchemy["include_tables"],
         )

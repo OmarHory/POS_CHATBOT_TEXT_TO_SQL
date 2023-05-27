@@ -31,7 +31,7 @@ If the prompt has mix intents, choose the intent that has the higher weight."""
 
 gpt_prompt = """{prompt}"""
 
-def gpt_sql_prompt():
+def gpt_sql_prompt(user_language):
         import datetime
         from datetime import datetime, date, timedelta
         import pandas as pd
@@ -87,16 +87,16 @@ def gpt_sql_prompt():
         - Question: "Question here"
         - SQLQuery: "SQL Query to run"
         - SQLResult: "Result of the SQLQuery"
-        - Answer: "Final answer here in Arabic only."
+        - Answer: "Final answer here in {user_language} only."
         """
 
         prompt_temp += '\n\n\tQuestion: {input}'
-        print(prompt_temp)
         return prompt_temp
 
 sorry_instruction = """Say sorry if you do not know the answer to the question, 
 otherwise answer the question. do not mention "an AI language model" sort of response, 
 just answer the question with clarifications.
+Answer the question in {} only.
 
 Question: {}
 """
@@ -118,9 +118,57 @@ sorry_words = [
     "نادم",
     "اعتذاري",
     "خطأي",
-    "عذرا"
+    "عذرا",
+    "للأسف",
+    "لا أعلم",
 ]
 
 translate_ar_prompt_ = """Translate the following Arabic (MSA or Dialect) to English:
 
                         {}"""
+language_map = {
+    "af": "Afrikaans",
+    "ar": "Arabic",
+    "bg": "Bulgarian",
+    "bn": "Bengali",
+    "ca": "Catalan",
+    "cs": "Czech",
+    "da": "Danish",
+    "de": "German",
+    "el": "Greek",
+    "en": "English",
+    "es": "Spanish",
+    "et": "Estonian",
+    "fi": "Finnish",
+    "fr": "French",
+    "he": "Hebrew",
+    "hi": "Hindi",
+    "hr": "Croatian",
+    "hu": "Hungarian",
+    "id": "Indonesian",
+    "it": "Italian",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "lt": "Lithuanian",
+    "lv": "Latvian",
+    "ms": "Malay",
+    "nl": "Dutch",
+    "no": "Norwegian",
+    "pl": "Polish",
+    "pt": "Portuguese",
+    "ro": "Romanian",
+    "ru": "Russian",
+    "sk": "Slovak",
+    "sl": "Slovenian",
+    "sq": "Albanian",
+    "sr": "Serbian",
+    "sv": "Swedish",
+    "sw": "Swahili",
+    "th": "Thai",
+    "tl": "Tagalog",
+    "tr": "Turkish",
+    "uk": "Ukrainian",
+    "vi": "Vietnamese",
+    "zh-cn": "Chinese (Simplified)",
+    "zh-tw": "Chinese (Traditional)"
+}
