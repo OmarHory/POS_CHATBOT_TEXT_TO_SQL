@@ -1,5 +1,3 @@
-from helpers.utils import get_wsd, get_wsd_string
-
 for_more_info = ""
 
 list_of_approved_emails = ["o_hawary@hotmail.com", "omar@sitech.me"]
@@ -49,6 +47,7 @@ def gpt_sql_prompt(user_language):
         Today's date is {today}, the current hour is {hour}.
         Return the answer in a readable format, do not return the SQL query, return the answer only.
         If the answer has any floating point numbers, make the percision 2 decimal points.
+        Add a thousand separator to the numbers.
 
         Examples:
 
