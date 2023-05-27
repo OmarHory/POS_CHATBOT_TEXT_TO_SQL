@@ -1,59 +1,48 @@
 date,hour,month,year,day_name,is_weekend,type,source,cashflow
-2023-05-25,7,5,2023,Thursday,No,Dine In,Cashier,0.0
-2023-05-25,8,5,2023,Thursday,No,Dine In,Cashier,0.0
-2023-05-25,8,5,2023,Thursday,No,Pick Up,Cashier,52.5
-2023-05-25,9,5,2023,Thursday,No,Delivery,Call Center,26.0
-2023-05-25,9,5,2023,Thursday,No,Dine In,Cashier,17.3
-2023-05-25,9,5,2023,Thursday,No,Pick Up,Call Center,10.0
-2023-05-25,9,5,2023,Thursday,No,Pick Up,Cashier,244.5
-2023-05-25,10,5,2023,Thursday,No,Delivery,Call Center,218.25
-2023-05-25,10,5,2023,Thursday,No,Dine In,Cashier,16.25
-2023-05-25,10,5,2023,Thursday,No,Pick Up,Call Center,8.0
-2023-05-25,10,5,2023,Thursday,No,Pick Up,Cashier,283.2
-2023-05-25,11,5,2023,Thursday,No,Delivery,Call Center,8.0
-2023-05-25,11,5,2023,Thursday,No,Dine In,Cashier,110.2
-2023-05-25,11,5,2023,Thursday,No,Pick Up,Call Center,24.0
-2023-05-25,11,5,2023,Thursday,No,Pick Up,Cashier,416.2
-2023-05-25,12,5,2023,Thursday,No,Dine In,Cashier,88.65
-2023-05-25,12,5,2023,Thursday,No,Pick Up,Call Center,16.0
-2023-05-25,12,5,2023,Thursday,No,Pick Up,Cashier,488.6
-2023-05-25,13,5,2023,Thursday,No,Delivery,Call Center,126.0
-2023-05-25,13,5,2023,Thursday,No,Dine In,Cashier,144.25
-2023-05-25,13,5,2023,Thursday,No,Pick Up,Call Center,8.0
-2023-05-25,13,5,2023,Thursday,No,Pick Up,Cashier,538.05
-2023-05-25,14,5,2023,Thursday,No,Dine In,Cashier,163.4
-2023-05-25,14,5,2023,Thursday,No,Pick Up,Call Center,20.5
-2023-05-25,14,5,2023,Thursday,No,Pick Up,Cashier,398.65
-2023-05-25,15,5,2023,Thursday,No,Delivery,Call Center,91.5
-2023-05-25,15,5,2023,Thursday,No,Delivery,Cashier,0.0
-2023-05-25,15,5,2023,Thursday,No,Dine In,Cashier,117.3
-2023-05-25,15,5,2023,Thursday,No,Pick Up,Cashier,517.75
-2023-05-25,16,5,2023,Thursday,No,Dine In,Cashier,205.8
-2023-05-25,16,5,2023,Thursday,No,Pick Up,Call Center,17.5
-2023-05-25,16,5,2023,Thursday,No,Pick Up,Cashier,480.4
-2023-05-25,17,5,2023,Thursday,No,Delivery,Call Center,38.75
-2023-05-25,17,5,2023,Thursday,No,Dine In,Cashier,319.45
-2023-05-25,17,5,2023,Thursday,No,Pick Up,Call Center,12.5
-2023-05-25,17,5,2023,Thursday,No,Pick Up,Cashier,394.0
-2023-05-25,18,5,2023,Thursday,No,Delivery,Call Center,35.25
-2023-05-25,18,5,2023,Thursday,No,Dine In,Cashier,227.4
-2023-05-25,18,5,2023,Thursday,No,Pick Up,Call Center,92.25
-2023-05-25,18,5,2023,Thursday,No,Pick Up,Cashier,267.6
-2023-05-25,19,5,2023,Thursday,No,Delivery,Call Center,36.75
-2023-05-25,19,5,2023,Thursday,No,Dine In,Cashier,273.8
-2023-05-25,19,5,2023,Thursday,No,Pick Up,Call Center,9.0
-2023-05-25,19,5,2023,Thursday,No,Pick Up,Cashier,327.25
-2023-05-25,20,5,2023,Thursday,No,Delivery,Call Center,54.5
-2023-05-25,20,5,2023,Thursday,No,Dine In,Cashier,312.5
-2023-05-25,20,5,2023,Thursday,No,Pick Up,Call Center,33.0
-2023-05-25,20,5,2023,Thursday,No,Pick Up,Cashier,253.85
-2023-05-25,21,5,2023,Thursday,No,Delivery,Call Center,56.25
-2023-05-25,21,5,2023,Thursday,No,Dine In,Cashier,274.55
-2023-05-25,21,5,2023,Thursday,No,Pick Up,Call Center,56.5
-2023-05-25,21,5,2023,Thursday,No,Pick Up,Cashier,278.3
-2023-05-25,22,5,2023,Thursday,No,Delivery,Call Center,8.0
-2023-05-25,22,5,2023,Thursday,No,Dine In,Cashier,423.0
-2023-05-25,22,5,2023,Thursday,No,Pick Up,Call Center,8.0
-2023-05-25,22,5,2023,Thursday,No,Pick Up,Cashier,230.0
-2023-05-25,23,5,2023,Thursday,No,Dine In,Cashier,187.0
-2023-05-25,23,5,2023,Thursday,No,Pick Up,Cashier,209.65
+2023-05-26,10,5,2023,Friday,Yes,Delivery,Call Center,18.75
+2023-05-26,10,5,2023,Friday,Yes,Dine In,Cashier,13.4
+2023-05-26,10,5,2023,Friday,Yes,Pick Up,Call Center,38.0
+2023-05-26,10,5,2023,Friday,Yes,Pick Up,Cashier,176.75
+2023-05-26,11,5,2023,Friday,Yes,Delivery,Call Center,21.0
+2023-05-26,11,5,2023,Friday,Yes,Dine In,Cashier,37.0
+2023-05-26,11,5,2023,Friday,Yes,Pick Up,Cashier,308.25
+2023-05-26,12,5,2023,Friday,Yes,Delivery,Call Center,45.5
+2023-05-26,12,5,2023,Friday,Yes,Dine In,Cashier,11.9
+2023-05-26,12,5,2023,Friday,Yes,Pick Up,Cashier,394.5
+2023-05-26,13,5,2023,Friday,Yes,Delivery,Call Center,16.0
+2023-05-26,13,5,2023,Friday,Yes,Dine In,Cashier,133.2
+2023-05-26,13,5,2023,Friday,Yes,Pick Up,Call Center,16.0
+2023-05-26,13,5,2023,Friday,Yes,Pick Up,Cashier,459.0
+2023-05-26,14,5,2023,Friday,Yes,Delivery,Call Center,18.5
+2023-05-26,14,5,2023,Friday,Yes,Dine In,Cashier,156.5
+2023-05-26,14,5,2023,Friday,Yes,Pick Up,Cashier,421.8
+2023-05-26,15,5,2023,Friday,Yes,Delivery,Call Center,8.0
+2023-05-26,15,5,2023,Friday,Yes,Dine In,Cashier,168.3
+2023-05-26,15,5,2023,Friday,Yes,Pick Up,Call Center,10.0
+2023-05-26,15,5,2023,Friday,Yes,Pick Up,Cashier,365.4
+2023-05-26,16,5,2023,Friday,Yes,Dine In,Cashier,95.5
+2023-05-26,16,5,2023,Friday,Yes,Pick Up,Call Center,24.0
+2023-05-26,16,5,2023,Friday,Yes,Pick Up,Cashier,321.75
+2023-05-26,17,5,2023,Friday,Yes,Delivery,Call Center,32.5
+2023-05-26,17,5,2023,Friday,Yes,Dine In,Cashier,165.9
+2023-05-26,17,5,2023,Friday,Yes,Pick Up,Call Center,37.75
+2023-05-26,17,5,2023,Friday,Yes,Pick Up,Cashier,370.8
+2023-05-26,18,5,2023,Friday,Yes,Delivery,Call Center,16.0
+2023-05-26,18,5,2023,Friday,Yes,Dine In,Cashier,98.0
+2023-05-26,18,5,2023,Friday,Yes,Pick Up,Cashier,570.1
+2023-05-26,19,5,2023,Friday,Yes,Delivery,Call Center,33.0
+2023-05-26,19,5,2023,Friday,Yes,Dine In,Cashier,123.7
+2023-05-26,19,5,2023,Friday,Yes,Pick Up,Call Center,27.0
+2023-05-26,19,5,2023,Friday,Yes,Pick Up,Cashier,406.95
+2023-05-26,20,5,2023,Friday,Yes,Delivery,Call Center,18.5
+2023-05-26,20,5,2023,Friday,Yes,Dine In,Cashier,170.95
+2023-05-26,20,5,2023,Friday,Yes,Pick Up,Call Center,10.0
+2023-05-26,20,5,2023,Friday,Yes,Pick Up,Cashier,398.0
+2023-05-26,21,5,2023,Friday,Yes,Dine In,Cashier,112.25
+2023-05-26,21,5,2023,Friday,Yes,Pick Up,Call Center,20.0
+2023-05-26,21,5,2023,Friday,Yes,Pick Up,Cashier,311.65
+2023-05-26,22,5,2023,Friday,Yes,Delivery,Call Center,20.0
+2023-05-26,22,5,2023,Friday,Yes,Dine In,Cashier,72.25
+2023-05-26,22,5,2023,Friday,Yes,Pick Up,Cashier,192.9
+2023-05-26,23,5,2023,Friday,Yes,Dine In,Cashier,18.0
+2023-05-26,23,5,2023,Friday,Yes,Pick Up,Cashier,19.9
