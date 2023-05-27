@@ -115,32 +115,6 @@ def process_message(
     elif "farewell" in intent:
         response = "Thank you! Have a nice day! \U0001F44B \U0001F44B\n"
 
-    # elif incoming_msg.isdigit():
-    #     match int(incoming_msg):
-    #         case 1:
-    #             response = (
-    #                 f"Last week average price for every category of avocado: \n"
-    #             )
-    #             response += pricing_last_week_every_category()
-    #         case 2:
-    #             response = "Last Week total Purchases per category: \n"
-    #             response += supply_last_week_total_purchases_per_category()
-    #         case 3:
-    #             response = (
-    #                 "Average weather forecast for the next 4 weeks in Mexico: \n"
-    #             )
-    #             response += mexico_weather_forecast_4_weeks()
-    #         case 4:
-    #             response = "Forecasted average price for the next 4 weeks for every category of avocado: \n"
-    #             response += pricing_forecast_every_category_4_weeks()
-    #         case 5:
-    #             response = "Last week average demand quantities for every Distribution Center Region: \n"
-    #             response += demand_last_week_every_distribution_center()
-    #         case 6:
-    #             response = "Forecasted total demand quantities for every Distribution Center Region over the next 4 weeks: \n"
-    #             response += demand_forecast_every_distribution_center_total()
-    #         case _:
-    #             response = "You entered an option that is not in the list."
     else:
             (
                 response,

@@ -4,7 +4,7 @@ for_more_info = ""
 
 list_of_approved_emails = ["o_hawary@hotmail.com", "omar@sitech.me"]
 
-general_menu = """Hello there, I am Bash Mohandes, I am here to help you with your questions about Shawarma 4 Chicks.\nAsk any question you would like about Sales / Orders."""
+general_menu = """مرحبا بك! انا مساعدك الشخصي لشاورما فور تشكس 🤖 يا حياالله فيك!"""
 
 
 intent_prompt = """What is the intent of this sentence:
@@ -47,7 +47,6 @@ def gpt_sql_prompt():
         Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
-        If the question is in Arabic, translate it to English, then answer it in Arabic, otherwise keep the question in English and answer it in English.
         Return the answer in a readable format, do not return the SQL query, return the answer only.
 
         Examples:
@@ -87,7 +86,7 @@ def gpt_sql_prompt():
         - Question: "Question here"
         - SQLQuery: "SQL Query to run"
         - SQLResult: "Result of the SQLQuery"
-        - Answer: "Final answer here"
+        - Answer: "Final answer here in Arabic only."
         """
 
         prompt_temp += '\n\n\tQuestion: {input}'
