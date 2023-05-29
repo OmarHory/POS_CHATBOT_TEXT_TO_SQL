@@ -51,36 +51,37 @@ def gpt_sql_prompt(user_language):
 
         Examples:
 
-        - Question: What is the cash flow yesterday?
-        - SQLQuery: SELECT SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' GROUP BY date
+        - Question: What is the sales yesterday?
+        - SQLQuery: SELECT SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' GROUP BY date
 
-        - Question: What is the total cash flow on {yesterday} at 9 PM?
-        - SQLQuery: SELECT date, hour, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 21 GROUP BY date, hour
+        - Question: What is the total sales on {yesterday} at 9 PM?
+        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 21 GROUP BY date, hour
 
-        - Question: What is the total cash flow on {yesterday} at 9 AM?
-        - SQLQuery: SELECT date, hour, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 9 GROUP BY date, hour
+        - Question: What is the total sales on {yesterday} at 9 AM?
+        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 9 GROUP BY date, hour
 
-        - Question: What is the cash flow on {yesterday} at 1 PM for Dine In orders?
-        - SQLQuery: SELECT date, hour, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 13 AND type = 'Dine In' GROUP BY date, hour, type
+        - Question: What is the sales on {yesterday} at 1 PM for Dine In orders?
+        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 13 AND type = 'Dine In' GROUP BY date, hour, type
 
-        - Question: Compare the total cash flow on {yesterday} at 4 PM for Dine In orders and Pick Up orders?
-        - SQLQuery: SELECT date, hour, type, SUM(cashflow) FROM orders_gpt WHERE date = '{yesterday}' and hour = 16 AND (type = 'Dine In' OR type = 'Pick Up') GROUP BY date, hour, type
+        - Question: Compare the total sales on {yesterday} at 4 PM for Dine In orders and Pick Up orders?
+        - SQLQuery: SELECT date, hour, type, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' and hour = 16 AND (type = 'Dine In' OR type = 'Pick Up') GROUP BY date, hour, type
         
-        - Question: Compare the cash flow between April and May in 2023?
-        - SQLQuery: SELECT month, year, SUM(cashflow) FROM orders_gpt WHERE month=4 OR month=5 AND year=2023 GROUP BY month, year
+        - Question: Compare the sales between April and May in 2023?
+        - SQLQuery: SELECT month, year, SUM(sales) FROM orders_gpt WHERE month=4 OR month=5 AND year=2023 GROUP BY month, year
 
         2- Tables Schemas and description:
 
         - "orders_gpt": Sales orders table, contains the following columns:
-                - date: date of the created order. (Primary Key)
-                - hour: hour of the created order. (Primary Key)
-                - day_name: day name of created order. (Primary Key)
-                - is_weekend: is the order on the weekend or not. (Primary Key)
+                - date: date of the created orders. (Primary Key)
+                - hour: hour of the created orders. (Primary Key)
+                - day_name: day name of created orders. (Primary Key)
+                - is_weekend: are the orders on the weekend or not. (Primary Key)
                 - month: month of year. (Primary Key)
                 - year: year. (Primary Key)
-                - type: type of order, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru]. (Primary Key)
-                - source: source of order, can be one of the following: [Cashier, API, Call Center]. (Primary Key)
-                - cashflow: cash flow on the specified date and hour in Jordanian Dinars or JD.
+                - type: type of orders, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru]. (Primary Key)
+                - source: source of orders, can be one of the following: [Cashier, API, Call Center]. (Primary Key)
+                - count: count of placed orders on the specified date and hour.
+                - sales: sales on the specified date and hour in Jordanian Dinars or JD.
 
         3- Use the following format:
         - Question: "Question here"

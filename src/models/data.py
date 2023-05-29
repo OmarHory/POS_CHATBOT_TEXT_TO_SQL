@@ -40,7 +40,9 @@ class OrdersTable(Base):
     year = Column(Integer, primary_key=True)
     type = Column(String(20), primary_key=True)
     source = Column(String(20), primary_key=True)
-    cashflow = Column(Float(precision=2))
+    sales = Column(Float(precision=2))
+    count = Column(Integer())
+
 
 
 def insert_data(csv_name, table_name, engine):
@@ -63,7 +65,8 @@ def insert_data(csv_name, table_name, engine):
                     year=row["year"],
                     type=row["type"],
                     source=row["source"],
-                    cashflow=row["cashflow"]
+                    sales=row["sales"],
+                    count=row["count"],
                 )
             )
 
@@ -82,10 +85,10 @@ def append_data(csv_name, table_name, engine):
     if table_name == "orders_gpt":
         for index, row in df.iterrows():
             try:
-                insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, cashflow) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['cashflow']}')"
+                insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, sales) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['sales']}')"
                 session.execute(insert_query)
             except Exception as e_:
-                print('An error has occurred on inserting date {} - hour {} - type {} - source {} - cashflow {}'.format(row['date'], row['hour'], row['type'], row['source'], row['cashflow']))
+                print('An error has occurred on inserting date {} - hour {} - type {} - source {} - sales {}'.format(row['date'], row['hour'], row['type'], row['source'], row['sales']))
 
         print("done")
     
