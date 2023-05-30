@@ -85,13 +85,12 @@ def append_data(csv_name, table_name, engine):
     if table_name == "orders_gpt":
         for index, row in df.iterrows():
             try:
-                insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, sales) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['sales']}')"
+                insert_query = f"INSERT INTO {table_name} (date, hour, day_name, is_weekend, month, year, type, source, sales, count) VALUES ('{pd.to_datetime(row['date'])}', '{row['hour']}', '{row['day_name']}', '{row['is_weekend']}', '{row['month']}', '{row['year']}', '{row['type']}', '{row['source']}', '{row['sales']}', '{row['count']}') ON DUPLICATE KEY UPDATE hour = '{row['hour']}', day_name = '{row['day_name']}', is_weekend = '{row['is_weekend']}', month = '{row['month']}', year = '{row['year']}', type = '{row['type']}', source = '{row['source']}', sales = '{row['sales']}', count = '{row['count']}'"
                 session.execute(insert_query)
             except Exception as e_:
                 print('An error has occurred on inserting date {} - hour {} - type {} - source {} - sales {}'.format(row['date'], row['hour'], row['type'], row['source'], row['sales']))
 
         print("done")
-    
 
     session.commit()
     session.close()
