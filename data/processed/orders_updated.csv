@@ -57,5 +57,10 @@ date,hour,month,year,day_name,is_weekend,type,source,sales,count
 2023-05-30,11,5,2023,Tuesday,No,Dine In,Cashier,10.5,1
 2023-05-30,11,5,2023,Tuesday,No,Pick Up,Cashier,101.5,12
 2023-05-30,12,5,2023,Tuesday,No,Delivery,Call Center,30.5,3
+2023-05-30,12,5,2023,Tuesday,No,Pick Up,Call Center,18.0,1
 2023-05-30,12,5,2023,Tuesday,No,Pick Up,Cashier,212.3,22
-2023-05-30,13,5,2023,Tuesday,No,Pick Up,Cashier,110.0,8
+2023-05-30,13,5,2023,Tuesday,No,Delivery,Call Center,28.5,1
+2023-05-30,13,5,2023,Tuesday,No,Dine In,Cashier,8.0,1
+2023-05-30,13,5,2023,Tuesday,No,Pick Up,Cashier,486.25,44
+2023-05-30,14,5,2023,Tuesday,No,Dine In,Cashier,19.25,3
+2023-05-30,14,5,2023,Tuesday,No,Pick Up,Cashier,92.0,5
