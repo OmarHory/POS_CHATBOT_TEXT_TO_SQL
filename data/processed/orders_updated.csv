@@ -62,5 +62,31 @@ date,hour,month,year,day_name,is_weekend,type,source,sales,count
 2023-05-30,13,5,2023,Tuesday,No,Delivery,Call Center,28.5,1
 2023-05-30,13,5,2023,Tuesday,No,Dine In,Cashier,8.0,1
 2023-05-30,13,5,2023,Tuesday,No,Pick Up,Cashier,486.25,44
-2023-05-30,14,5,2023,Tuesday,No,Dine In,Cashier,19.25,3
-2023-05-30,14,5,2023,Tuesday,No,Pick Up,Cashier,92.0,5
+2023-05-30,14,5,2023,Tuesday,No,Delivery,Call Center,39.25,2
+2023-05-30,14,5,2023,Tuesday,No,Dine In,Cashier,35.25,4
+2023-05-30,14,5,2023,Tuesday,No,Pick Up,Call Center,9.0,1
+2023-05-30,14,5,2023,Tuesday,No,Pick Up,Cashier,368.2,36
+2023-05-30,15,5,2023,Tuesday,No,Dine In,Cashier,96.2,10
+2023-05-30,15,5,2023,Tuesday,No,Pick Up,Cashier,554.9,60
+2023-05-30,16,5,2023,Tuesday,No,Delivery,Call Center,35.75,2
+2023-05-30,16,5,2023,Tuesday,No,Dine In,Cashier,19.15,2
+2023-05-30,16,5,2023,Tuesday,No,Pick Up,Call Center,10.0,2
+2023-05-30,16,5,2023,Tuesday,No,Pick Up,Cashier,485.8,51
+2023-05-30,17,5,2023,Tuesday,No,Delivery,Call Center,62.5,5
+2023-05-30,17,5,2023,Tuesday,No,Dine In,Cashier,58.8,7
+2023-05-30,17,5,2023,Tuesday,No,Pick Up,Call Center,8.5,1
+2023-05-30,17,5,2023,Tuesday,No,Pick Up,Cashier,483.3,46
+2023-05-30,18,5,2023,Tuesday,No,Delivery,Call Center,10.0,1
+2023-05-30,18,5,2023,Tuesday,No,Dine In,Cashier,90.2,8
+2023-05-30,18,5,2023,Tuesday,No,Pick Up,Call Center,13.0,2
+2023-05-30,18,5,2023,Tuesday,No,Pick Up,Cashier,456.3,47
+2023-05-30,19,5,2023,Tuesday,No,Delivery,Call Center,13.25,2
+2023-05-30,19,5,2023,Tuesday,No,Dine In,Cashier,30.5,6
+2023-05-30,19,5,2023,Tuesday,No,Pick Up,Call Center,14.0,1
+2023-05-30,19,5,2023,Tuesday,No,Pick Up,Cashier,268.25,30
+2023-05-30,20,5,2023,Tuesday,No,Delivery,Call Center,52.25,3
+2023-05-30,20,5,2023,Tuesday,No,Dine In,Cashier,79.25,7
+2023-05-30,20,5,2023,Tuesday,No,Pick Up,Cashier,430.0,47
+2023-05-30,21,5,2023,Tuesday,No,Dine In,Cashier,105.8,14
+2023-05-30,21,5,2023,Tuesday,No,Pick Up,Call Center,38.5,3
+2023-05-30,21,5,2023,Tuesday,No,Pick Up,Cashier,381.4,39
