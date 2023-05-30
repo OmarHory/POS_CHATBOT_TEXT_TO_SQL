@@ -37,6 +37,7 @@ def gpt_sql_prompt(user_language):
         today = today_.strftime("%Y-%m-%d")
         yesterday = (today_ - timedelta(days=1)).strftime("%Y-%m-%d")
         hour = datetime.now().hour
+        print(date.today())
 
 
         prompt_temp = f"""
