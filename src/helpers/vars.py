@@ -149,3 +149,14 @@ translate_ar_prompt_ = """Translate the following {} (MSA or Dialect) to English
 language_map = {
     "Arabic": ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
 }
+
+sql_revision_prompt = """Your task is to debug MySQL Queries, below is a MySQL query that I got the followng error on:
+Error: 
+{}
+
+SQL Query: 
+{}
+
+Just return the result in the following format:
+"Only write the SQL Query, I want to copy paste your response, do not write anything other than the SQL query"
+"""
