@@ -55,7 +55,7 @@ def gpt_sql_prompt(user_language):
         Generate a full sql query, do not use any predefined queries, generate the query based on the question.
         Do not cut off the generated query, return the full query.
         Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
-        Do not filter on is_weekend in the where clause unless asked to.
+        Do not filter on the branch unless instructed to do so.
 
         2- Tables Schemas and description:
 
@@ -73,6 +73,7 @@ def gpt_sql_prompt(user_language):
                 - product_id: product id. (Primary Key)
                 - product_name: product name. 
                 - product_sku: product sku. 
+                - category_id: category id. (Foreign Key to categories table)
                 - is_active: is the product active or not. 
                 - is_stock_product: is the product a stock product or not. 
                 - price: price of the product in Jordanian Dinars or JD. 
@@ -87,12 +88,6 @@ def gpt_sql_prompt(user_language):
                 - order_source: order source, can be one of the following: [Cashier, API, Call Center].
                 - order_status: order status, can be one of the following: [Pending, Active, Declined, Closed, Returned, Joined, Void].
                 - order_total_price: order total in Jordanian Dinars or JD.
-                - hour: hour of the created orders, format HH.
-                - day_name: day name of created orders, example: Sunday.
-                - is_weekend: is the order on the weekend or not, can be one of the following: [Yes, No].
-                - month: month of year, format MM.
-                - year: year, format YYYY.
-                
 
         - "order_details": Order details table, contains the following columns:
                 - order_line_id: order line id. (Primary Key)
