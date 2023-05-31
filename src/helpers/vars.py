@@ -57,6 +57,7 @@ def gpt_sql_prompt(user_language):
         Filter on time period when instructed to do so.
         Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
         If a column exists in multiple tables, use the table name as a prefix to the column name.
+        Always use the table name as a prefix to the column name.
         
         2- Tables Schemas and description:
 

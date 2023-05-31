@@ -38,8 +38,8 @@ config_twilio = dict(
 config_gpt = dict(
     api_key="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",
     model_name="gpt-3.5-turbo",
-    temperature=0.3,
-    max_tokens=300,
+    temperature=0.0,
+    max_tokens=500,
     request_timeout=120,
 )  # gpt-3.5-turbo	$0.002 / 1K tokens
 
