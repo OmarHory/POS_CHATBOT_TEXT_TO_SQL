@@ -52,6 +52,8 @@ def gpt_sql_prompt(user_language):
         Return the answer in a readable format, do not return the SQL query, return the answer only.
         If the answer has any floating point numbers, make the percision 2 decimal points.
         Add a thousand separator to the numbers.
+        Generate a full sql query, do not use any predefined queries, generate the query based on the question.
+        Do not cut off the generated query, return the full query.
 
         2- Tables Schemas and description:
 
