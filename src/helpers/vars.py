@@ -96,7 +96,7 @@ def gpt_sql_prompt(user_language):
                 - product_id: product id. (Foreign Key to products table)
                 - category_id: category id. (Foreign Key to categories table)
                 - quantity: quantity of the product. 
-                - product_price: price of the product in Jordanian Dinars or JD. 
+                - price: price of the product in Jordanian Dinars or JD. 
 
 
         3- Use the following format:

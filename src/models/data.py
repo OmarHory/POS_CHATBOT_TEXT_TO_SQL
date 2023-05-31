@@ -48,7 +48,7 @@ class OrderDetails(Base):
     product_id = Column(String(40), ForeignKey("products.product_id"))
     category_id = Column(String(40), ForeignKey("categories.category_id"))
     quantity = Column(Integer)
-    product_price = Column(Float(precision=2))
+    price = Column(Float(precision=2))
 
 class Branches(Base):
     __tablename__ = "branches"
@@ -106,7 +106,7 @@ def insert_data(csv_name, table_name, engine):
                     product_id=row["product_id"],
                     category_id=row["category_id"],
                     quantity=row["quantity"],
-                    product_price=row["product_price"],
+                    price=row["price"],
                 )
             )
 
