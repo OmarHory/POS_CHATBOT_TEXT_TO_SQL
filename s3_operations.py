@@ -11,4 +11,4 @@ bucket_name = config_aws['bucket_name']
 
 # Upload the file to S3
 for name in ['orders_final_include.csv']:
-    s3.download_file(bucket_name, f'foodicsdata/chicks/{name}', f'data/{name}')
+    s3.download_file(bucket_name, f'chicks/{name}', f'data/{name}')

@@ -23,7 +23,7 @@ config_databases = dict(
     users="chicks_users", data="chicks_data", log="chicks_log"
 )
 
-config_aws = dict(access_key='AKIAUURCRIKGZTPHPFF2', secret_access_key = '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', bucket_name='foodicsdata')
+config_aws = dict(access_key='AKIAUURCRIKG7R7WCAUC', secret_access_key = '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', bucket_name='foodicsbucket')
 
 
 config_twilio = dict(
