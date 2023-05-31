@@ -84,7 +84,6 @@ def gpt_sql_prompt(user_language):
         - "order_header": Order header table, contains the following columns:
                 - order_header_id: order header id. (Primary Key)
                 - branch_id: branch id. (Foreign Key to branches table)
-                - branch_name: branch name.
                 - order_time: order time, format: HH:MM:SS.
                 - order_date: order date, format: YYYY-MM-DD.
                 - order_type: order type, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru].
