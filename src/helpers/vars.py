@@ -52,9 +52,9 @@ def gpt_sql_prompt(user_language):
         Add a thousand separator to the numbers.
         Generate a full sql query, do not use any predefined queries, generate the query based on the question.
         Do not cut off the generated query, return the full query.
-        Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
-        Do not filter on the branch unless instructed to do so.
-        Do not filter on time period unless instructed to do so.
+        Filter the columns based on the question.
+        Filter on the branch when instructed to do so.
+        Filter on time period when instructed to do so.
         When doing joins, do not forget to reference the table name before the column name in the group by clause.
         Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
         
