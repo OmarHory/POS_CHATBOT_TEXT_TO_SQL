@@ -57,6 +57,7 @@ def gpt_sql_prompt(user_language):
         Filter on time period when instructed to do so.
         When doing joins, do not forget to reference the table name before the column name in the group by clause.
         Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
+        Make sure to avoid this error: 1052, "Column 'X' in field list is ambiguous"
         
 
 
