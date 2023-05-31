@@ -72,8 +72,6 @@ def gpt_sql_prompt(user_language):
                 - product_id: product id. (Primary Key)
                 - product_name: product name. 
                 - product_sku: product sku. 
-                - category_id: category id. (Foreign Key to categories table)
-                - category_name: category name. 
                 - is_active: is the product active or not. 
                 - is_stock_product: is the product a stock product or not. 
                 - price: price of the product in Jordanian Dinars or JD. 
