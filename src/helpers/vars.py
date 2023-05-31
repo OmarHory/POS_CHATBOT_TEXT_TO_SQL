@@ -56,6 +56,8 @@ def gpt_sql_prompt(user_language):
         Do not cut off the generated query, return the full query.
         Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
         Do not filter on the branch unless instructed to do so.
+        Do not filter on time period unless instructed to do so.
+
 
         2- Tables Schemas and description:
 
