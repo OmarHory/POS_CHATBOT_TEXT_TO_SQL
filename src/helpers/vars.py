@@ -38,8 +38,6 @@ def gpt_sql_prompt(user_language):
         yesterday = (today_ - timedelta(days=1)).strftime("%Y-%m-%d")
         hour = datetime.now().hour
         print(date.today())
-
-
         prompt_temp = f"""
         1- Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
@@ -69,7 +67,7 @@ def gpt_sql_prompt(user_language):
 
         - "categories": Categories table, contains the following columns:
                 - category_id: category id. (Primary Key)
-                - category_name: category name.
+                - category_name: category name can be one of the following: [Shawarma, Fries, Drinks, Juices, Chicken burger, Sauces].
 
         - "products": Products table, contains the following columns:
                 - product_id: product id. (Primary Key)
@@ -81,18 +79,18 @@ def gpt_sql_prompt(user_language):
                 - price: price of the product in Jordanian Dinars or JD. 
 
         - "order_header": Order header table, contains the following columns:
-                - order_id: order id. (Primary Key)
+                - order_header_id: order header id. (Primary Key)
                 - branch_id: branch id. (Foreign Key to branches table)
                 - branch_name: branch name.
-                - order_datetime: order date, format: YYYY-MM-DD HH:MM:SS.
+                - order_time: order time, format: HH:MM:SS.
                 - order_date: order date, format: YYYY-MM-DD.
                 - order_type: order type, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru].
                 - order_source: order source, can be one of the following: [Cashier, API, Call Center].
                 - order_status: order status, can be one of the following: [Pending, Active, Declined, Closed, Returned, Joined, Void].
-                - order_total_price: order total in Jordanian Dinars or JD.
+                - order_total_price: order total price in Jordanian Dinars or JD.
 
         - "order_details": Order details table, contains the following columns:
-                - order_line_id: order line id. (Primary Key)
+                - order_details_id: order details id. (Primary Key)
                 - order_id: order id. (Foreign Key to order_header table)
                 - product_id: product id. (Foreign Key to products table)
                 - category_id: category id. (Foreign Key to categories table)
