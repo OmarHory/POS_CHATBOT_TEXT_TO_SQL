@@ -54,6 +54,7 @@ def gpt_sql_prompt(user_language):
         Add a thousand separator to the numbers.
         Generate a full sql query, do not use any predefined queries, generate the query based on the question.
         Do not cut off the generated query, return the full query.
+        Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
 
         2- Tables Schemas and description:
 
