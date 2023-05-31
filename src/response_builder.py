@@ -182,10 +182,11 @@ def process_send_gpt(
     )
     print("First GPT response: ", response)
 
-    if (
-        any(item in response.lower() for item in sorry_words)
-        and "undefined" not in edited_intent.lower()
-    ):
+    # if (
+    #     any(item in response.lower() for item in sorry_words)
+    #     and "undefined" not in edited_intent.lower()
+    # ):
+    if ("undefined" in edited_intent.lower()):
         print("Go to SQL GPT")
         incoming_msg = edit_prompt(incoming_msg)
 
