@@ -43,46 +43,63 @@ def gpt_sql_prompt(user_language):
         prompt_temp = f"""
         1- Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
-        Your task is to answer questions related a restaurant called [Shawarma 4 Chicks], the restaurant works everyday, the weekends are on Friday and Saturday.
+        You are a restaurant manager, you report analytics about your restaurant.
+        Your task is to answer questions related to a restaurant called [Shawarma 4 Chicks] which sells Chicken and Beef Shawarma.
+        The restaurant works everyday on specific hours based on the branch, the available branches (name : id): [4Chicks Abdoun : 975b3d24-cb71-4df8-930e-054bcd67f90c, 4Chicks 7th circle:975b3d24-ce3d-4801-9c11-582a817cc591, 4Chicks Al-Jubeha:976744f0-20ac-4dd5-a06a-6a1ee9ffa7b5], expect the user to misspell the branch name so use the branch id in the SQL query, expect the user to mention the branch name in the question, if not mentioned, assume the opening hours are from 9 AM to 3 AM.
+        Weekends are on Friday and Saturday.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Today's date is {today}, the current hour is {hour}.
         Return the answer in a readable format, do not return the SQL query, return the answer only.
         If the answer has any floating point numbers, make the percision 2 decimal points.
         Add a thousand separator to the numbers.
 
-        Examples:
-
-        - Question: What is the sales yesterday?
-        - SQLQuery: SELECT SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' GROUP BY date
-
-        - Question: What is the total sales on {yesterday} at 9 PM?
-        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 21 GROUP BY date, hour
-
-        - Question: What is the total sales on {yesterday} at 9 AM?
-        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 9 GROUP BY date, hour
-
-        - Question: What is the sales on {yesterday} at 1 PM for Dine In orders?
-        - SQLQuery: SELECT date, hour, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' AND hour = 13 AND type = 'Dine In' GROUP BY date, hour, type
-
-        - Question: Compare the total sales on {yesterday} at 4 PM for Dine In orders and Pick Up orders?
-        - SQLQuery: SELECT date, hour, type, SUM(sales) FROM orders_gpt WHERE date = '{yesterday}' and hour = 16 AND (type = 'Dine In' OR type = 'Pick Up') GROUP BY date, hour, type
-        
-        - Question: Compare the sales between April and May in 2023?
-        - SQLQuery: SELECT month, year, SUM(sales) FROM orders_gpt WHERE month=4 OR month=5 AND year=2023 GROUP BY month, year
-
         2- Tables Schemas and description:
 
-        - "orders_gpt": Sales orders table, contains the following columns:
-                - date: date of the created orders. (Primary Key)
-                - hour: hour of the created orders. (Primary Key)
-                - day_name: day name of created orders. (Primary Key)
-                - is_weekend: are the orders on the weekend or not. (Primary Key)
-                - month: month of year. (Primary Key)
-                - year: year. (Primary Key)
-                - type: type of orders, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru]. (Primary Key)
-                - source: source of orders, can be one of the following: [Cashier, API, Call Center]. (Primary Key)
-                - count: count of placed orders on the specified date and hour.
-                - sales: sales on the specified date and hour in Jordanian Dinars or JD.
+        - "branches": Branches table, contains the following columns:
+                - branch_id: branch id. (Primary Key)
+                - branch_name: branch name. 
+                - opening_from: opening hour, format HH. 
+                - opening_to: closing hour, format HH.
+
+        - "categories": Categories table, contains the following columns:
+                - category_id: category id. (Primary Key)
+                - category_name: category name.
+
+        - "products": Products table, contains the following columns:
+                - product_id: product id. (Primary Key)
+                - product_name: product name. 
+                - product_sku: product sku. 
+                - category_id: category id. (Foreign Key to categories table)
+                - category_name: category name. 
+                - is_active: is the product active or not. 
+                - is_stock_product: is the product a stock product or not. 
+                - price: price of the product in Jordanian Dinars or JD. 
+
+        - "order_header": Order header table, contains the following columns:
+                - order_id: order id. (Primary Key)
+                - branch_id: branch id. (Foreign Key to branches table)
+                - branch_name: branch name.
+                - order_datetime: order date, format: YYYY-MM-DD HH:MM:SS.
+                - order_date: order date, format: YYYY-MM-DD.
+                - order_type: order type, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru].
+                - order_source: order source, can be one of the following: [Cashier, API, Call Center].
+                - order_status: order status, can be one of the following: [Pending, Active, Declined, Closed, Returned, Joined, Void].
+                - order_total_price: order total in Jordanian Dinars or JD.
+                - hour: hour of the created orders, format HH.
+                - day_name: day name of created orders, example: Sunday.
+                - is_weekend: is the order on the weekend or not, can be one of the following: [Yes, No].
+                - month: month of year, format MM.
+                - year: year, format YYYY.
+                
+
+        - "order_details": Order details table, contains the following columns:
+                - order_line_id: order line id. (Primary Key)
+                - order_id: order id. (Foreign Key to order_header table)
+                - product_id: product id. (Foreign Key to products table)
+                - category_id: category id. (Foreign Key to categories table)
+                - quantity: quantity of the product. 
+                - product_price: price of the product in Jordanian Dinars or JD. 
+
 
         3- Use the following format:
         - Question: "Question here"
@@ -127,52 +144,9 @@ sorry_words = [
 ]
 
 
-translate_ar_prompt_ = """Translate the following Arabic (MSA or Dialect) to English:
+translate_ar_prompt_ = """Translate the following {} (MSA or Dialect) to English:
 
                         {}"""
 language_map = {
-    "af": "Afrikaans",
-    "ar": "Arabic",
-    "bg": "Bulgarian",
-    "bn": "Bengali",
-    "ca": "Catalan",
-    "cs": "Czech",
-    "da": "Danish",
-    "de": "German",
-    "el": "Greek",
-    "en": "English",
-    "es": "Spanish",
-    "et": "Estonian",
-    "fi": "Finnish",
-    "fr": "French",
-    "he": "Hebrew",
-    "hi": "Hindi",
-    "hr": "Croatian",
-    "hu": "Hungarian",
-    "id": "Indonesian",
-    "it": "Italian",
-    "ja": "Japanese",
-    "ko": "Korean",
-    "lt": "Lithuanian",
-    "lv": "Latvian",
-    "ms": "Malay",
-    "nl": "Dutch",
-    "no": "Norwegian",
-    "pl": "Polish",
-    "pt": "Portuguese",
-    "ro": "Romanian",
-    "ru": "Russian",
-    "sk": "Slovak",
-    "sl": "Slovenian",
-    "sq": "Albanian",
-    "sr": "Serbian",
-    "sv": "Swedish",
-    "sw": "Swahili",
-    "th": "Thai",
-    "tl": "Tagalog",
-    "tr": "Turkish",
-    "uk": "Ukrainian",
-    "vi": "Vietnamese",
-    "zh-cn": "Chinese (Simplified)",
-    "zh-tw": "Chinese (Traditional)"
+    "Arabic": ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
 }

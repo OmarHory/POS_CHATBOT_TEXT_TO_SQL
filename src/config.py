@@ -47,7 +47,11 @@ config_gpt = dict(
 config_gpt_sqlchemy = dict(
     database="mysql://{}:{}@{}:{}/{}",
     include_tables=[
-        "orders_gpt",
+        "branches",
+        "categories",
+        "products",
+        "order_header",
+        "order_details",
     ],
 )
 
