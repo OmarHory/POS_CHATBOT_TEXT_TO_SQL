@@ -11,6 +11,8 @@ from langchain.chains.sql_database.prompt import PROMPT
 from langchain.prompts.base import BasePromptTemplate
 from langchain.schema import BaseLanguageModel
 from langchain.sql_database import SQLDatabase
+from helpers.vars import sql_revision_prompt
+from helpers.utils import send_to_gpt
 # from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 
 def get_db_session(engine, include_tables, llm, PROMPT_SQL):
@@ -92,9 +94,13 @@ class SQLDatabaseChain(Chain, BaseModel):
         print("\nsql_cmd:\n", sql_cmd)
         intermediate_steps.append(sql_cmd)
         self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
-        print("before yoooooooooooooooooooooooooooo")
-        result = self.database.run(sql_cmd)
-        print("after yoooooooooooooooooooooooooooo", result)
+        try:
+            result = self.database.run(sql_cmd)
+        except Exception as e:
+            sql_cmd = send_to_gpt(sql_revision_prompt.format(e, sql_cmd))
+            print("New sql_cmd:\n", sql_cmd)
+            result = self.database.run(sql_cmd)
+        
         intermediate_steps.append(result)
         self.callback_manager.on_text("\nSQLResult: ", verbose=self.verbose)
         self.callback_manager.on_text(result, color="yellow", verbose=self.verbose)
