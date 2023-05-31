@@ -55,6 +55,7 @@ def gpt_sql_prompt(user_language):
         Generate a full sql query, do not use any predefined queries, generate the query based on the question.
         Do not cut off the generated query, return the full query.
         Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
+        Do not filter on is_weekend in the where clause unless asked to.
 
         2- Tables Schemas and description:
 
