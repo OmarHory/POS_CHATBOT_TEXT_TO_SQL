@@ -55,6 +55,8 @@ def gpt_sql_prompt(user_language):
         Do not filter unnecessary columns in the where clause, just filter the necessary columns based on the question.
         Do not filter on the branch unless instructed to do so.
         Do not filter on time period unless instructed to do so.
+        When doing joins, do not forget to reference the table name before the column name in the group by clause.
+        
 
 
         2- Tables Schemas and description:
