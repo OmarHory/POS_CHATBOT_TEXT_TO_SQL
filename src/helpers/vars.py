@@ -91,7 +91,7 @@ def gpt_sql_prompt(user_language):
 
         - "order_details": Order details table, contains the following columns:
                 - order_details_id: order details id. (Primary Key)
-                - order_id: order id. (Foreign Key to order_header table)
+                - order_header_id: order header id. (Foreign Key to order_header table)
                 - product_id: product id. (Foreign Key to products table)
                 - category_id: category id. (Foreign Key to categories table)
                 - quantity: quantity of the product. 
