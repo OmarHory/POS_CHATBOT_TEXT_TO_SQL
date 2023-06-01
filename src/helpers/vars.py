@@ -32,12 +32,19 @@ gpt_prompt = """{prompt}"""
 def gpt_sql_prompt(user_language):
         import datetime
         from datetime import datetime, date, timedelta
-        import pandas as pd
-        today_ = date.today()
-        today = today_.strftime("%Y-%m-%d")
-        yesterday = (today_ - timedelta(days=1)).strftime("%Y-%m-%d")
-        hour = datetime.now().hour
-        print(date.today())
+        import pytz
+
+        # today_ = date.today()
+        # today = today_.strftime("%Y-%m-%d")
+        # yesterday = (today_ - timedelta(days=1)).strftime("%Y-%m-%d")
+        # hour = datetime.now().hour + 3
+        # print(date.today())
+        jordan_tz = pytz.timezone('Asia/Amman')
+        jordan_datetime = datetime.datetime.now(jordan_tz)
+
+        # Extract the date and time components
+        today = jordan_datetime.strftime("%Y-%m-%d")
+        time = jordan_datetime.strftime("%H:%M:%S")
         prompt_temp = f"""
         1- Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
@@ -47,7 +54,7 @@ def gpt_sql_prompt(user_language):
         The restaurant resides in Jordan.
         The restaurant works everyday on specific hours based on the branch, the available branches (name : id): [4Chicks Abdoun : 975b3d24-cb71-4df8-930e-054bcd67f90c, 4Chicks 7th circle:975b3d24-ce3d-4801-9c11-582a817cc591, 4Chicks Al-Jubeha:976744f0-20ac-4dd5-a06a-6a1ee9ffa7b5], expect the user to misspell the branch name so use the branch id in the SQL query, expect the user to mention the branch name in the question, if not mentioned, then do not filter on the branch.
         Weekends are on Friday and Saturday.
-        Today's date is {today}, the current hour is {hour}.
+        Today's date is {today}, the current time is {time}.
         Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
         Return the answer in a readable format, do not return the MySQL query, return the answer only.
         Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
@@ -60,6 +67,7 @@ def gpt_sql_prompt(user_language):
         Always use the table name as a prefix to the column name.
         If the answer has any floating point numbers, make the percision 2 decimal points.
         Add a thousand separator to the numbers.
+
         
         
         2- Tables Schemas and description:
