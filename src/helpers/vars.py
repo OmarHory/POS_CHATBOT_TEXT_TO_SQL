@@ -40,7 +40,7 @@ def gpt_sql_prompt(user_language):
         # hour = datetime.now().hour + 3
         # print(date.today())
         jordan_tz = pytz.timezone('Asia/Amman')
-        jordan_datetime = datetime.datetime.now(jordan_tz)
+        jordan_datetime = datetime.now(jordan_tz)
 
         # Extract the date and time components
         today = jordan_datetime.strftime("%Y-%m-%d")
