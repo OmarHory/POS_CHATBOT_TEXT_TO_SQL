@@ -12,7 +12,12 @@ from models.data import *
 # Base.metadata.drop_all(data_engine)
 # Base.metadata.create_all(data_engine)
 
-append_data("orders_updated.csv", "orders_gpt", data_engine)
+
+update_data("branches.csv", "branches", data_engine)
+update_data("categories.csv", "categories", data_engine)
+update_data("products.csv", "products", data_engine)
+update_data("order_header.csv", "order_header", data_engine)
+update_data("order_details.csv", "order_details", data_engine)
 
 
 data_engine.dispose()
