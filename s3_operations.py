@@ -20,8 +20,8 @@ if method == 'download':
         s3.download_file(bucket_name, f'chicks/{name}', f'data/{name}')
 elif method == 'upload':
     print('Performing upload...')
-    for name in ['orders_final_include.csv']:
-        s3.upload_file(f'data/{name}', bucket_name, f'chicks/{name}')
+    for name in ['orders_final_include_updated.csv']:
+        s3.upload_file(f'data/{name}', bucket_name, f'chicks/orders_final_include.csv')
 
 else:
     raise ValueError('Invalid method specified')
