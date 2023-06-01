@@ -1,4 +1,4 @@
-echo "$(date +'%Y-%m-%d %H:%M:%S')" >> /home/ubuntu/chicks_project/foodics_gpt/cron_jobs_logs.txt
+echo "$(date +'%Y-%m-%d %H:%M:%S') Start" >> /home/ubuntu/chicks_project/foodics_gpt/cron_jobs_logs.txt
 cd /home/ubuntu/chicks_project/foodics_gpt/
 . .venv/bin/activate
 
@@ -12,3 +12,4 @@ python src/models/runner/data_runner_update.py
 
 python s3_operations.py upload
 
+echo "$(date +'%Y-%m-%d %H:%M:%S') End" >> /home/ubuntu/chicks_project/foodics_gpt/cron_jobs_logs.txt
