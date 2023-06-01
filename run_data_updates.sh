@@ -1,3 +1,4 @@
+echo "$(date +'%Y-%m-%d %H:%M:%S')" >> /home/ubuntu/chicks_project/foodics_gpt/cron_jobs_logs.txt
 cd /home/ubuntu/chicks_project/foodics_gpt/
 . .venv/bin/activate
 
