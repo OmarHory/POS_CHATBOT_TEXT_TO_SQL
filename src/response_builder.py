@@ -93,6 +93,7 @@ def process_message(
     is_gpt_answer = False
 
     incoming_msg, user_language = translate_message(incoming_msg, language_map, translate_ar_prompt_)
+    incoming_msg = incoming_msg.strip(".").strip('"').strip("'").strip(" ")
 
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"
