@@ -133,7 +133,7 @@ def gpt_sql_prompt(user_language):
         - SQLQuery: "SQL Query to run"
         - SQLResult: "Result of the SQLQuery"
         - Answer: "Final answer here in {user_language} only."
-        - Recommendations: "Provide recommendations and actions to take based on the data."
+        - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
         """
 
         prompt_temp += '\n\n\tQuestion: {input}'
