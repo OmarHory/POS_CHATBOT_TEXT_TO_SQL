@@ -66,6 +66,7 @@ def gpt_sql_prompt(user_language):
                         - When asked about quantity, return the quantity in units.
                         - When asked about sales or price, return the sales or price in Jordanian Dinars or JD.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
+                        - Expect the user to mispell the product name so use the product sku in the SQL query, expect the user to mention the product name in the question, if not mentioned, then do not filter on the product.
                 
                 C. SQL instructions:
                         - Use the following format: 
