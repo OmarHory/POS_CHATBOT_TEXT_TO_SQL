@@ -34,8 +34,7 @@ class OrderHeader(Base):
     __tablename__ = "order_header"
     order_header_id = Column(String(40), primary_key=True)
     branch_id = Column(String(40), ForeignKey("branches.branch_id"))
-    order_time = Column(Time)
-    order_date = Column(Date)
+    order_datetime = Column(DateTime)
     order_type = Column(String(20))
     order_source = Column(String(20))
     order_status = Column(String(20))
@@ -88,8 +87,7 @@ def insert_data(csv_name, table_name, engine):
                 OrderHeader(
                     order_header_id=row["order_header_id"],
                     branch_id=row["branch_id"],
-                    order_time=row["order_time"],
-                    order_date=pd.to_datetime(row["order_date"]),
+                    order_datetime=pd.to_datetime(row["order_datetime"]),
                     order_type=row["order_type"],
                     order_source=row["order_source"],
                     order_status=row["order_status"],
@@ -164,8 +162,7 @@ def update_data(csv_name, table_name, engine):
             record = session.query(OrderHeader).filter_by(order_header_id=row["order_header_id"]).first()
             if record:
                 record.branch_id = row["branch_id"]
-                record.order_time = row["order_time"]
-                record.order_date = pd.to_datetime(row["order_date"])
+                record.order_datetime = pd.to_datetime(row["order_datetime"])
                 record.order_type = row["order_type"]
                 record.order_source = row["order_source"]
                 record.order_status = row["order_status"]
@@ -176,8 +173,7 @@ def update_data(csv_name, table_name, engine):
                     OrderHeader(
                         order_header_id=row["order_header_id"],
                         branch_id=row["branch_id"],
-                        order_time=row["order_time"],
-                        order_date=pd.to_datetime(row["order_date"]),
+                        order_datetime=pd.to_datetime(row["order_datetime"]),
                         order_type=row["order_type"],
                         order_source=row["order_source"],
                         order_status=row["order_status"],
