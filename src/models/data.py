@@ -34,7 +34,7 @@ class OrderHeader(Base):
     __tablename__ = "order_header"
     order_header_id = Column(String(40), primary_key=True)
     branch_id = Column(String(40), ForeignKey("branches.branch_id"))
-    order_datetime = Column(DateTime)
+    order_datetime = Column(DateTime(timezone=True))
     order_type = Column(String(20))
     order_source = Column(String(20))
     order_status = Column(String(20))
