@@ -85,7 +85,7 @@ def gpt_sql_prompt(user_language):
                         - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
 
                 D. Time instructions:
-                        - Today's date is {today}, the current time is {time}.
+                        - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
                         - The time is in UTC+3.
                         - The time is in the following format: HH:MM:SS.
                         - The time is in 24 hour format.
@@ -115,7 +115,7 @@ def gpt_sql_prompt(user_language):
                 D. "order_header": Order header table, contains the following columns:
                         - order_header_id: order header id. (Primary Key)
                         - branch_id: branch id. (Foreign Key to branches table)
-                        - order_datetime: order date, format: YYYY-MM-DD HH:MM:SS in UTC+3.
+                        - order_datetime: order datetime, format: YYYY-MM-DD HH:MM:SS in UTC+3.
                         - order_type: order type, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru].
                         - order_source: order source, can be one of the following: [Cashier, API, Call Center].
                         - order_status: order status, can be one of the following: [Pending, Active, Declined, Closed, Returned, Joined, Void].
