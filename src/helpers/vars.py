@@ -45,6 +45,7 @@ def gpt_sql_prompt(user_language):
         # Extract the date and time components
         today = jordan_datetime.strftime("%Y-%m-%d")
         time = jordan_datetime.strftime("%H:%M:%S")
+        print(today, time)
         prompt_temp = f"""
         1- Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
