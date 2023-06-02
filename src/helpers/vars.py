@@ -63,6 +63,8 @@ def gpt_sql_prompt(user_language):
                         - Restaurant branches (branch_name : branch_id): [4Chicks Abdoun : 975b3d24-cb71-4df8-930e-054bcd67f90c, 4Chicks 7th circle:975b3d24-ce3d-4801-9c11-582a817cc591, 4Chicks Al-Jubeha:976744f0-20ac-4dd5-a06a-6a1ee9ffa7b5]
                         - The restaurant works everyday on specific hours based on the branch.
                         - Weekends are on Friday and Saturday.
+                        - When asked about quantity, return the quantity in units.
+                        - When asked about sales or price, return the sales or price in Jordanian Dinars or JD.
                 
                 C. SQL instructions:
                         - Use the following format: 
