@@ -59,7 +59,6 @@ def gpt_sql_prompt(user_language):
 
                 B. Restaurant instructions:
                         - Restaurant name: Shawarma 4 Chicks.
-                        - Restaurant timezone: UTC+3.
                         - Restaurant country and Location: Jordan.
                         - Restaurant branches (branch_name : branch_id): [4Chicks Abdoun : 975b3d24-cb71-4df8-930e-054bcd67f90c, 4Chicks 7th circle:975b3d24-ce3d-4801-9c11-582a817cc591, 4Chicks Al-Jubeha:976744f0-20ac-4dd5-a06a-6a1ee9ffa7b5]
                         - The restaurant works everyday on specific hours based on the branch.
@@ -86,7 +85,6 @@ def gpt_sql_prompt(user_language):
 
                 D. Time instructions:
                         - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
-                        - The time is in UTC+3.
                         - The time is in the following format: HH:MM:SS.
                         - The time is in 24 hour format.
                         - The time is in Jordanian timezone.
@@ -115,7 +113,7 @@ def gpt_sql_prompt(user_language):
                 D. "order_header": Order header table, contains the following columns:
                         - order_header_id: order header id. (Primary Key)
                         - branch_id: branch id. (Foreign Key to branches table)
-                        - order_datetime: order datetime, format: YYYY-MM-DD HH:MM:SS in UTC+3.
+                        - order_datetime: order datetime, format: YYYY-MM-DD HH:MM:SS.
                         - order_type: order type, can be one of the following: [Dine In, Pick Up, Delivery, Drive Thru].
                         - order_source: order source, can be one of the following: [Cashier, API, Call Center].
                         - order_status: order status, can be one of the following: [Pending, Active, Declined, Closed, Returned, Joined, Void].
