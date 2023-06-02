@@ -65,6 +65,7 @@ def gpt_sql_prompt(user_language):
                         - Weekends are on Friday and Saturday.
                         - When asked about quantity, return the quantity in units.
                         - When asked about sales or price, return the sales or price in Jordanian Dinars or JD.
+                        - If the user asks about future analysis, return the analysis based on the current date and time.
                 
                 C. SQL instructions:
                         - Use the following format: 
