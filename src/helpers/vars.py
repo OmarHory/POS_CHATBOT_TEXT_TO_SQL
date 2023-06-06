@@ -2,7 +2,8 @@ for_more_info = ""
 
 list_of_approved_emails = ["o_hawary@hotmail.com", "omar@sitech.me"]
 
-general_menu = """مرحبا بك! انا مساعدك الشخصي لشاورما فور تشكس 🤖 يا حياالله فيك!"""
+general_menu = """
+مرحبا بك {}! انا مساعدك الشخصي لشاورما فور تشكس 🤖 يا حياالله فيك!"""
 
 
 intent_prompt = """What is the intent of this sentence:

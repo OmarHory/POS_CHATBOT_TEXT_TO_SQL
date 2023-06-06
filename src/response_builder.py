@@ -107,7 +107,7 @@ def process_message(
 
     response = ""
     if "greeting" in intent:
-        response = general_menu
+        response = general_menu.format(username)
 
     elif "farewell" in intent:
         response = "Thank you! Have a nice day! \U0001F44B \U0001F44B\n"
