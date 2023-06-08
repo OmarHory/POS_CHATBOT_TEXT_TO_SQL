@@ -16,11 +16,11 @@ business_order_statuses = config_business["business_order_statuses"]
 
 for_more_info = ""
 
-general_menu = """Hello {username}! Welcome to the {business_name} AI Assistant! \U0001F44B \U0001F44B\n"""
+general_menu = f"""Hello _USERNAME_HERE_! Welcome to the {business_name} AI Assistant! \U0001F44B \U0001F44B\n"""
 
-intent_prompt = """What is the intent of this sentence:
+intent_prompt = f"""What is the intent of this sentence:
 
-"{prompt}"
+"_PROMPT_HERE_"
 
 Work as an intent classifier that works for a {business_type} called [{business_name}]. Classify the intent of the above prompt, return the output without formatting, just the intent.
 

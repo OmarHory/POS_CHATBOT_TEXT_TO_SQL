@@ -85,16 +85,17 @@ def process_message(
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
         intent = "user_input"
     else:
-        intent_prompt_ = intent_prompt.replace("{prompt}", incoming_msg)
+        intent_prompt_ = intent_prompt.replace("_PROMPT_HERE_", incoming_msg)
         intent = send_to_gpt(intent_prompt_).strip(".").strip('"').strip("'").strip(" ")
         intent = intent.lower()
+        print(intent_prompt_)
     print("intent is:", intent)
 
     edited_intent = get_formatted_intent(intent=intent)
 
     response = ""
     if "greeting" in intent:
-        response = general_menu.format(username)
+        response = general_menu.replace("_USERNAME_HERE_", username)
 
     elif "farewell" in intent:
         response = "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
