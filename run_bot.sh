@@ -1,4 +1,12 @@
-export ENV=prod
+
+#!/bin/bash
+
+env_file=".env"
+
+if [ ! -f "$env_file" ]; then
+    echo "Error: .env file not found in the current directory."
+    exit 1
+fi
 
 python src/update_variables.py
 
