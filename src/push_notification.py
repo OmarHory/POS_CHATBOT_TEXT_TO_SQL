@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 
 def push_notification(config_twilio, option):
-    account_sid = config_twilio["account_sid"]
+    account_sid = config_twilio["twilio_account_sid"]
     auth_token = config_twilio["auth_token"]
     twilio_phone_number = config_twilio["twilio_phone_number"]
     client = Client(account_sid, auth_token)

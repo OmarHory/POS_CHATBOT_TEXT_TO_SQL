@@ -1,52 +1,55 @@
 config_business = dict(
-
-    business_name="Shawarma 4 Chicks",
-    # business_address="1234 Main Street, Anytown, USA",
-    # business_phone_number="+1 123-456-7890",
-    # business_email="info@lexchicks",
+    business_type="",
+    business_name="",
+    business_branches="",
+    business_country="",
+    business_categories="",
+    business_timezone="",
+    business_currency_full="",
+    business_currency_short="",
+    business_order_types="",
+    business_order_sources="",
+    business_order_statuses=""
 
 )
 
-redis_config = dict(host="localhost", port=6379, db=1, timeout=86400, otp_timeout=300)
+redis_config = dict(redis_host="", redis_port=6379, redis_db=1, redis_timeout=86400, redis_otp_timeout=300)
 
 config_mysql = dict(
-    user="chicks_mysql",
-    password="Sqlchickspassword@97",
-    host="localhost",
-    port="3306",
-    raise_on_warnings=True,
-    pool_timeout=None,
-    pool_size=5,
+    mysql_user="",
+    mysql_password="",
+    mysql_host="localhost",
+    mysql_port="3306",
+    mysql_raise_on_warnings=True,
+    mysql_pool_timeout=None,
+    mysql_pool_size=5,
 )
 
 config_databases = dict(
-    users="chicks_users", data="chicks_data", log="chicks_log"
+    mysql_db_users="", mysql_db_data="", mysql_db_log=""
 )
 
-config_aws = dict(access_key='AKIAUURCRIKG7R7WCAUC', secret_access_key = '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', bucket_name='foodicsbucket')
+config_aws = dict(aws_access_key='', aws_secret_access_key = '', aws_bucket_name='')
 
 
 config_twilio = dict(
-    account_sid="ACaf651020fa33a079954846f95fb22822",
-    auth_token="827238ee1b4abe23eaabc9081c939545",
-    twilio_phone_number="whatsapp:+13156934187",
-    avocado_robot_image="https://i.ibb.co/ZGyZ0Gz/avocado-robot.png",
-    avocado_smile_image="https://i.ibb.co/FXMQfm6/smile-avocado.png",
+    twilio_account_sid="",
+    twilio_auth_token="",
+    twilio_phone_number="",
 )
 
 
 config_gpt = dict(
-    api_key="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",
-    model_name="gpt-3.5-turbo",
-    temperature=0.0,
-    max_tokens=500,
-    request_timeout=120,
-)  # gpt-3.5-turbo	$0.002 / 1K tokens
+    llm_api_key="",
+    llm_name="",
+    llm_temperature=0.1,
+    llm_max_tokens=400,
+    llm_request_timeout=120,
+) 
 
-# mysql 'mysql://chicks_mysql:Sqlchickspassword%4097@localhost:3306/chicks_data'
 config_gpt_sqlchemy = dict(
-    database="mysql://{}:{}@{}:{}/{}",
-    include_tables=[
+    sqlchemy_database="mysql://{}:{}@{}:{}/{}",
+    sqlchemy_include_tables=[
         "branches",
         "categories",
         "products",

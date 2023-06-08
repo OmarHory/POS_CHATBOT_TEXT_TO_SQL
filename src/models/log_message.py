@@ -24,12 +24,12 @@ sys.path.append(parent_dir)
 from config import config_gpt_sqlchemy, config_mysql, config_databases
 
 # create the database engine
-db_link = config_gpt_sqlchemy["database"].format(
-    config_mysql["user"],
-    config_mysql["password"].replace("@", "%40"),
-    config_mysql["host"],
-    config_mysql["port"],
-    config_databases["log"],
+db_link = config_gpt_sqlchemy["sqlchemy_database"].format(
+    config_mysql["mysql_user"],
+    config_mysql["mysql_password"].replace("@", "%40"),
+    config_mysql["mysql_host"],
+    config_mysql["mysql_port"],
+    config_databases["mysql_db_log"],
 )
 
 Base = declarative_base()

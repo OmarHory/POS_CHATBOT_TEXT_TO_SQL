@@ -1,3 +1,5 @@
+import update_variables
+
 import os
 import logging
 import warnings
@@ -34,53 +36,47 @@ from pydub import AudioSegment
 import tempfile
 import whisper
 
-
-
-
 warnings.simplefilter("ignore")
 logging.disable(logging.CRITICAL)
 
 # set environment variables
-os.environ["OPENAI_API_KEY"] = config_gpt["api_key"]
+os.environ["OPENAI_API_KEY"] = config_gpt["llm_api_key"]
 
 
 # redis settings
 redis_client = redis.Redis(
-    host=redis_config["host"], port=redis_config["port"], db=redis_config["db"]
+    host=redis_config["redis_host"], port=redis_config["redis_port"], db=redis_config["redis_db"]
 )
 
 # SQL Chaining
 print("SQL Engine created for Database Chaining...")
 gpt_sql_engine = create_engine(
-    config_gpt_sqlchemy["database"].format(
-        config_mysql["user"],
-        config_mysql["password"].replace("@", "%40"),
-        config_mysql["host"],
-        config_mysql["port"],
-        config_databases["data"],
+    config_gpt_sqlchemy["sqlchemy_database"].format(
+        config_mysql["mysql_user"],
+        config_mysql["mysql_password"].replace("@", "%40"),
+        config_mysql["mysql_host"],
+        config_mysql["mysql_port"],
+        config_databases["mysql_db_data"],
     ),
     echo=True,
-    pool_timeout=config_mysql["pool_timeout"],
-    pool_size=config_mysql["pool_size"],
+    pool_timeout=config_mysql["mysql_pool_timeout"],
+    pool_size=config_mysql["mysql_pool_size"],
 )
 
-
 # twilio settings
-account_sid = config_twilio["account_sid"]
-auth_token = config_twilio["auth_token"]
+account_sid = config_twilio["twilio_account_sid"]
+auth_token = config_twilio["twilio_auth_token"]
 twilio_phone_number = config_twilio["twilio_phone_number"]
 client = Client(account_sid, auth_token)
 
 if not os.environ.get("ENV"):
     os.environ["ENV"] = "dev"
 
-
-# llm_predictor_gpt3 = LLMPredictor(llm=OpenAI(temperature=0, model_name="text-davinci-003"))
 llm = ChatOpenAI(
-    model_name=config_gpt["model_name"],
-    request_timeout=config_gpt["request_timeout"],
-    max_tokens=config_gpt["max_tokens"],
-    temperature=config_gpt["temperature"],
+    model_name=config_gpt["llm_name"],
+    request_timeout=config_gpt["llm_request_timeout"],
+    max_tokens=config_gpt["llm_max_tokens"],
+    temperature=config_gpt["llm_temperature"],
 )
 
 app = Flask(__name__)
@@ -122,13 +118,9 @@ def bot():
         ) as temp_file:
             pcm_segment.export(temp_file.name, format="mp3")
             print("Finished exporting to temp file")
-            # mp3_file = open(temp_file.name, "rb")
-            # print("Start transcribing")
-            # transcript = Audio.transcribe("whisper-1", mp3_file, language='en')
             transcript = model.transcribe(temp_file.name)
             incoming_msg = transcript["text"].strip()
             print("Finish transcribing")
-            # mp3_file.close()
         input_type = 'audio'
     else:
         print("in text")
@@ -170,7 +162,7 @@ def bot():
             username=username,
             llm=llm,
             gpt_sql_engine=gpt_sql_engine,
-            include_tables=config_gpt_sqlchemy["include_tables"],
+            include_tables=config_gpt_sqlchemy["sqlchemy_include_tables"],
         )
 
         response_timestamp = time.time()
@@ -220,4 +212,6 @@ def bot():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=4000)
+    app_port = int(os.environ.get("app_port", 4000))
+    print('app_port: ', app_port)
+    app.run(debug=True, port=app_port)

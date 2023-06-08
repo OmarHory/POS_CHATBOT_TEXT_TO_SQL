@@ -13,12 +13,12 @@ import pandas as pd
 import os
 
 
-db_link = config_gpt_sqlchemy["database"].format(
-    config_mysql["user"],
-    config_mysql["password"].replace("@", "%40"),
-    config_mysql["host"],
-    config_mysql["port"],
-    config_databases["data"],
+db_link = config_gpt_sqlchemy["sqlchemy_database"].format(
+    config_mysql["mysql_user"],
+    config_mysql["mysql_password"].replace("@", "%40"),
+    config_mysql["mysql_host"],
+    config_mysql["mysql_port"],
+    config_databases["mysql_db_data"],
 )
 
 print("SQL Engine created for Data...")

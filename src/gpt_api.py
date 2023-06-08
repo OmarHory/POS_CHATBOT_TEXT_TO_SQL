@@ -5,13 +5,13 @@ import tiktoken
 
 def send_to_gpt(prompt):
     try:
-        openai.api_key = config_gpt["api_key"]
+        openai.api_key = config_gpt["llm_api_key"]
 
         completion = openai.ChatCompletion.create(
-            temperature=config_gpt["temperature"],
-            request_timeout=config_gpt["request_timeout"],
-            max_tokens=config_gpt["max_tokens"],
-            model=config_gpt["model_name"],
+            temperature=config_gpt["llm_temperature"],
+            request_timeout=config_gpt["llm_request_timeout"],
+            max_tokens=config_gpt["llm_max_tokens"],
+            model=config_gpt["llm_name"],
             messages=[{"role": "user", "content": prompt}],
         )
         if completion.choices[0].message != None:

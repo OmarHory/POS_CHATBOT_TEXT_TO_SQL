@@ -2,26 +2,13 @@ from gpt_api import send_to_gpt
 from helpers.vars import (
     general_menu,
     intent_prompt,
-    gpt_prompt,
     sorry_instruction,
-    sorry_words,
     language_map,
     translate_ar_prompt_,
+    sorry_words,
 )
 
-# from helpers.static_prompts import (
-#     pricing_last_week_every_category,
-#     supply_last_week_total_purchases_per_category,
-#     mexico_weather_forecast_4_weeks,
-#     pricing_forecast_every_category_4_weeks,
-#     demand_last_week_every_distribution_center,
-#     demand_forecast_every_distribution_center_total,
-#     specific_size_total_demand_last_week,
-#     specific_size_average_price_last_n_weeks,
-#     specific_supply_overview,
-# )
 from helpers.utils import edit_response, edit_prompt, get_formatted_intent, translate_message
-# from helpers.predefined_report import get_general_report
 from helpers.DatabaseChain import get_db_session
 from langchain.prompts.prompt import PromptTemplate
 from helpers.vars import gpt_sql_prompt
@@ -63,7 +50,7 @@ def prepare_response(
     )
 
     redis_client.hset(phone_number, "context", updated_context)
-    redis_client.expire(phone_number, redis_config["timeout"])
+    redis_client.expire(phone_number, redis_config["redis_timeout"])
 
     return (
         message,
@@ -169,11 +156,6 @@ def process_send_gpt(
     sql_result,
     is_gpt_answer,
 ):
-    # message_type = None
-    # error_flag = False
-    # error_description = None
-    # sql_cmd = None
-    # sql_result = None
     is_gpt_answer = True
 
     response = send_to_gpt(
@@ -183,11 +165,11 @@ def process_send_gpt(
     )
     print("First GPT response: ", response)
 
-    # if (
-    #     any(item in response.lower() for item in sorry_words)
-    #     and "undefined" not in edited_intent.lower()
-    # ):
-    if "undefined" not in edited_intent.lower():
+    if (
+        any(item in response.lower() for item in sorry_words)
+        and "undefined" not in edited_intent.lower()
+    ):
+    # if "undefined" not in edited_intent.lower():
         print("Go to SQL GPT")
         incoming_msg = edit_prompt(incoming_msg)
 
