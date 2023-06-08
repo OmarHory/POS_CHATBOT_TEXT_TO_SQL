@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
 def update_keys(config):
     for key in config:
         env_value = os.getenv(key)
         if env_value is not None:
             # Convert environment variable to the appropriate type
             if isinstance(config[key], bool):
-                config[key] = env_value.lower() in ['true', '1']
+                config[key] = env_value.lower() in ["true", "1"]
             elif isinstance(config[key], int):
                 config[key] = int(env_value)
             elif isinstance(config[key], float):
@@ -19,6 +20,7 @@ def update_keys(config):
             else:
                 config[key] = env_value
     return config
+
 
 config_gpt = update_keys(config_gpt)
 config_twilio = update_keys(config_twilio)

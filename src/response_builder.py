@@ -8,7 +8,12 @@ from helpers.vars import (
     sorry_words,
 )
 
-from helpers.utils import edit_response, edit_prompt, get_formatted_intent, translate_message
+from helpers.utils import (
+    edit_response,
+    edit_prompt,
+    get_formatted_intent,
+    translate_message,
+)
 from helpers.DatabaseChain import get_db_session
 from langchain.prompts.prompt import PromptTemplate
 from helpers.vars import gpt_sql_prompt
@@ -79,7 +84,9 @@ def process_message(
     sql_result = None
     is_gpt_answer = False
 
-    incoming_msg, user_language = translate_message(incoming_msg, language_map, translate_ar_prompt_)
+    incoming_msg, user_language = translate_message(
+        incoming_msg, language_map, translate_ar_prompt_
+    )
     incoming_msg = incoming_msg.strip(".").strip('"').strip("'").strip(" ")
 
     if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
@@ -101,29 +108,29 @@ def process_message(
         response = "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
 
     else:
-            (
-                response,
-                message_type,
-                error_flag,
-                error_description,
-                edited_intent,
-                sql_cmd,
-                sql_result,
-                is_gpt_answer,
-            ) = process_send_gpt(
-                edited_intent,
-                gpt_sql_engine,
-                include_tables,
-                llm,
-                user_language,
-                incoming_msg,
-                message_type,
-                error_flag,
-                error_description,
-                sql_cmd,
-                sql_result,
-                is_gpt_answer,
-            )
+        (
+            response,
+            message_type,
+            error_flag,
+            error_description,
+            edited_intent,
+            sql_cmd,
+            sql_result,
+            is_gpt_answer,
+        ) = process_send_gpt(
+            edited_intent,
+            gpt_sql_engine,
+            include_tables,
+            llm,
+            user_language,
+            incoming_msg,
+            message_type,
+            error_flag,
+            error_description,
+            sql_cmd,
+            sql_result,
+            is_gpt_answer,
+        )
 
     print()
     print(incoming_msg)
@@ -170,15 +177,15 @@ def process_send_gpt(
         any(item in response.lower() for item in sorry_words)
         and "undefined" not in edited_intent.lower()
     ):
-    # if "undefined" not in edited_intent.lower():
+        # if "undefined" not in edited_intent.lower():
         print("Go to SQL GPT")
         incoming_msg = edit_prompt(incoming_msg)
 
         # Record the start time
         start_time = time.time()
         PROMPT_SQL = PromptTemplate(
-        input_variables=["input"],
-        template=gpt_sql_prompt(user_language))
+            input_variables=["input"], template=gpt_sql_prompt(user_language)
+        )
         db_chain_session = get_db_session(
             gpt_sql_engine, include_tables, llm, PROMPT_SQL
         )

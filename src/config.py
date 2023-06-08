@@ -9,11 +9,16 @@ config_business = dict(
     business_currency_short="",
     business_order_types="",
     business_order_sources="",
-    business_order_statuses=""
-
+    business_order_statuses="",
 )
 
-redis_config = dict(redis_host="", redis_port=6379, redis_db=1, redis_timeout=86400, redis_otp_timeout=300)
+redis_config = dict(
+    redis_host="",
+    redis_port=6379,
+    redis_db=1,
+    redis_timeout=86400,
+    redis_otp_timeout=300,
+)
 
 config_mysql = dict(
     mysql_user="",
@@ -25,11 +30,11 @@ config_mysql = dict(
     mysql_pool_size=5,
 )
 
-config_databases = dict(
-    mysql_db_users="", mysql_db_data="", mysql_db_log=""
-)
+config_databases = dict(mysql_db_users="", mysql_db_data="", mysql_db_log="")
 
-config_aws = dict(aws_access_key='', aws_secret_access_key = '', aws_bucket_name='')
+config_aws = dict(
+    aws_access_key="", aws_secret_access_key="", aws_bucket_name="", aws_folder_name=""
+)
 
 
 config_twilio = dict(
@@ -45,7 +50,7 @@ config_gpt = dict(
     llm_temperature=0.1,
     llm_max_tokens=400,
     llm_request_timeout=120,
-) 
+)
 
 config_gpt_sqlchemy = dict(
     sqlchemy_database="mysql://{}:{}@{}:{}/{}",
@@ -57,4 +62,3 @@ config_gpt_sqlchemy = dict(
         "order_details",
     ],
 )
-

@@ -23,6 +23,7 @@ from models.log_message import log_user_message
 
 from response_builder import prepare_response
 from models.user import fetch_user
+
 # from registration import registration_process
 from sqlalchemy import create_engine
 
@@ -30,6 +31,7 @@ from langchain.chat_models import ChatOpenAI
 
 
 from twilio.rest import Client
+
 # from openai import Audio
 import requests, io
 from pydub import AudioSegment
@@ -45,7 +47,9 @@ os.environ["OPENAI_API_KEY"] = config_gpt["llm_api_key"]
 
 # redis settings
 redis_client = redis.Redis(
-    host=redis_config["redis_host"], port=redis_config["redis_port"], db=redis_config["redis_db"]
+    host=redis_config["redis_host"],
+    port=redis_config["redis_port"],
+    db=redis_config["redis_db"],
 )
 
 # SQL Chaining
@@ -82,6 +86,7 @@ llm = ChatOpenAI(
 app = Flask(__name__)
 
 model = whisper.load_model("base")
+
 
 @app.route("/bot", methods=["POST"])
 def bot():
@@ -121,10 +126,10 @@ def bot():
             transcript = model.transcribe(temp_file.name)
             incoming_msg = transcript["text"].strip()
             print("Finish transcribing")
-        input_type = 'audio'
+        input_type = "audio"
     else:
         print("in text")
-        input_type = 'text'
+        input_type = "text"
         incoming_msg = request.values.get("Body", "")
     print(incoming_msg)
 
@@ -213,5 +218,5 @@ def bot():
 
 if __name__ == "__main__":
     app_port = int(os.environ.get("app_port", 4000))
-    print('app_port: ', app_port)
+    print("app_port: ", app_port)
     app.run(debug=True, port=app_port)

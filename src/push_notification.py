@@ -46,14 +46,14 @@ def send_message(client, twilio_phone_number, key, message, image=None):
             from_=twilio_phone_number,
             to=f"whatsapp:{key}",
             media_url=image,
-                body=message,
-            )
+            body=message,
+        )
     else:
         client.messages.create(
             from_=twilio_phone_number,
             to=f"whatsapp:{key}",
             body=message,
-            )
+        )
 
 
 push_notification(config_twilio, args.option)

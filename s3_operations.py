@@ -1,27 +1,45 @@
 import boto3
 from src.config import config_aws
 import argparse
+import os
+from dotenv import load_dotenv
 
-parser = argparse.ArgumentParser(description='Process method argument')
+load_dotenv()
 
-parser.add_argument('method', choices=['download', 'upload'], help='Specify the method: download or upload')
+aws_access_key = os.getenv("aws_access_key")
+aws_secret_access_key = os.getenv("aws_secret_access_key")
+aws_bucket_name = os.getenv("aws_bucket_name")
+aws_folder_name = os.getenv("aws_folder_name")
+
+parser = argparse.ArgumentParser(description="Process method argument")
+
+parser.add_argument(
+    "method",
+    choices=["download", "upload"],
+    help="Specify the method: download or upload",
+)
 
 args = parser.parse_args()
 
 method = args.method
 
-s3 = boto3.client('s3', aws_access_key_id=config_aws['access_key'], aws_secret_access_key=config_aws['secret_access_key'])
-bucket_name = config_aws['bucket_name']
+s3 = boto3.client(
+    "s3", aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_access_key
+)
 
-if method == 'download':
-    print('Performing download...')
+if method == "download":
+    print("Performing download...")
 
-    for name in ['orders_final_include.csv']:
-        s3.download_file(bucket_name, f'chicks/{name}', f'data/{name}')
-elif method == 'upload':
-    print('Performing upload...')
-    for name in ['orders_final_include_updated.csv']:
-        s3.upload_file(f'data/{name}', bucket_name, f'chicks/orders_final_include.csv')
+    for name in ["orders_final_include.csv"]:
+        s3.download_file(aws_bucket_name, f"{aws_folder_name}/{name}", f"data/{name}")
+elif method == "upload":
+    print("Performing upload...")
+    for name in ["orders_final_include_updated.csv"]:
+        s3.upload_file(
+            f"data/{name}",
+            aws_bucket_name,
+            f"{aws_folder_name}/orders_final_include.csv",
+        )
 
 else:
-    raise ValueError('Invalid method specified')
+    raise ValueError("Invalid method specified")

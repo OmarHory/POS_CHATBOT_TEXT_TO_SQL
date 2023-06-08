@@ -6,7 +6,7 @@ sys.path.append(parent_dir)
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.append(parent_dir)
 ##
-
+import update_variables
 from models.data import *
 
 # Base.metadata.drop_all(data_engine)
