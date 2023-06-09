@@ -4,5 +4,6 @@ test.ipynb
 **/__pycache__
 cron_jobs_logs.txt
 data/
+data_chicks/
 
 .env

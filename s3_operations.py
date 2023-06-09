@@ -9,7 +9,7 @@ load_dotenv()
 aws_access_key = os.getenv("aws_access_key")
 aws_secret_access_key = os.getenv("aws_secret_access_key")
 aws_bucket_name = os.getenv("aws_bucket_name")
-aws_folder_name = os.getenv("aws_folder_name")
+aws_folder_name = os.getenv("aws_s3_folder")
 
 parser = argparse.ArgumentParser(description="Process method argument")
 

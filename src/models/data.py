@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -52,14 +52,14 @@ class OrderDetails(Base):
 class Branches(Base):
     __tablename__ = "branches"
     branch_id = Column(String(40), primary_key=True)
-    branch_name = Column(String(40))
+    branch_name = Column(Text)
     opening_from = Column(String(10))
     opening_to = Column(String(10))
 
 class Products(Base):
     __tablename__ = "products"
     product_id = Column(String(40), primary_key=True)
-    product_name = Column(String(150))
+    product_name = Column(Text)
     product_sku = Column(String(40))
     category_id = Column(String(40), ForeignKey("categories.category_id"))
     category_name = Column(String(40))
