@@ -1,1 +1,0 @@
-export PROJECT_NAME_BOT=blk_project
