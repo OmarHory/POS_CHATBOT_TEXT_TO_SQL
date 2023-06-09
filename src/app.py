@@ -219,4 +219,4 @@ def bot():
 if __name__ == "__main__":
     app_port = int(os.environ.get("app_port", 4000))
     print("app_port: ", app_port)
-    app.run(debug=True, port=app_port)
+    app.run(host="0.0.0.0", debug=True, port=app_port)

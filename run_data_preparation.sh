@@ -1,7 +1,8 @@
-. export_vars.sh
 
 cd /home/ubuntu/
 . .venv/bin/activate
+
+cd /home/ubuntu/$PROJECT_NAME_BOT/foodics_gpt
 
 jupyter nbconvert --execute data_notebooks/orders/prepare_data.ipynb --to python --inplace
 jupyter nbconvert --execute data_notebooks/orders/process_tables.ipynb --to python --inplace

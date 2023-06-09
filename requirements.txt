@@ -17,3 +17,5 @@ black==23.3.0
 pydub==0.25.1
 boto3==1.26.109
 langdetect==1.0.9
+nbconvert==7.4.0
+jupyter==1.0.0
