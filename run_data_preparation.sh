@@ -1,4 +1,6 @@
-cd /home/ubuntu/chicks_project/foodics_gpt/
+. export_vars.sh
+
+cd /home/ubuntu/$PROJECT_NAME_BOT/foodics_gpt/
 . .venv/bin/activate
 
 jupyter nbconvert --execute data_notebooks/orders/prepare_data.ipynb --to python --inplace
@@ -9,4 +11,4 @@ jupyter nbconvert --execute data_notebooks/orders/process_tables.ipynb --to pyth
 
 python src/models/runner/data_runner.py
 
-echo "$Data Prepare --> (date +'%Y-%m-%d %H:%M:%S') End" >> /home/ubuntu/chicks_project/foodics_gpt/cron_jobs_logs.txt
+echo "$Data Prepare --> (date +'%Y-%m-%d %H:%M:%S') End" >> /home/ubuntu/$PROJECT_NAME_BOT/foodics_gpt/cron_jobs_logs.txt
