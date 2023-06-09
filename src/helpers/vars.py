@@ -146,7 +146,6 @@ def gpt_sql_prompt(user_language):
         """
 
         prompt_temp += '\n\n\tQuestion: {input}'
-        print(prompt_temp)
         return prompt_temp
 
 sorry_instruction = """Say sorry if you do not know the answer to the question, 
