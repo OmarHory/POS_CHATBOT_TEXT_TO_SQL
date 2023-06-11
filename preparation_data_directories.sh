@@ -1,6 +1,7 @@
 if [ ! -d "\data" ]; then
     echo "Directory does not exist"
     mkdir data/
+    mkdir data/raw
     mkdir data/processed
     mkdir data/processed/updates
     mkdir data/updates
