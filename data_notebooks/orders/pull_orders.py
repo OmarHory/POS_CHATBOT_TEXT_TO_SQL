@@ -16,7 +16,7 @@ filter = {}
 business_name = os.getenv('business_name')
 if business_name == 'Blk Coffee':
     print(f"Yes it is {business_name}")
-    filter = {"business_date_after": "2023-05-01"}
+#    filter = {"business_date_after": "2023-05-01"}
 
 
 print('orders_final_include.csv does not exist')
