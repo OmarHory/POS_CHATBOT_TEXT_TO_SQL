@@ -20,7 +20,7 @@ def foodics_api(method, payload={}):
   return response.json()
 
 
-def call_foodics(method, last_page, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_path='data/raw/pull_orders_', checkpoint_every = 3):
+def call_foodics(method, last_page, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_path='data/raw/pull_orders_', checkpoint_every = 500):
     
     list_responses = []
     counter = 0
