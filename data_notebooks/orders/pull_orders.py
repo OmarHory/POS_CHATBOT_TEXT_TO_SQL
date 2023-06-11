@@ -23,7 +23,6 @@ includables = 'products,branch,products.product,tags,products.promotion,payments
 # call the foodics api to get the orders
 last_page = call_foodics('orders', 1, includables=includables, filter=filter, return_last_page=True)
 print('last_page: ', last_page)
-last_page = 30
 
 list_responses = call_foodics('orders', last_page, includables=includables, filter=filter)
 df_orders = pd.DataFrame([item for sublist in list_responses for item in sublist])

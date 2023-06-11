@@ -52,7 +52,7 @@ def call_foodics(method, last_page, includables=None, filter = {}, return_last_p
             except Exception as e:
                 print(f"Request failed with page: {page} {str(e)}, retrying... {retries} retries left.")
                 retries -= 1
-                # time.sleep(70) # wait 70 seconds before retrying
+                time.sleep(70) # wait 70 seconds before retrying
         if counter == checkpoint_every and method == 'orders':
             print("Writing to path.")
             pd.DataFrame([item for sublist in list_responses for item in sublist]).to_csv(checkpoint_path + f'_{page}.csv', index=False)
