@@ -18,6 +18,10 @@ To install the chatbot, you can use the following command:
 
 `python setup.py install`
 
+To setup database table, run the below command
+
+`python src/models/migrate.py`
+
 ## Usage
 
 To run the chatbot, you can use the following command:
