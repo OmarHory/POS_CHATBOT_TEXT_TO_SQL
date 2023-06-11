@@ -15,12 +15,12 @@ def foodics_api(method, payload={}):
 
   response = requests.request("GET", url, headers=headers, data=payload)
   if response.status_code != 200:
-        return response.status_code
+        return response.text
 
   return response.json()
 
 
-def call_foodics(method, last_page, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_path='data/orders_final_include.csv'):
+def call_foodics(method, last_page, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_path='data/raw/pull_orders_', checkpoint_every = 3):
     
     list_responses = []
     counter = 0
@@ -52,11 +52,12 @@ def call_foodics(method, last_page, includables=None, filter = {}, return_last_p
             except Exception as e:
                 print(f"Request failed with page: {page} {str(e)}, retrying... {retries} retries left.")
                 retries -= 1
-                time.sleep(70) # wait 70 seconds before retrying
-        if counter == 50 and method == 'orders':
+                # time.sleep(70) # wait 70 seconds before retrying
+        if counter == checkpoint_every and method == 'orders':
             print("Writing to path.")
-            pd.DataFrame([item for sublist in list_responses for item in sublist]).to_csv(checkpoint_path, index=False)
+            pd.DataFrame([item for sublist in list_responses for item in sublist]).to_csv(checkpoint_path + f'_{page}.csv', index=False)
             counter = 0
+            list_responses = []
         
 
         if not success:
