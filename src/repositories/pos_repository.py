@@ -51,10 +51,11 @@ class PosRepository:
         if table_name == "order_details":
             for index, row in df.iterrows():
                 self.session.add(
-                    OrderDetails(
+                    OrderDetail(
                         id=row["id"],
                         header_id=row["header_id"],
                         product_id=row["product_id"],
+                        quantity=row["quantity"],
                         price=row["price"],
                         client_id=client_id,
                         created_at=pd.to_datetime(row["created_at"]),
@@ -65,7 +66,7 @@ class PosRepository:
         if table_name == "branches":
             for index, row in df.iterrows():
                 self.session.add(
-                    Branches(
+                    Branch(
                         id=row["id"],
                         name=row["name"],
                         slug=row["slug"],
@@ -81,7 +82,7 @@ class PosRepository:
         if table_name == "products":
             for index, row in df.iterrows():
                 self.session.add(
-                    Products(
+                    Product(
                         id=row["id"],
                         name=row["name"],
                         sku=row["sku"],
@@ -100,7 +101,7 @@ class PosRepository:
 
             for index, row in df.iterrows():
                 self.session.add(
-                    Categories(
+                    Category(
                         id=row["id"],
                         name=row["name"],
                         slug=row["slug"],
@@ -158,10 +159,11 @@ class PosRepository:
 
         if table_name == "order_details":
             for index, row in df.iterrows():
-                record = self.session.query(OrderDetails).filter_by(id=row["id"]).first()
+                record = self.session.query(OrderDetail).filter_by(id=row["id"]).first()
                 if record:
                     record.header_id = row["header_id"]
                     record.product_id = row["product_id"]
+                    record.quantity=row["quantity"],
                     record.price = row["price"]
                     record.client_id = client_id
                     record.created_at = pd.to_datetime(row["created_at"])
@@ -169,10 +171,11 @@ class PosRepository:
                     self.session.merge(record)
                 else:
                     self.session.add(
-                        OrderDetails(
+                        OrderDetail(
                             id=row["id"],
                             header_id=row["header_id"],
                             product_id=row["product_id"],
+                            quantity=row["quantity"],
                             price=row["price"],
                             client_id=client_id,
                             created_at=pd.to_datetime(row["created_at"]),
@@ -183,7 +186,7 @@ class PosRepository:
 
         if table_name == "branches":
             for index, row in df.iterrows():
-                record = self.session.query(Branches).filter_by(id=row["id"]).first()
+                record = self.session.query(Branch).filter_by(id=row["id"]).first()
                 if record:
                     record.name = row["name"]
                     record.slug = row["slug"]
@@ -196,7 +199,7 @@ class PosRepository:
                     self.session.merge(record)
                 else:
                     self.session.add(
-                        Branches(
+                        Branch(
                             id=row["id"],
                             name=row["name"],
                             slug=row["slug"],
@@ -211,7 +214,7 @@ class PosRepository:
 
         if table_name == "products":
             for index, row in df.iterrows():
-                record = self.session.query(Products).filter_by(id=row["id"]).first()
+                record = self.session.query(Product).filter_by(id=row["id"]).first()
                 if record:
                     record.name = row["name"]
                     record.sku = row["sku"]
@@ -226,7 +229,7 @@ class PosRepository:
                     self.session.merge(record)
                 else:
                     self.session.add(
-                        Products(
+                        Product(
                             id=row["id"],
                             name=row["name"],
                             sku=row["sku"],
@@ -243,7 +246,7 @@ class PosRepository:
 
         if table_name == "categories":
             for index, row in df.iterrows():
-                record = self.session.query(Categories).filter_by(id=row["id"]).first()
+                record = self.session.query(Category).filter_by(id=row["id"]).first()
                 if record:
                     record.name = row["name"]
                     record.slug = row["slug"]
@@ -254,7 +257,7 @@ class PosRepository:
                     self.session.merge(record)
                 else:
                     self.session.add(
-                        Categories(
+                        Category(
                             id=row["id"],
                             name=row["name"],
                             slug=row["slug"],

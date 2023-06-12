@@ -15,7 +15,7 @@ class Client(Base):
     slug = Column(String(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)
 
 
 class User(Base):
@@ -27,7 +27,7 @@ class User(Base):
     mobile_number = Column(String(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)
 
 
 class ClientUser(Base):
@@ -43,13 +43,13 @@ class ClientUser(Base):
 class Category(Base):
     __tablename__ = 'categories'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(255), primary_key=True)
     name = Column(String(255))
     slug = Column(String(255))
     client_id = Column(Integer, ForeignKey('clients.id'))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)
 
     client = relationship("Client")
 
@@ -57,7 +57,7 @@ class Category(Base):
 class Branch(Base):
     __tablename__ = 'branches'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(255), primary_key=True)
     name = Column(String(255))
     slug = Column(String(255))
     client_id = Column(Integer, ForeignKey('clients.id'))
@@ -65,24 +65,24 @@ class Branch(Base):
     opening_to = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)
 
     client = relationship("Client")
 
 class Product(Base):
     __tablename__ = 'products'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(255), primary_key=True)
     name = Column(String(255))
     sku = Column(String(255), unique=True)
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    category_id = Column(String(255), ForeignKey('categories.id'))
     is_active = Column(Boolean)
     is_stock = Column(Boolean)
     price = Column(Float(precision=2))
     client_id = Column(Integer, ForeignKey('clients.id'))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)
 
     category = relationship("Category")
     client = relationship("Client")
@@ -91,8 +91,8 @@ class Product(Base):
 class OrderHeader(Base):
     __tablename__ = 'order_headers'
 
-    id = Column(Integer, primary_key=True)
-    branch_id = Column(Integer, ForeignKey('branches.id'))
+    id = Column(String(255), primary_key=True)
+    branch_id = Column(String(255), ForeignKey('branches.id'))
     type = Column(String(255))
     source = Column(String(255))
     status = Column(String(255))
@@ -108,9 +108,10 @@ class OrderHeader(Base):
 class OrderDetail(Base):
     __tablename__ = 'order_details'
 
-    id = Column(Integer, primary_key=True)
-    header_id = Column(Integer, ForeignKey('order_headers.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
+    id = Column(String(255), primary_key=True)
+    header_id = Column(String(255), ForeignKey('order_headers.id'))
+    product_id = Column(String(255), ForeignKey('products.id'))
+    quantity = Column(Integer)
     price = Column(Float(precision=2))
     client_id = Column(Integer, ForeignKey('clients.id'))
     created_at = Column(DateTime)
