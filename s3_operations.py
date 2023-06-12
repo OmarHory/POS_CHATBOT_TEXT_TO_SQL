@@ -10,6 +10,8 @@ aws_access_key = os.getenv("aws_access_key")
 aws_secret_access_key = os.getenv("aws_secret_access_key")
 aws_bucket_name = os.getenv("aws_bucket_name")
 aws_folder_name = os.getenv("aws_s3_folder")
+client_id = os.getenv("client_id")
+
 
 parser = argparse.ArgumentParser(description="Process method argument")
 
@@ -31,12 +33,12 @@ if method == "download":
     print("Performing download...")
 
     for name in ["orders_final_include.csv"]:
-        s3.download_file(aws_bucket_name, f"{aws_folder_name}/{name}", f"data/{name}")
+        s3.download_file(aws_bucket_name, f"{aws_folder_name}/{name}", f"data/{client_id}/raw/{name}")
 elif method == "upload":
     print("Performing upload...")
     for name in ["orders_final_include_updated.csv"]:
         s3.upload_file(
-            f"data/{name}",
+            f"data/{client_id}/raw/{name}",
             aws_bucket_name,
             f"{aws_folder_name}/orders_final_include.csv",
         )

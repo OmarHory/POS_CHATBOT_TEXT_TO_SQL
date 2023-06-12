@@ -6,7 +6,7 @@ import os, sys
 #import models from models/models.py
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
-from models import OrderHeader, OrderDetails, Branches, Categories, Products, Client
+from models.models import OrderHeader, OrderDetail, Branch, Category, Product, Client
 
 class PosRepository:
     def __init__(self, db_uri):

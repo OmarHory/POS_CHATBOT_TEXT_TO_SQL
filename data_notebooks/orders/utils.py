@@ -1,12 +1,10 @@
-import os
 import requests
 import time
 import pandas as pd
 
-def foodics_api(method, payload={}):
+def foodics_api(method, token, payload={}):
     
   url = f"https://api.foodics.com/v5/{method}"
-  token = os.getenv('data_access_token')
   headers = {
     'Authorization': f'Bearer {token}',
     'Accept': 'application/json',
@@ -20,7 +18,7 @@ def foodics_api(method, payload={}):
   return response.json()
 
 
-def call_foodics(method, last_page, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_path='data/raw/pull_orders_', checkpoint_every = 500):
+def call_foodics(method, last_page, client_id, token, includables=None, filter = {}, return_last_page=False, from_page=1, checkpoint_every = 500):
     
     list_responses = []
     counter = 0
@@ -42,7 +40,7 @@ def call_foodics(method, last_page, includables=None, filter = {}, return_last_p
                     method_ = method_ + filters
                 print(method_)
 
-                response = foodics_api(method_)
+                response = foodics_api(method_, token)
                 
                 # If the request is successful, the following line will be executed
                 if return_last_page:
@@ -54,8 +52,9 @@ def call_foodics(method, last_page, includables=None, filter = {}, return_last_p
                 retries -= 1
                 time.sleep(70) # wait 70 seconds before retrying
         if counter == checkpoint_every and method == 'orders':
+            checkpoint_path=f'data/{client_id}raw/pull_orders_{page}.csv',
             print("Writing to path.")
-            pd.DataFrame([item for sublist in list_responses for item in sublist]).to_csv(checkpoint_path + f'_{page}.csv', index=False)
+            pd.DataFrame([item for sublist in list_responses for item in sublist]).to_csv(checkpoint_path, index=False)
             counter = 0
             list_responses = []
         
@@ -67,3 +66,26 @@ def call_foodics(method, last_page, includables=None, filter = {}, return_last_p
         counter+=1
 
     return list_responses
+
+
+import re
+def generate_slug(string):
+    # Replace Arabic diacritics with empty string
+    slug = re.sub(r'[\u064b-\u0652]', '', string)
+    
+    # Replace spaces with hyphens
+    slug = slug.replace(' ', '-')
+    
+    # Remove any non-alphanumeric characters except hyphens
+    slug = re.sub(r'[^a-zA-Z0-9-\u0621-\u064a]', '', slug)
+    
+    # Remove consecutive hyphens
+    slug = re.sub(r'-+', '-', slug)
+    
+    # Remove leading and trailing hyphens
+    slug = slug.strip('-')
+    
+    # Convert string to lowercase
+    slug = slug.lower()
+    
+    return slug
