@@ -7,8 +7,14 @@ load_dotenv()
 obj = ClientRepository(os.getenv("DATABASE_URI"))
 
 def create_directories(client_repo):
-    clients = client_repo.fetch_clients()
 
+    clients = client_repo.fetch_clients()
+    if not len(clients):
+        print("No clients found")
+        return
+    
+    if not os.path.exists('data/'):
+        os.makedirs('data/')
     # Loop through all clients
     for client_id in clients:
         dirs = [
