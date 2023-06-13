@@ -43,7 +43,8 @@ class ClientUser(Base):
 class Category(Base):
     __tablename__ = 'categories'
 
-    id = Column(String(255), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255))
     name = Column(String(255))
     slug = Column(String(255))
     client_id = Column(Integer, ForeignKey('clients.id'))
@@ -57,7 +58,8 @@ class Category(Base):
 class Branch(Base):
     __tablename__ = 'branches'
 
-    id = Column(String(255), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255))
     name = Column(String(255))
     slug = Column(String(255))
     client_id = Column(Integer, ForeignKey('clients.id'))
@@ -72,10 +74,11 @@ class Branch(Base):
 class Product(Base):
     __tablename__ = 'products'
 
-    id = Column(String(255), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255))
     name = Column(String(255))
     sku = Column(String(255), unique=True)
-    category_id = Column(String(255), ForeignKey('categories.id'))
+    category_id = Column(Integer, ForeignKey('categories.id'))
     is_active = Column(Boolean)
     is_stock = Column(Boolean)
     price = Column(Float(precision=2))
@@ -91,8 +94,9 @@ class Product(Base):
 class OrderHeader(Base):
     __tablename__ = 'order_headers'
 
-    id = Column(String(255), primary_key=True)
-    branch_id = Column(String(255), ForeignKey('branches.id'))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255))
+    branch_id = Column(Integer, ForeignKey('branches.id'))
     type = Column(String(255))
     source = Column(String(255))
     status = Column(String(255))
@@ -108,9 +112,10 @@ class OrderHeader(Base):
 class OrderDetail(Base):
     __tablename__ = 'order_details'
 
-    id = Column(String(255), primary_key=True)
-    header_id = Column(String(255), ForeignKey('order_headers.id'))
-    product_id = Column(String(255), ForeignKey('products.id'))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255))
+    order_header_id = Column(Integer, ForeignKey('order_headers.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
     quantity = Column(Integer)
     price = Column(Float(precision=2))
     client_id = Column(Integer, ForeignKey('clients.id'))
