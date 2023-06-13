@@ -116,7 +116,7 @@ class PosRepository:
 
     def update_data(self, client_id, csv_name, table_name):
         dirname = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        filename = os.path.join(dirname, f"data/processed/updates/{csv_name}")
+        filename = os.path.join(dirname, f"data/{client_id}/processed/updates/{csv_name}")
         print(filename)
         df = pd.read_csv(filename)
 
