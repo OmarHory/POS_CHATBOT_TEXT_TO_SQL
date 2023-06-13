@@ -1,5 +1,5 @@
 .venv/
-.vscode/
+.vscode/*
 lex/
 test.ipynb
 **/__pycache__
