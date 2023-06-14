@@ -14,3 +14,4 @@ obj.insert_data(client_id, 'products.csv', 'products')
 obj.insert_data(client_id, 'order_header.csv', 'order_headers')
 obj.insert_data(client_id, 'order_details.csv', 'order_details')
 
+obj.close_session()

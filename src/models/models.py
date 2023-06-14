@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text
+from sqlalchemy import Index, create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
@@ -11,7 +11,7 @@ class Client(Base):
     __tablename__ = 'clients'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), nullable=False)
     slug = Column(String(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
@@ -22,7 +22,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=True)
     mobile_number = Column(String(255))
     created_at = Column(DateTime)
@@ -44,8 +44,8 @@ class Category(Base):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255))
-    name = Column(String(255))
+    external_id = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
     slug = Column(String(255))
     client_id = Column(Integer, ForeignKey('clients.id'))
     created_at = Column(DateTime)
@@ -53,55 +53,67 @@ class Category(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     client = relationship("Client")
+
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
 
 
 class Branch(Base):
     __tablename__ = 'branches'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255))
-    name = Column(String(255))
-    slug = Column(String(255))
-    client_id = Column(Integer, ForeignKey('clients.id'))
+    external_id = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
+    slug = Column(String(255), nullable=False)
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
     opening_from = Column(DateTime)
     opening_to = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime)
 
     client = relationship("Client")
+
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
 
 class Product(Base):
     __tablename__ = 'products'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255))
-    name = Column(String(255))
-    sku = Column(String(255), unique=True)
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    external_id = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
+    sku = Column(String(255))
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
     is_active = Column(Boolean)
     is_stock = Column(Boolean)
     price = Column(Float(precision=2))
-    client_id = Column(Integer, ForeignKey('clients.id'))
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime)
 
     category = relationship("Category")
     client = relationship("Client")
+
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
 
 
 class OrderHeader(Base):
     __tablename__ = 'order_headers'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255))
-    branch_id = Column(Integer, ForeignKey('branches.id'))
+    external_id = Column(String(255), nullable=False)
+    branch_id = Column(Integer, ForeignKey('branches.id'), nullable=False)
     type = Column(String(255))
     source = Column(String(255))
     status = Column(String(255))
     total_price = Column(Float(precision=2))
-    client_id = Column(Integer, ForeignKey('clients.id'))
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
     ordered_at = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
@@ -109,22 +121,30 @@ class OrderHeader(Base):
     branch = relationship("Branch")
     client = relationship("Client")
 
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
+
 class OrderDetail(Base):
     __tablename__ = 'order_details'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255))
-    order_header_id = Column(Integer, ForeignKey('order_headers.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
+    external_id = Column(String(255), nullable=False)
+    order_header_id = Column(Integer, ForeignKey('order_headers.id'), nullable=False)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
     quantity = Column(Integer)
     price = Column(Float(precision=2))
-    client_id = Column(Integer, ForeignKey('clients.id'))
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
     header = relationship("OrderHeader")
     product = relationship("Product")
     client = relationship("Client")
+
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
 
 
 class MessageLog(Base):

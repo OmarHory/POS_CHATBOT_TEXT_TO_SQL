@@ -28,91 +28,109 @@ class PosRepository:
             print("Client {} not found.".format(client_id))
             return
 
-
         df = pd.read_csv(filename)
 
         if table_name == "order_headers":
             for index, row in df.iterrows():
-                self.session.add(
-                    OrderHeader(
-                        id=row["id"],
-                        branch_id=row["branch_id"],
-                        ordered_at=pd.to_datetime(row["ordered_at"]),
-                        type=row["type"],
-                        source=row["source"],
-                        status=row["status"],
-                        total_price=row["total_price"],
-                        client_id=client_id,
-                        created_at=pd.to_datetime(row["created_at"]),
-                        updated_at=pd.to_datetime(row["updated_at"]),
+                try:
+                    self.session.add(
+                        OrderHeader(
+                            external_id=row["id"],
+                            branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
+                            ordered_at=pd.to_datetime(row["ordered_at"]),
+                            type=row["type"],
+                            source=row["source"],
+                            status=row["status"],
+                            total_price=row["total_price"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
                     )
-                )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
         
         if table_name == "order_details":
             for index, row in df.iterrows():
-                self.session.add(
-                    OrderDetail(
-                        id=row["id"],
-                        header_id=row["header_id"],
-                        product_id=row["product_id"],
-                        quantity=row["quantity"],
-                        price=row["price"],
-                        client_id=client_id,
-                        created_at=pd.to_datetime(row["created_at"]),
-                        updated_at=pd.to_datetime(row["updated_at"]),
+                try:
+                    self.session.add(
+                        OrderDetail(
+                            external_id=row["id"],
+                            order_header_id=self.query_record_by_uuid(table_name='order_headers', external_id=row["header_id"]),
+                            product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
+                            quantity=row["quantity"],
+                            price=row["price"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
                     )
-                )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
 
         if table_name == "branches":
             for index, row in df.iterrows():
-                self.session.add(
-                    Branch(
-                        id=row["id"],
-                        name=row["name"],
-                        slug=row["slug"],
-                        client_id=client_id,
-                        opening_from=pd.to_datetime(row["opening_from"]),
-                        opening_to=pd.to_datetime(row["opening_to"]),
-                        created_at=pd.to_datetime(row["created_at"]),
-                        updated_at=pd.to_datetime(row["updated_at"]),
-                        deleted_at=pd.to_datetime(row["deleted_at"]),
+                try:
+                    self.session.add(
+                        Branch(
+                            external_id=row["id"],
+                            name=row["name"],
+                            slug=row["slug"],
+                            client_id=client_id,
+                            opening_from=pd.to_datetime(row["opening_from"]),
+                            opening_to=pd.to_datetime(row["opening_to"]),
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
                     )
-                )
+                except Exception as e:
+                    print(e)
+            self.session.commit()
         
         if table_name == "products":
             for index, row in df.iterrows():
-                self.session.add(
-                    Product(
-                        id=row["id"],
-                        name=row["name"],
-                        sku=row["sku"],
-                        category_id=row["category_id"],
-                        is_active=row["is_active"],
-                        is_stock=row["is_stock"],
-                        price=row["price"],
-                        client_id=client_id,
-                        created_at=pd.to_datetime(row["created_at"]),
-                        updated_at=pd.to_datetime(row["updated_at"]),
-                        deleted_at=pd.to_datetime(row["deleted_at"]),
+                #self.dd(df.shape)
+                try:
+                    self.session.add(
+                        Product(
+                            external_id=row["id"],
+                            name=row["name"],
+                            sku=row["sku"],
+                            category_id=self.query_record_by_uuid(table_name="categories", external_id=row["category_id"]),
+                            is_active=row["is_active"],
+                            is_stock=row["is_stock"],
+                            price=row["price"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
                     )
-                )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
 
         if table_name == "categories":
 
             for index, row in df.iterrows():
-                self.session.add(
-                    Category(
-                        id=row["id"],
-                        name=row["name"],
-                        slug=row["slug"],
-                        client_id=client_id,
-                        created_at=pd.to_datetime(row["created_at"]),
-                        updated_at=pd.to_datetime(row["updated_at"]),
-                        deleted_at=pd.to_datetime(row["deleted_at"]),
+                try:
+                    self.session.add(
+                        Category(
+                            external_id=row["id"],
+                            name=row["name"],
+                            slug=row["slug"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
                     )
-                )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
 
         self.session.commit()
+        
 
     def update_data(self, client_id, csv_name, table_name):
         dirname = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -182,6 +200,7 @@ class PosRepository:
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
                     )
+            #self.session.commit()
 
 
         if table_name == "branches":
@@ -253,7 +272,6 @@ class PosRepository:
                     record.client_id = client_id
                     record.created_at = pd.to_datetime(row["created_at"])
                     record.updated_at = pd.to_datetime(row["updated_at"])
-                    record.deleted_at = pd.to_datetime(row["deleted_at"])
                     self.session.merge(record)
                 else:
                     self.session.add(
@@ -270,3 +288,29 @@ class PosRepository:
 
         self.session.commit()
         self.session.close()
+
+    def query_record_by_uuid(self, table_name, external_id):
+        model = self.get_model(table_name)
+        record = self.session.query(model).filter_by(external_id=external_id).first();
+        self.session.close()
+        return record.id if record else None
+
+
+    def get_model(self, table_name):
+        if table_name == "clients":
+            return Client
+        if table_name == "order_headers":
+            return OrderHeader
+        if table_name == "order_details":
+            return OrderDetail
+        if table_name == "branches":
+            return Branch
+        if table_name == "products":
+            return Product
+        if table_name == "categories":
+            return Category
+        
+
+    def dd(self, obj):
+        print(obj)
+        sys.exit(1)  # Terminate the program
