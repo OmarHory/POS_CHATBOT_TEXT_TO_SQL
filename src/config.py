@@ -1,4 +1,5 @@
 config_business = dict(
+    client_id=0,
     business_type="",
     business_name="",
     business_branches="",
@@ -21,13 +22,10 @@ redis_config = dict(
 )
 
 config_mysql = dict(
-    mysql_user="",
-    mysql_password="",
-    mysql_host="localhost",
-    mysql_port="3306",
     mysql_raise_on_warnings=True,
     mysql_pool_timeout=None,
     mysql_pool_size=5,
+    DATABASE_URI="",
 )
 
 config_databases = dict(mysql_db_users="", mysql_db_data="", mysql_db_log="")
@@ -58,7 +56,8 @@ config_gpt_sqlchemy = dict(
         "branches",
         "categories",
         "products",
-        "order_header",
+        "order_headers",
         "order_details",
+        'order_options',
     ],
 )

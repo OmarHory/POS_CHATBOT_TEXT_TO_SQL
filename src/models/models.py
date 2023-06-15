@@ -25,7 +25,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=True)
-    mobile_number = Column(String(255))
+    phone_number = Column(String(255))
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime, nullable=True)

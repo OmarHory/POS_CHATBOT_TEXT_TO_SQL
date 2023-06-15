@@ -13,6 +13,7 @@ business_categories = config_business["business_categories"]
 business_order_types = config_business["business_order_types"]
 business_order_sources = config_business["business_order_sources"]
 business_order_statuses = config_business["business_order_statuses"]
+client_id = config_business["client_id"]
 
 for_more_info = ""
 
@@ -62,6 +63,7 @@ def gpt_sql_prompt(user_language):
                         - Add a thousand separator to the numbers.
 
                 B. {business_type} instructions:
+                        - client id: {client_id}.
                         - {business_type} name: {business_name}.
                         - {business_type} country and Location: {business_country}.
                         - {business_type} branches (branch_name : branch_id): {business_branches}
@@ -82,13 +84,13 @@ def gpt_sql_prompt(user_language):
                                 - LIMIT: limit the number of rows based on the question.
                                 - JOIN: join the tables based on the question.
                                 - HAVING: filter the columns based on the question after the group by.
+                        - Always filter on the client id.
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - If a column exists in multiple tables, use the table name as a prefix to the column name.
                         - Always use the table name as a prefix to the column name.
                         - Return the answer in a readable format, do not return the MySQL query, return the answer only.
                         - Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
                         - Do not cut off the generated query, return the full query.
-                        - Expect the user to misspell the branch name so use the branch id in the SQL query, expect the user to mention the branch name in the question, if not mentioned, then do not filter on the branch.
                         - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
                         - Return SQL queries that do not result in a huge amount of data, limit the number of rows returned to 100 rows where suitable.
 
@@ -101,41 +103,56 @@ def gpt_sql_prompt(user_language):
         2- Tables Schemas and description:
 
                 A. "branches": Branches table, contains the following columns:
-                        - branch_id: branch id. (Primary Key)
-                        - branch_name: branch name. 
+                        - id: incremental id. (Primary Key)
+                        - external_id: branch id.
+                        - name: branch name. 
+                        - slug: branch slug.
+                        - client_id: client id. (Foreign Key to clients table)
                         - opening_from: opening hour, format HH. 
                         - opening_to: closing hour, format HH.
 
                 B. "categories": Categories table, contains the following columns:
-                        - category_id: category id. (Primary Key)
-                        - category_name: category name can be one of the following: {business_categories}.
+                        - id: incremental id. (Primary Key)
+                        - external_id: category id.
+                        - name: category name; can be one of the following: {business_categories}
+                        - slug: category slug.
+                        - client_id: client id. (Foreign Key to clients table)
 
                 C. "products": Products table, contains the following columns:
-                        - product_id: product id. (Primary Key)
-                        - product_name: product name. 
-                        - product_sku: product sku. 
+                        - id: incremental id. (Primary Key)
+                        - external_id: product id.
+                        - name: product name.
+                        - sku: product sku.
                         - category_id: category id. (Foreign Key to categories table)
-                        - is_active: is the product active or not. 
-                        - is_stock_product: is the product a stock product or not. 
-                        - price: price of the product in {business_currency_full} or {business_currency_short}. 
+                        - is_active: is the product active or not.
+                        - is_stock: is the product a stock product or not.
+                        - price: price of the product in {business_currency_full} or {business_currency_short}.
+                        - client_id: client id. (Foreign Key to clients table)
 
-                D. "order_header": Order header table, contains the following columns:
-                        - order_header_id: order header id. (Primary Key)
+                D. "order_headers": Order header table, contains the following columns:
+                        - id: incremental id. (Primary Key)
+                        - external_id: order id.
+                        - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
                         - branch_id: branch id. (Foreign Key to branches table)
-                        - order_datetime: order datetime, format: YYYY-MM-DD HH:MM:SS.
-                        - order_type: order type, can be one of the following: {business_order_types}.
-                        - order_source: order source, can be one of the following: {business_order_sources}.
-                        - order_status: order status, can be one of the following: {business_order_statuses}.
-                        - order_total_price: order total price in {business_currency_full} or {business_currency_short}.
+                        - type: order type, can be one of the following: {business_order_types}.
+                        - source: order source, can be one of the following: {business_order_sources}.
+                        - status: order status, can be one of the following: {business_order_statuses}.
+                        - total_price: order total price in {business_currency_full} or {business_currency_short}.
+                        - client_id: client id. (Foreign Key to clients table)
 
                 E. "order_details": Order details table, contains the following columns:
-                        - order_details_id: order details id. (Primary Key)
-                        - order_header_id: order header id. (Foreign Key to order_header table)
+                        - id: incremental id. (Primary Key)
+                        - external_id: order details id.
+                        - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
-                        - category_id: category id. (Foreign Key to categories table)
-                        - quantity: quantity of the product in units. 
-                        - price: price of the product in {business_currency_full} or {business_currency_short}. 
+                        - quantity: quantity of the product in units.
+                        - price: price of the product in {business_currency_full} or {business_currency_short}.
+                        - client_id: client id. (Foreign Key to clients table)
 
+                F. "clients": Clients table, contains the following columns:
+                        - id: incremental id. (Primary Key)
+                        - name: client name.
+                        - slug: client slug.
 
         3- Use the following format:
         - Question: "Question here"
