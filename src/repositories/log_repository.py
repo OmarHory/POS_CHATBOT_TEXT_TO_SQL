@@ -4,7 +4,7 @@ import os, sys, datetime
 #import models from models/models.py
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
-from models import MessageLog
+from models.models import MessageLog
 
 class UserActivityRepository:
     def __init__(self, db_uri):

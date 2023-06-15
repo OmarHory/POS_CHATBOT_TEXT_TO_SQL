@@ -4,7 +4,7 @@ import os, sys
 #import models from models/models.py
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
-from models import Client, ClientUser
+from models.models import Client, ClientUser
 
 class ClientRepository:
     def __init__(self, db_uri):
@@ -18,6 +18,18 @@ class ClientRepository:
         session.commit()
         session.close()
         return client
+    
+    def fetch_client(self, client_id):
+        session = self.Session()
+        client = session.query(Client).filter(Client.id == client_id).first()
+        session.close()
+        return client
+
+    def fetch_clients(self):
+        session = self.Session()
+        clients = session.query(Client).all()
+        session.close()
+        return {client.id: client for client in clients}
     
     def delete_client(self, client_id):
         session = self.Session()
@@ -41,3 +53,4 @@ class ClientRepository:
             session.commit()
             
             session.close()
+
