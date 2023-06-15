@@ -14,15 +14,18 @@ from config import (
     config_gpt,
     config_gpt_sqlchemy,
     config_twilio,
-    config_databases,
+    # config_databases,
+    config_business,
 )
 
 # Initialize the engines
-from models import user, log_message
-from models.log_message import log_user_message
+from repositories.user_repository import *
+from repositories.log_repository import *
+# from repositories.user_repository import *
 
 from response_builder import prepare_response
-from models.user import fetch_user
+
+
 
 # from registration import registration_process
 from sqlalchemy import create_engine
@@ -53,14 +56,9 @@ redis_client = redis.Redis(
 )
 
 # SQL Chaining
-print("SQL Engine created for Database Chaining...")
 gpt_sql_engine = create_engine(
-    config_gpt_sqlchemy["sqlchemy_database"].format(
-        config_mysql["mysql_user"],
-        config_mysql["mysql_password"].replace("@", "%40"),
-        config_mysql["mysql_host"],
-        config_mysql["mysql_port"],
-        config_databases["mysql_db_data"],
+    config_mysql["DATABASE_URI"].format(
+        
     ),
     echo=True,
     pool_timeout=config_mysql["mysql_pool_timeout"],
@@ -86,6 +84,10 @@ llm = ChatOpenAI(
 app = Flask(__name__)
 
 model = whisper.load_model("base")
+
+#repos
+user_repo = UserRepository(config_mysql['DATABASE_URI'])
+log_repo = UserActivityRepository(config_mysql['DATABASE_URI'])
 
 
 @app.route("/bot", methods=["POST"])
@@ -137,9 +139,8 @@ def bot():
         1
     ]  # Specific for twilio whatsapp:+962795704964 to get the phone number only (need to validate this for US users)
 
-    user = fetch_user(phone_number=phone_number)
-    print(user)
-    if user is None:
+    username = user_repo.get_user_by_phone_number(phone_number).name
+    if username is None:
         # message = registration_process(phone_number=phone_number,
         #                      incoming_msg=incoming_msg,
         #                      redis_client=redis_client,
@@ -148,7 +149,6 @@ def bot():
         message = "You have reached a restricted area, please contact the administration to get access to this bot."
 
     else:
-        username = user["name"]  # get user_name
 
         (
             message,
@@ -177,7 +177,8 @@ def bot():
         print(response_timestamp_utc)
         print("is_gpt_answer", is_gpt_answer)
         if is_gpt_answer:
-            log_user_message(
+            log_repo.insert_user_activity(
+                client_id=config_business['client_id'],
                 username=username,
                 phone_number=phone_number,
                 user_intent=edited_intent,
