@@ -87,7 +87,7 @@ class Product(Base):
     external_id = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     sku = Column(String(255))
-    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
     is_active = Column(Boolean)
     is_stock = Column(Boolean)
     price = Column(Float(precision=2))
