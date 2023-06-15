@@ -1,3 +1,4 @@
+import datetime
 from sqlalchemy import Index, create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -140,6 +141,31 @@ class OrderDetail(Base):
 
     header = relationship("OrderHeader")
     product = relationship("Product")
+    client = relationship("Client")
+
+    __table_args__ = (
+        Index('idx_external_id', external_id, unique=True),
+    )
+
+class OrderOption(Base):
+    __tablename__ = 'order_options'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    external_id = Column(String(255), nullable=False)
+    order_details_id = Column(Integer, ForeignKey('order_details.id'), nullable=False)
+    name = Column(String(255))
+    name_localized = Column(String(255))
+    sku = Column(String(255))
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
+    quantity = Column(Integer)
+    unit_price = Column(Float(precision=2))
+    total_price = Column(Float(precision=2))
+    total_cost = Column(Float(precision=2))
+
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    detail = relationship("OrderDetail")
     client = relationship("Client")
 
     __table_args__ = (

@@ -6,7 +6,7 @@ import os, sys
 #import models from models/models.py
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
-from models.models import OrderHeader, OrderDetail, Branch, Category, Product, Client
+from models.models import OrderHeader, OrderDetail, Branch, Category, Product, Client, OrderOption
 
 class PosRepository:
     def __init__(self, db_uri):
@@ -29,46 +29,6 @@ class PosRepository:
             return
 
         df = pd.read_csv(filename)
-
-        if table_name == "order_headers":
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        OrderHeader(
-                            external_id=row["id"],
-                            branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
-                            ordered_at=pd.to_datetime(row["ordered_at"]),
-                            type=row["type"],
-                            source=row["source"],
-                            status=row["status"],
-                            total_price=row["total_price"],
-                            client_id=client_id,
-                            created_at=pd.to_datetime(row["created_at"]),
-                            updated_at=pd.to_datetime(row["updated_at"]),
-                        )
-                    )
-                    self.session.commit()
-                except Exception as e:
-                    print(e)
-        
-        if table_name == "order_details":
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        OrderDetail(
-                            external_id=row["id"],
-                            order_header_id=self.query_record_by_uuid(table_name='order_headers', external_id=row["header_id"]),
-                            product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
-                            quantity=row["quantity"],
-                            price=row["price"],
-                            client_id=client_id,
-                            created_at=pd.to_datetime(row["created_at"]),
-                            updated_at=pd.to_datetime(row["updated_at"]),
-                        )
-                    )
-                    self.session.commit()
-                except Exception as e:
-                    print(e)
 
         if table_name == "branches":
             for index, row in df.iterrows():
@@ -123,6 +83,67 @@ class PosRepository:
                             client_id=client_id,
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
+                        )
+                    )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
+
+        if table_name == "order_headers":
+            for index, row in df.iterrows():
+                try:
+                    self.session.add(
+                        OrderHeader(
+                            external_id=row["id"],
+                            branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
+                            ordered_at=pd.to_datetime(row["ordered_at"]),
+                            type=row["type"],
+                            source=row["source"],
+                            status=row["status"],
+                            total_price=row["total_price"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
+                    )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
+        
+        if table_name == "order_details":
+            for index, row in df.iterrows():
+                try:
+                    self.session.add(
+                        OrderDetail(
+                            external_id=row["id"],
+                            order_header_id=self.query_record_by_uuid(table_name='order_headers', external_id=row["header_id"]),
+                            product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
+                            quantity=row["quantity"],
+                            price=row["price"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
+                    )
+                    self.session.commit()
+                except Exception as e:
+                    print(e)
+
+        if table_name == 'order_options':
+            for index, row in df.iterrows():
+                try:
+                    self.session.add(
+                        OrderOption(
+                            external_id=row["option_id"],
+                            order_details_id=self.query_record_by_uuid(table_name='order_details', external_id=row["order_details_id"]),
+                            name=row["option_name"],
+                            name_localized=row["option_name_localized"],
+                            sku=row["option_sku"],
+                            quantity=row["option_quantity"],
+                            unit_price=row["option_unit_price"],
+                            total_price=row["option_total_price"],
+                            total_cost=row["option_total_cost"],
+                            client_id=client_id,
                         )
                     )
                     self.session.commit()
@@ -309,6 +330,8 @@ class PosRepository:
             return Product
         if table_name == "categories":
             return Category
+        if table_name == "order_options":
+            return OrderOption
         
 
     def dd(self, obj):
