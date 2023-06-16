@@ -74,3 +74,30 @@ def translate_message(incoming_msg, language_map, prompt):
 def strip_message(incoming_msg):
     incoming_msg = incoming_msg.strip(".").strip('"').strip("'").strip(" ")
     return incoming_msg
+
+
+# write a function to grab a specific key value from redis and return it, if not exists it should process a second parameter object store it on redis with the speficied key and return me the object, it should take an expiration time parameter
+def get_from_redis(redis_client, key, object_to_store, expiration_time):
+    if redis_client.exists(key):
+        return redis_client.get(key)
+    else:
+        redis_client.setex(key, expiration_time, object_to_store)
+        return object_to_store
+    
+
+def redis_hash_get_or_create(redis_client, key, object_to_store, expiration_time):
+    for key_inner, value in object_to_store.items():
+        if type(value) == list:
+            object_to_store[key_inner] = ",".join(value)
+
+    if redis_client.exists(key):
+        dict_ = redis_client.hgetall(key)
+        dict_ = {key.decode('utf-8'): value.decode('utf-8') for key, value in dict_.items()}
+        return dict_
+    else:
+        redis_client.hset(key, mapping=object_to_store)
+        redis_client.expire(key, expiration_time)
+        return object_to_store
+
+
+

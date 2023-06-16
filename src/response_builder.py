@@ -15,6 +15,7 @@ from helpers.utils import (
     get_formatted_intent,
     translate_message,
     strip_message,
+    redis_hash_get_or_create,
 )
 from helpers.DatabaseChain import get_db_session
 from langchain.prompts.prompt import PromptTemplate
@@ -69,7 +70,9 @@ def prepare_response(
         sql_engine=sql_engine,
         include_tables=include_tables,
         client_repo=client_repo,
-        config_client=config_client
+        config_client=config_client,
+        redis_client=redis_client,
+        redis_timeout=redis_config["redis_timeout"],
     )
 
     redis_client.hset(phone_number, "context", updated_context)
@@ -102,6 +105,8 @@ def process_message(
     include_tables,
     client_repo,
     config_client,
+    redis_client,
+    redis_timeout,
 ):
     message_type = None
     error_flag = False
@@ -124,15 +129,16 @@ def process_message(
     if strip_message(incoming_msg.lower()) in ["switch", 'تغيير'] or incoming_msg.isdigit():
         intent = "user_input"
 
-    incoming_msg, user_language = translate_message(
-        incoming_msg, language_map, translate_ar_prompt_
-    )
-    incoming_msg = strip_message(incoming_msg)
-    
+    if intent != "user_input":
+        incoming_msg, user_language = translate_message(
+            incoming_msg, language_map, translate_ar_prompt_
+        )
+        incoming_msg = strip_message(incoming_msg)
+        
     if intent is None:
-        print(config_client)
         intent_prompt_ = intent_prompt(incoming_msg=incoming_msg, client_name=config_client['client_name'], client_type=config_client['client_type'])
         intent = strip_message(send_to_gpt(intent_prompt_))
+
         intent = intent.lower()
         print(intent_prompt_)
     print("intent is:", intent)
@@ -143,7 +149,7 @@ def process_message(
 
     if intent == "user_input":
 
-        if incoming_msg.lower() == 'switch':
+        if incoming_msg.lower() in ["switch", 'تغيير']:
             response = switch_message(available_client_ids, client_repo)
             user_context = 'switch_client'
     
@@ -151,8 +157,9 @@ def process_message(
             # get the client name from the client id
             active_client_context = available_client_ids[int(incoming_msg) - 1]
             user_context = 'first_time_user'
-            client_name = client_repo.fetch_client(int(incoming_msg)).name
-            response = f'You have switched to {client_name}'
+            client = client_repo.fetch_client(int(incoming_msg))
+            response = f'You have switched to {client.name}'
+            _ = redis_hash_get_or_create(redis_client, f'client_{int(incoming_msg)}', client.settings, redis_timeout)
             
 
     elif "greeting" in intent:
@@ -162,7 +169,6 @@ def process_message(
         response = farewell(username=username)
 
     else:
-        print("FUCKING HEERE")
         (
             response,
             message_type,

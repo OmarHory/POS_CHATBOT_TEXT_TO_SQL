@@ -7,6 +7,8 @@ import warnings
 import datetime
 import time
 
+from helpers.utils import redis_hash_get_or_create
+
 from flask import Flask, request
 import redis
 #config
@@ -23,6 +25,7 @@ from repositories.user_repository import UserRepository
 from repositories.client_user_repository import ClientUserRepository
 from repositories.log_repository import UserActivityRepository
 from repositories.client_repository import ClientRepository
+
 from response_builder import prepare_response
 
 #sqlalchemy
@@ -100,6 +103,7 @@ def bot():
     print(request_timestamp_utc)
 
     phone_number = request.form.get("From").split("+")[1] 
+    
     user = user_repo.get_user_by_phone_number(phone_number)
     client_user = client_user_repo.get_by_user_id(user_id=user.id).all()
 
@@ -148,6 +152,7 @@ def bot():
         available_client_ids = []
         for observation in client_user:
             available_client_ids.append(observation.client_id)
+        available_client_ids = sorted(available_client_ids)
 
         print('######################')
         print(available_client_ids)
@@ -162,12 +167,13 @@ def bot():
     else:
         if bool(redis_client.hexists(phone_number, "active_client")):
             active_client_id = int(redis_client.hget(phone_number, "active_client").decode("utf-8"))
-            active_client_id = client_repo.fetch_client(active_client_id)
-            config_client = update_keys(active_client_id.settings)
+            
         else:
-            active_client_id = client_repo.fetch_client(available_client_ids[0])
-            config_client = update_keys(active_client_id.settings)
+            active_client_id = client_repo.fetch_client(available_client_ids[0]).id
 
+        active_client = client_repo.fetch_client(active_client_id)
+        
+        config_client = redis_hash_get_or_create(redis_client, f'client_{active_client_id}', active_client.settings, redis_config["redis_timeout"])
         (
             active_client_id,
             message,

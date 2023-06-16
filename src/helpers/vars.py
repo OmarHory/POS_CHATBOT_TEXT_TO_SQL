@@ -38,6 +38,11 @@ def farewell(username):
 
 
 def gpt_sql_prompt(user_language, client_branches, client_type, client_name, client_currency_full, client_currency_short, client_country, client_timezone, client_categories, client_order_types, client_order_sources, client_order_statuses, client_id):
+        client_branches = client_branches.split(',')
+        client_order_types = client_order_types.split(',')
+        client_order_sources = client_order_sources.split(',')
+        client_order_statuses = client_order_statuses.split(',')
+        client_categories = client_categories.split(',')
 
         timezone_tz = pytz.timezone(client_timezone)
         timezone_datetime = datetime.now(timezone_tz)
@@ -50,7 +55,6 @@ def gpt_sql_prompt(user_language, client_branches, client_type, client_name, cli
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
         1- Instructions:
-       
 
                 A. General instructions:
                         - You are a {client_type} data analyst, you report analytics about your {client_type}, and you give actions and recommendations to increase revenue.
