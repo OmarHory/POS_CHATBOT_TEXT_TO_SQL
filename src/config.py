@@ -1,16 +1,16 @@
-config_business = dict(
+config_client = dict(
     client_id=0,
-    business_type="",
-    business_name="",
-    business_branches="",
-    business_country="",
-    business_categories="",
-    business_timezone="",
-    business_currency_full="",
-    business_currency_short="",
-    business_order_types="",
-    business_order_sources="",
-    business_order_statuses="",
+    client_type="",
+    client_name="",
+    client_branches="",
+    client_country="",
+    client_categories="",
+    client_timezone="",
+    client_currency_full="",
+    client_currency_short="",
+    client_order_types="",
+    client_order_sources="",
+    client_order_statuses="",
 )
 
 redis_config = dict(
@@ -26,9 +26,15 @@ config_mysql = dict(
     mysql_pool_timeout=None,
     mysql_pool_size=5,
     DATABASE_URI="",
+    include_tables=[
+        "branches",
+        "categories",
+        "products",
+        "order_headers",
+        "order_details",
+        'order_options',
+    ],
 )
-
-config_databases = dict(mysql_db_users="", mysql_db_data="", mysql_db_log="")
 
 config_aws = dict(
     aws_access_key="", aws_secret_access_key="", aws_bucket_name="", aws_folder_name=""
@@ -50,14 +56,3 @@ config_gpt = dict(
     llm_request_timeout=120,
 )
 
-config_gpt_sqlchemy = dict(
-    sqlchemy_database="mysql://{}:{}@{}:{}/{}",
-    sqlchemy_include_tables=[
-        "branches",
-        "categories",
-        "products",
-        "order_headers",
-        "order_details",
-        'order_options',
-    ],
-)

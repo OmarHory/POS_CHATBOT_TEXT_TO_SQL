@@ -7,4 +7,4 @@ if [ ! -f "$env_file" ]; then
     exit 1
 fi
 
-gunicorn --bind 0.0.0.0:$app_port src.app:app --chdir src --workers 4 --timeout 120
+gunicorn --bind 0.0.0.0:4000 src.app:app --chdir src --workers 4 --timeout 120

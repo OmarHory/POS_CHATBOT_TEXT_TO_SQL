@@ -1,4 +1,5 @@
 import update_variables
+from update_variables import update_keys
 
 import os
 import logging
@@ -8,34 +9,33 @@ import time
 
 from flask import Flask, request
 import redis
+#config
 from config import (
     redis_config,
     config_mysql,
     config_gpt,
-    config_gpt_sqlchemy,
     config_twilio,
-    # config_databases,
-    config_business,
+    config_client,
 )
 
 # Initialize the engines
-from repositories.user_repository import *
-from repositories.log_repository import *
-# from repositories.user_repository import *
-
+from repositories.user_repository import UserRepository
+from repositories.client_user_repository import ClientUserRepository
+from repositories.log_repository import UserActivityRepository
+from repositories.client_repository import ClientRepository
 from response_builder import prepare_response
 
-
-
-# from registration import registration_process
+#sqlalchemy
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
+#langchain
 from langchain.chat_models import ChatOpenAI
 
-
+#twilio
 from twilio.rest import Client
 
-# from openai import Audio
+#audio
 import requests, io
 from pydub import AudioSegment
 import tempfile
@@ -56,10 +56,8 @@ redis_client = redis.Redis(
 )
 
 # SQL Chaining
-gpt_sql_engine = create_engine(
-    config_mysql["DATABASE_URI"].format(
-        
-    ),
+sql_engine = create_engine(
+    config_mysql["DATABASE_URI"],
     echo=True,
     pool_timeout=config_mysql["mysql_pool_timeout"],
     pool_size=config_mysql["mysql_pool_size"],
@@ -86,8 +84,12 @@ app = Flask(__name__)
 model = whisper.load_model("base")
 
 #repos
-user_repo = UserRepository(config_mysql['DATABASE_URI'])
-log_repo = UserActivityRepository(config_mysql['DATABASE_URI'])
+session = sessionmaker(bind=sql_engine)
+session = session()
+user_repo = UserRepository(session)
+client_user_repo = ClientUserRepository(session)
+client_repo = ClientRepository(session)
+log_repo = UserActivityRepository(session)
 
 
 @app.route("/bot", methods=["POST"])
@@ -96,6 +98,10 @@ def bot():
     print(request_timestamp)
     request_timestamp_utc = datetime.datetime.utcnow()
     print(request_timestamp_utc)
+
+    phone_number = request.form.get("From").split("+")[1] 
+    user = user_repo.get_user_by_phone_number(phone_number)
+    client_user = client_user_repo.get_by_user_id(user_id=user.id).all()
 
     recording_url = request.form.get("MediaUrl0")
     if recording_url:
@@ -135,22 +141,35 @@ def bot():
         incoming_msg = request.values.get("Body", "")
     print(incoming_msg)
 
-    phone_number = request.form.get("From").split("+")[
-        1
-    ]  # Specific for twilio whatsapp:+962795704964 to get the phone number only (need to validate this for US users)
 
-    username = user_repo.get_user_by_phone_number(phone_number).name
+    username = user.name
+    
+    if client_user is not None:
+        available_client_ids = []
+        for observation in client_user:
+            available_client_ids.append(observation.client_id)
+
+        print('######################')
+        print(available_client_ids)
+        print("##########################")
+
+    else:
+        message = "You have reached a restricted area, please contact the administration to get access to this bot."
+    
     if username is None:
-        # message = registration_process(phone_number=phone_number,
-        #                      incoming_msg=incoming_msg,
-        #                      redis_client=redis_client,
-        #                      redis_config=redis_config)
-
         message = "You have reached a restricted area, please contact the administration to get access to this bot."
 
     else:
+        if bool(redis_client.hexists(phone_number, "active_client")):
+            active_client_id = int(redis_client.hget(phone_number, "active_client").decode("utf-8"))
+            active_client_id = client_repo.fetch_client(active_client_id)
+            config_client = update_keys(active_client_id.settings)
+        else:
+            active_client_id = client_repo.fetch_client(available_client_ids[0])
+            config_client = update_keys(active_client_id.settings)
 
         (
+            active_client_id,
             message,
             message_type,
             error_flag,
@@ -160,14 +179,17 @@ def bot():
             sql_result,
             is_gpt_answer,
         ) = prepare_response(
+            available_client_ids=available_client_ids,
             incoming_msg=incoming_msg,
             phone_number=phone_number,
             redis_client=redis_client,
             redis_config=redis_config,
             username=username,
             llm=llm,
-            gpt_sql_engine=gpt_sql_engine,
-            include_tables=config_gpt_sqlchemy["sqlchemy_include_tables"],
+            sql_engine=sql_engine,
+            include_tables=config_mysql["include_tables"],
+            client_repo=client_repo,
+            config_client=config_client,
         )
 
         response_timestamp = time.time()
@@ -178,7 +200,7 @@ def bot():
         print("is_gpt_answer", is_gpt_answer)
         if is_gpt_answer:
             log_repo.insert_user_activity(
-                client_id=config_business['client_id'],
+                client_id=active_client_id,
                 username=username,
                 phone_number=phone_number,
                 user_intent=edited_intent,

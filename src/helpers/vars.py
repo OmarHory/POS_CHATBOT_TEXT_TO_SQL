@@ -1,49 +1,45 @@
 from datetime import datetime
 import pytz
-from config import config_business
 
-business_name = config_business["business_name"]
-business_type = config_business["business_type"]
-business_currency_full = config_business["business_currency_full"]
-business_currency_short = config_business["business_currency_short"]
-business_branches = config_business["business_branches"]
-business_country = config_business["business_country"]
-business_timezone = config_business["business_timezone"]
-business_categories = config_business["business_categories"]
-business_order_types = config_business["business_order_types"]
-business_order_sources = config_business["business_order_sources"]
-business_order_statuses = config_business["business_order_statuses"]
-client_id = config_business["client_id"]
-
-for_more_info = ""
-
-general_menu = f"""Hello _USERNAME_HERE_! Welcome to the {business_name} AI Assistant! \U0001F44B \U0001F44B\n"""
-
-intent_prompt = f"""What is the intent of this sentence:
-
-"_PROMPT_HERE_"
-
-Work as an intent classifier that works for a {business_type} called [{business_name}]. Classify the intent of the above prompt, return the output without formatting, just the intent.
-
-Please choose one of the following intents, do not generate your own intents:
-- Greeting 
-        When the user says hello, hi, hello there, etc.
-
-- Orders
-        When the user intention is to know information about the orders or sales.
-
-- Farewell 
-        When the user says goodbye, have a good one, see ya, etc..
-
-- Undefined 
-        When the user says something that is not totally related to the above intents.
-
-If the prompt has mix intents, choose the intent that has the higher weight."""
+def for_more_info():
+        return ""
 
 
-def gpt_sql_prompt(user_language):
+def general_menu(username, client_name):
+    general_menu = f"""Hello {username}! Welcome to the {client_name} AI Assistant! \U0001F44B \U0001F44B\n"""
+    return general_menu
 
-        timezone_tz = pytz.timezone(business_timezone)
+def intent_prompt(incoming_msg, client_type, client_name):
+        intent_prompt = f"""What is the intent of this sentence:
+
+        "{incoming_msg}"
+
+        Work as an intent classifier that works for a {client_type} called [{client_name}]. Classify the intent of the above prompt, return the output without formatting, just the intent.
+
+        Please choose one of the following intents, do not generate your own intents:
+        - Greeting 
+                When the user says hello, hi, hello there, etc.
+
+        - Orders
+                When the user intention is to know information about the orders or sales.
+
+        - Farewell 
+                When the user says goodbye, have a good one, see ya, etc..
+
+        - Undefined 
+                When the user says something that is not totally related to the above intents.
+
+        If the prompt has mix intents, choose the intent that has the higher weight."""
+
+        return intent_prompt
+
+def farewell(username):
+        return "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
+
+
+def gpt_sql_prompt(user_language, client_branches, client_type, client_name, client_currency_full, client_currency_short, client_country, client_timezone, client_categories, client_order_types, client_order_sources, client_order_statuses, client_id):
+
+        timezone_tz = pytz.timezone(client_timezone)
         timezone_datetime = datetime.now(timezone_tz)
 
         # Extract the date and time components
@@ -57,20 +53,20 @@ def gpt_sql_prompt(user_language):
        
 
                 A. General instructions:
-                        - You are a {business_type} data analyst, you report analytics about your {business_type}, and you give actions and recommendations to increase revenue.
-                        - Your task is to answer questions related to a {business_type}.
+                        - You are a {client_type} data analyst, you report analytics about your {client_type}, and you give actions and recommendations to increase revenue.
+                        - Your task is to answer questions related to a {client_type}.
                         - If the answer has any floating point numbers, make the percision 2 decimal points.
                         - Add a thousand separator to the numbers.
 
-                B. {business_type} instructions:
+                B. {client_type} instructions:
                         - client id: {client_id}.
-                        - {business_type} name: {business_name}.
-                        - {business_type} country and Location: {business_country}.
-                        - {business_type} branches (branch_name : branch_id): {business_branches}
-                        - The {business_type} works everyday on specific hours based on the branch.
+                        - {client_type} name: {client_name}.
+                        - {client_type} country and Location: {client_country}.
+                        - {client_type} branches (branch_name : branch_id): {client_branches}
+                        - The {client_type} works everyday on specific hours based on the branch.
                         - Weekends are on Friday and Saturday.
                         - When asked about quantity, return the quantity in units.
-                        - When asked about sales or price, return the sales or price in {business_currency_full} or {business_currency_short}.
+                        - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
                 
@@ -98,7 +94,7 @@ def gpt_sql_prompt(user_language):
                         - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
                         - The time is in the following format: HH:MM:SS.
                         - The time is in 24 hour format.
-                        - The time is in {business_country} timezone.
+                        - The time is in {client_country} timezone.
 
         2- Tables Schemas and description:
 
@@ -114,7 +110,7 @@ def gpt_sql_prompt(user_language):
                 B. "categories": Categories table, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: category id.
-                        - name: category name; can be one of the following: {business_categories}
+                        - name: category name; can be one of the following: {client_categories}
                         - slug: category slug.
                         - client_id: client id. (Foreign Key to clients table)
 
@@ -126,7 +122,7 @@ def gpt_sql_prompt(user_language):
                         - category_id: category id. (Foreign Key to categories table)
                         - is_active: is the product active or not.
                         - is_stock: is the product a stock product or not.
-                        - price: price of the product in {business_currency_full} or {business_currency_short}.
+                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 D. "order_headers": Order header table, contains the following columns:
@@ -134,10 +130,10 @@ def gpt_sql_prompt(user_language):
                         - external_id: order id.
                         - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
                         - branch_id: branch id. (Foreign Key to branches table)
-                        - type: order type, can be one of the following: {business_order_types}.
-                        - source: order source, can be one of the following: {business_order_sources}.
-                        - status: order status, can be one of the following: {business_order_statuses}.
-                        - total_price: order total price in {business_currency_full} or {business_currency_short}.
+                        - type: order type, can be one of the following: {client_order_types}.
+                        - source: order source, can be one of the following: {client_order_sources}.
+                        - status: order status, can be one of the following: {client_order_statuses}.
+                        - total_price: order total price in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 E. "order_details": Order details table, contains the following columns:
@@ -146,7 +142,7 @@ def gpt_sql_prompt(user_language):
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
                         - quantity: quantity of the product in units.
-                        - price: price of the product in {business_currency_full} or {business_currency_short}.
+                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 F. "clients": Clients table, contains the following columns:

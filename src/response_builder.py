@@ -6,6 +6,7 @@ from helpers.vars import (
     language_map,
     translate_ar_prompt_,
     sorry_words,
+    farewell,
 )
 
 from helpers.utils import (
@@ -13,31 +14,44 @@ from helpers.utils import (
     edit_prompt,
     get_formatted_intent,
     translate_message,
+    strip_message,
 )
 from helpers.DatabaseChain import get_db_session
 from langchain.prompts.prompt import PromptTemplate
 from helpers.vars import gpt_sql_prompt
 import time
+from update_variables import update_keys
 
 
 def prepare_response(
+    available_client_ids,
     incoming_msg,
     username,
     phone_number,
     redis_client,
     redis_config,
     llm,
-    gpt_sql_engine,
+    sql_engine,
     include_tables,
+    client_repo,
+    config_client,
 ):
     if not bool(redis_client.hexists(phone_number, "context")):
         user_context = "first_time_user"
-    else:
+
+
+    if not bool(redis_client.hexists(phone_number, "active_client")):
+        active_client_context = available_client_ids[0]
+        
+
+    if bool(redis_client.hexists(phone_number, "active_client")) and bool(redis_client.hexists(phone_number, "context")):
         user_context = redis_client.hget(phone_number, "context").decode("utf-8")
+        active_client_context = redis_client.hget(phone_number, "active_client").decode("utf-8")
 
     (
         message,
         updated_context,
+        updated_active_client,
         message_type,
         error_flag,
         error_description,
@@ -46,18 +60,26 @@ def prepare_response(
         sql_result,
         is_gpt_answer,
     ) = process_message(
+        available_client_ids=available_client_ids,
         incoming_msg=incoming_msg,
         user_context=user_context,
+        active_client_context=active_client_context,
         username=username,
         llm=llm,
-        gpt_sql_engine=gpt_sql_engine,
+        sql_engine=sql_engine,
         include_tables=include_tables,
+        client_repo=client_repo,
+        config_client=config_client
     )
 
     redis_client.hset(phone_number, "context", updated_context)
+    redis_client.hset(phone_number, "active_client",updated_active_client)
     redis_client.expire(phone_number, redis_config["redis_timeout"])
-
+    print("$$$$$$$$$$$$$$$$$$$$$")
+    print(active_client_context)
+    print("$$$$$$$$$$$$$$$$$$$$")
     return (
+        active_client_context,
         message,
         message_type,
         error_flag,
@@ -70,12 +92,16 @@ def prepare_response(
 
 
 def process_message(
+    available_client_ids,
     incoming_msg,
     user_context,
+    active_client_context,
     username,
     llm,
-    gpt_sql_engine,
+    sql_engine,
     include_tables,
+    client_repo,
+    config_client,
 ):
     message_type = None
     error_flag = False
@@ -83,17 +109,30 @@ def process_message(
     sql_cmd = None
     sql_result = None
     is_gpt_answer = False
+    intent = None
+
+    def switch_message(available_client_ids, client_repo):
+        message = 'You have the following clients:\n'
+        i = 1
+        for client in available_client_ids:
+            client_name = client_repo.fetch_client(client).name
+            message += f'{i} - {client_name}\n'
+            i += 1
+        message += 'Please enter the number of the client you want to switch to:'
+        return message
+
+    if strip_message(incoming_msg.lower()) in ["switch", 'تغيير'] or incoming_msg.isdigit():
+        intent = "user_input"
 
     incoming_msg, user_language = translate_message(
         incoming_msg, language_map, translate_ar_prompt_
     )
-    incoming_msg = incoming_msg.strip(".").strip('"').strip("'").strip(" ")
-
-    if incoming_msg.lower() in ["menu", "exit"] or incoming_msg.isdigit():
-        intent = "user_input"
-    else:
-        intent_prompt_ = intent_prompt.replace("_PROMPT_HERE_", incoming_msg)
-        intent = send_to_gpt(intent_prompt_).strip(".").strip('"').strip("'").strip(" ")
+    incoming_msg = strip_message(incoming_msg)
+    
+    if intent is None:
+        print(config_client)
+        intent_prompt_ = intent_prompt(incoming_msg=incoming_msg, client_name=config_client['client_name'], client_type=config_client['client_type'])
+        intent = strip_message(send_to_gpt(intent_prompt_))
         intent = intent.lower()
         print(intent_prompt_)
     print("intent is:", intent)
@@ -101,13 +140,29 @@ def process_message(
     edited_intent = get_formatted_intent(intent=intent)
 
     response = ""
-    if "greeting" in intent:
-        response = general_menu.replace("_USERNAME_HERE_", username)
+
+    if intent == "user_input":
+
+        if incoming_msg.lower() == 'switch':
+            response = switch_message(available_client_ids, client_repo)
+            user_context = 'switch_client'
+    
+        if incoming_msg.isdigit() and user_context == 'switch_client':
+            # get the client name from the client id
+            active_client_context = available_client_ids[int(incoming_msg) - 1]
+            user_context = 'first_time_user'
+            client_name = client_repo.fetch_client(int(incoming_msg)).name
+            response = f'You have switched to {client_name}'
+            
+
+    elif "greeting" in intent:
+        response = general_menu(username=username, client_name=config_client['client_name'])
 
     elif "farewell" in intent:
-        response = "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
+        response = farewell(username=username)
 
     else:
+        print("FUCKING HEERE")
         (
             response,
             message_type,
@@ -118,8 +173,9 @@ def process_message(
             sql_result,
             is_gpt_answer,
         ) = process_send_gpt(
+            active_client_context,
             edited_intent,
-            gpt_sql_engine,
+            sql_engine,
             include_tables,
             llm,
             user_language,
@@ -130,6 +186,7 @@ def process_message(
             sql_cmd,
             sql_result,
             is_gpt_answer,
+            config_client,
         )
 
     print()
@@ -140,6 +197,7 @@ def process_message(
     return (
         edit_response(response),
         user_context,
+        active_client_context,
         message_type,
         error_flag,
         error_description,
@@ -151,8 +209,9 @@ def process_message(
 
 
 def process_send_gpt(
+    active_client_context,
     edited_intent,
-    gpt_sql_engine,
+    sql_engine,
     include_tables,
     llm,
     user_language,
@@ -163,6 +222,7 @@ def process_send_gpt(
     sql_cmd,
     sql_result,
     is_gpt_answer,
+    config_client
 ):
     is_gpt_answer = True
 
@@ -184,10 +244,15 @@ def process_send_gpt(
         # Record the start time
         start_time = time.time()
         PROMPT_SQL = PromptTemplate(
-            input_variables=["input"], template=gpt_sql_prompt(user_language)
-        )
+            input_variables=["input"], template=gpt_sql_prompt(user_language=user_language,client_branches=config_client['client_branches'], client_type=config_client['client_type'], 
+                                                               client_name=config_client['client_name'], client_currency_full=config_client['client_currency_full'], 
+                                                               client_currency_short=config_client['client_currency_short'], 
+                                                               client_country=config_client['client_country'], client_timezone=config_client['client_timezone'],
+                                                               client_categories=config_client['client_categories'], client_order_types=config_client['client_order_types'], 
+                                                               client_order_sources=config_client['client_order_sources'], client_order_statuses=config_client['client_order_statuses'], 
+                                                               client_id=active_client_context))
         db_chain_session = get_db_session(
-            gpt_sql_engine, include_tables, llm, PROMPT_SQL
+            sql_engine, include_tables, llm, PROMPT_SQL
         )
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -215,16 +280,6 @@ def process_send_gpt(
                 message_type = "GPT_Max_Tokens_Error"
             else:
                 message_type = "Unrecognized_Error"
-
-        # response_with_context = f'\n\nUser Question: {incoming_msg}\n\nResponse: {response}'
-
-        # second_response = get_general_report()
-
-        # final_response = predefined_report_prompt + '\n\nFirst Text:'+ response_with_context + '\nSecond Text:\n' + second_response
-        # print('final_response: ', final_response)
-
-        # response = f'\nIntent: {edited_intent}\n\n' + send_to_gpt(edit_prompt(final_response) + '\n')
-        # print(final_response)
 
     else:
         message_type = "general_gpt_response"

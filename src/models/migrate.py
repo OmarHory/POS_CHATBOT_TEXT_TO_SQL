@@ -7,7 +7,6 @@ import os, sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 ##
-from config import config_gpt_sqlchemy, config_mysql, config_databases
 from dotenv import load_dotenv
 
 # Load environment variables from the .env file

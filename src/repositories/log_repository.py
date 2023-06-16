@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os, sys, datetime
 #import models from models/models.py
@@ -7,10 +6,8 @@ sys.path.append(parent_dir)
 from models.models import MessageLog
 
 class UserActivityRepository:
-    def __init__(self, db_uri):
-        self.engine = create_engine(db_uri)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
+    def __init__(self, session):
+        self.session = session
 
     def close_session(self):
         self.session.close()
