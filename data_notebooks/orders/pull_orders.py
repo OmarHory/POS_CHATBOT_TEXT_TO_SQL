@@ -23,4 +23,4 @@ includables = 'branch,products.product,products.options.modifier_option'
 last_page = call_foodics('orders', 1, client_id, token, includables=includables, filter=filter_, return_last_page=True)
 print('last_page:', last_page)
 
-call_foodics('orders', last_page, client_id, token, includables=includables, filter=filter_, checkpoint_every=2)
+call_foodics('orders', last_page, client_id, token, includables=includables, filter=filter_, checkpoint_every=300)
