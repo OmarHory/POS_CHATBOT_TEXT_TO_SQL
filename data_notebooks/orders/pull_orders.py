@@ -1,6 +1,14 @@
 import os
 import argparse
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.append(parent_dir)
+
+from src.repositories.client_repository import ClientRepository
+
 from utils import call_foodics
 
 # Load environment variables from .env file
@@ -12,8 +20,17 @@ parser.add_argument('--client-id', type=int, required=True, help='Client ID')
 args = parser.parse_args()
 
 # Get environment variables
-token = os.getenv('data_access_token')
 client_id = args.client_id
+
+# Get Foodics API token from clients table
+engine = create_engine(os.environ['DATABASE_URI'])
+session = sessionmaker(bind=engine)
+client_repo = ClientRepository(session=session())
+client = client_repo.fetch_client(client_id)
+token = client.token
+
+print('client_id:', client_id)
+print('token:', token)
 
 # Set filter
 filter_ = {}

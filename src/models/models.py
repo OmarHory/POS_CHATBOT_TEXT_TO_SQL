@@ -15,6 +15,7 @@ class Client(Base):
     name = Column(String(255), nullable=False)
     slug = Column(String(255))
     settings = Column(JSON)
+    token = Column(Text)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime, nullable=True)
