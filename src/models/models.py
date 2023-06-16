@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Index, create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text
+from sqlalchemy import Index, create_engine, Column, Integer, String, Float, Date, Boolean, DateTime, ForeignKey, Time, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
@@ -14,6 +14,7 @@ class Client(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     slug = Column(String(255))
+    settings = Column(JSON)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime, nullable=True)

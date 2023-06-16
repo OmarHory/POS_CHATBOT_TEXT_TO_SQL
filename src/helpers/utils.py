@@ -48,7 +48,7 @@ def get_formatted_intent(intent):
     if "Farewell".lower() in intent:
         intent = "Farewell"
 
-    elif "Undefined".lower() in intent:
+    if "Undefined".lower() in intent:
         intent = "Undefined"
 
     return intent
@@ -70,3 +70,7 @@ def translate_message(incoming_msg, language_map, prompt):
             print(incoming_msg)
         
         return incoming_msg, user_language
+
+def strip_message(incoming_msg):
+    incoming_msg = incoming_msg.strip(".").strip('"').strip("'").strip(" ")
+    return incoming_msg
