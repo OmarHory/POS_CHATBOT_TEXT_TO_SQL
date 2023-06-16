@@ -29,9 +29,6 @@ client_repo = ClientRepository(session=session())
 client = client_repo.fetch_client(client_id)
 token = client.token
 
-print('client_id:', client_id)
-print('token:', token)
-
 # Set filter
 filter_ = {}
 
