@@ -32,7 +32,7 @@ config_mysql = dict(
         "products",
         "order_headers",
         "order_details",
-        'order_options',
+        "order_options",
     ],
 )
 
@@ -55,9 +55,3 @@ config_gpt = dict(
     llm_max_tokens=400,
     llm_request_timeout=120,
 )
-
-
-
-
-
-

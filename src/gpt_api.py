@@ -1,5 +1,5 @@
 import openai
-from config import config_gpt
+from src.config import config_gpt
 import tiktoken
 
 

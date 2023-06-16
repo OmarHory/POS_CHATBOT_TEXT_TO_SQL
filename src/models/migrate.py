@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
+
 ##
 import os, sys
 
@@ -14,6 +15,7 @@ load_dotenv()
 
 
 DATABASE_URI = os.getenv("DATABASE_URI")
+
 
 def apply_migrations():
     # Create the database engine
@@ -30,6 +32,7 @@ def apply_migrations():
     session.close()
 
     print("Migrations applied successfully.")
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     apply_migrations()

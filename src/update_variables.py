@@ -1,4 +1,4 @@
-from config import config_gpt, config_twilio, config_aws, config_mysql, redis_config
+from src.config import config_gpt, config_twilio, config_aws, config_mysql, redis_config
 import os
 from dotenv import load_dotenv
 

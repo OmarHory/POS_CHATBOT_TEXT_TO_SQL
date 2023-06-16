@@ -1,16 +1,18 @@
 from datetime import datetime
 import pytz
 
+
 def for_more_info():
-        return ""
+    return ""
 
 
 def general_menu(username, client_name):
     general_menu = f"""Hello {username}! Welcome to the {client_name} AI Assistant! \U0001F44B \U0001F44B\n"""
     return general_menu
 
+
 def intent_prompt(incoming_msg, client_type, client_name):
-        intent_prompt = f"""What is the intent of this sentence:
+    intent_prompt = f"""What is the intent of this sentence:
 
         "{incoming_msg}"
 
@@ -31,27 +33,42 @@ def intent_prompt(incoming_msg, client_type, client_name):
 
         If the prompt has mix intents, choose the intent that has the higher weight."""
 
-        return intent_prompt
+    return intent_prompt
+
 
 def farewell(username):
-        return "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
+    return "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
 
 
-def gpt_sql_prompt(user_language, client_branches, client_type, client_name, client_currency_full, client_currency_short, client_country, client_timezone, client_categories, client_order_types, client_order_sources, client_order_statuses, client_id):
-        client_branches = client_branches.split(',')
-        client_order_types = client_order_types.split(',')
-        client_order_sources = client_order_sources.split(',')
-        client_order_statuses = client_order_statuses.split(',')
-        client_categories = client_categories.split(',')
+def gpt_sql_prompt(
+    user_language,
+    client_branches,
+    client_type,
+    client_name,
+    client_currency_full,
+    client_currency_short,
+    client_country,
+    client_timezone,
+    client_categories,
+    client_order_types,
+    client_order_sources,
+    client_order_statuses,
+    client_id,
+):
+    client_branches = client_branches.split(",")
+    client_order_types = client_order_types.split(",")
+    client_order_sources = client_order_sources.split(",")
+    client_order_statuses = client_order_statuses.split(",")
+    client_categories = client_categories.split(",")
 
-        timezone_tz = pytz.timezone(client_timezone)
-        timezone_datetime = datetime.now(timezone_tz)
+    timezone_tz = pytz.timezone(client_timezone)
+    timezone_datetime = datetime.now(timezone_tz)
 
-        # Extract the date and time components
-        today = timezone_datetime.strftime("%Y-%m-%d")
-        time = timezone_datetime.strftime("%H:%M:%S")
-        
-        prompt_temp = f"""
+    # Extract the date and time components
+    today = timezone_datetime.strftime("%Y-%m-%d")
+    time = timezone_datetime.strftime("%H:%M:%S")
+
+    prompt_temp = f"""
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
         1- Instructions:
@@ -149,7 +166,19 @@ def gpt_sql_prompt(user_language, client_branches, client_type, client_name, cli
                         - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "clients": Clients table, contains the following columns:
+                F. "order_options": Options table, contains the following columns:
+                        - id: incremental id. (Primary Key)
+                        - external_id: option id.
+                        - order_details_id: order details id. (Foreign Key to order_details table)
+                        - name: option name.
+                        - name_localized: option name in Arabic.
+                        - sku: option sku.
+                        - quantity: quantity of the option in units.
+                        - unit_price: unit price of the option in {client_currency_full} or {client_currency_short}.
+                        - total_price: total price of the option in {client_currency_full} or {client_currency_short}.
+                        - total_cost: total cost of the option in {client_currency_full} or {client_currency_short}.
+
+                G. "clients": Clients table, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - name: client name.
                         - slug: client slug.
@@ -162,8 +191,9 @@ def gpt_sql_prompt(user_language, client_branches, client_type, client_name, cli
         - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
         """
 
-        prompt_temp += '\n\n\tQuestion: {input}'
-        return prompt_temp
+    prompt_temp += "\n\n\tQuestion: {input}"
+    return prompt_temp
+
 
 sorry_instruction = """Say sorry if you do not know the answer to the question, 
 otherwise answer the question. do not mention "an AI language model" sort of response, 
@@ -177,7 +207,36 @@ translate_ar_prompt_ = """Translate the following {} (MSA or Dialect) to English
 
                         {}"""
 language_map = {
-    "Arabic": ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
+    "Arabic": [
+        "ا",
+        "ب",
+        "ت",
+        "ث",
+        "ج",
+        "ح",
+        "خ",
+        "د",
+        "ذ",
+        "ر",
+        "ز",
+        "س",
+        "ش",
+        "ص",
+        "ض",
+        "ط",
+        "ظ",
+        "ع",
+        "غ",
+        "ف",
+        "ق",
+        "ك",
+        "ل",
+        "م",
+        "ن",
+        "ه",
+        "و",
+        "ي",
+    ],
 }
 
 sql_revision_prompt = """Your task is to debug MySQL Queries based on a user question, below is a MySQL query that I got the followng error on:

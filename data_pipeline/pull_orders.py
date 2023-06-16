@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import sys
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 
 from src.repositories.client_repository import ClientRepository

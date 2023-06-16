@@ -1,5 +1,5 @@
-import update_variables
-from update_variables import update_keys
+import src.update_variables
+from src.update_variables import update_keys
 
 import os
 import logging
@@ -7,12 +7,13 @@ import warnings
 import datetime
 import time
 
-from helpers.utils import redis_hash_get_or_create
+from src.helpers.utils import redis_hash_get_or_create
 
 from flask import Flask, request
 import redis
-#config
-from config import (
+
+# config
+from src.config import (
     redis_config,
     config_mysql,
     config_gpt,
@@ -21,24 +22,24 @@ from config import (
 )
 
 # Initialize the engines
-from repositories.user_repository import UserRepository
-from repositories.client_user_repository import ClientUserRepository
-from repositories.log_repository import UserActivityRepository
-from repositories.client_repository import ClientRepository
+from src.repositories.user_repository import UserRepository
+from src.repositories.client_user_repository import ClientUserRepository
+from src.repositories.log_repository import UserActivityRepository
+from src.repositories.client_repository import ClientRepository
 
-from response_builder import prepare_response
+from src.response_builder import prepare_response
 
-#sqlalchemy
+# sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-#langchain
+# langchain
 from langchain.chat_models import ChatOpenAI
 
-#twilio
+# twilio
 from twilio.rest import Client
 
-#audio
+# audio
 import requests, io
 from pydub import AudioSegment
 import tempfile
@@ -86,7 +87,7 @@ app = Flask(__name__)
 
 model = whisper.load_model("base")
 
-#repos
+# repos
 session = sessionmaker(bind=sql_engine)
 session = session()
 user_repo = UserRepository(session)
@@ -102,8 +103,8 @@ def bot():
     request_timestamp_utc = datetime.datetime.utcnow()
     print(request_timestamp_utc)
 
-    phone_number = request.form.get("From").split("+")[1] 
-    
+    phone_number = request.form.get("From").split("+")[1]
+
     user = user_repo.get_user_by_phone_number(phone_number)
     client_user = client_user_repo.get_by_user_id(user_id=user.id).all()
 
@@ -145,35 +146,41 @@ def bot():
         incoming_msg = request.values.get("Body", "")
     print(incoming_msg)
 
-
     username = user.name
-    
+
     if client_user is not None:
         available_client_ids = []
         for observation in client_user:
             available_client_ids.append(observation.client_id)
         available_client_ids = sorted(available_client_ids)
 
-        print('######################')
+        print("######################")
         print(available_client_ids)
         print("##########################")
 
     else:
         message = "You have reached a restricted area, please contact the administration to get access to this bot."
-    
+
     if username is None:
         message = "You have reached a restricted area, please contact the administration to get access to this bot."
 
     else:
         if bool(redis_client.hexists(phone_number, "active_client")):
-            active_client_id = int(redis_client.hget(phone_number, "active_client").decode("utf-8"))
-            
+            active_client_id = int(
+                redis_client.hget(phone_number, "active_client").decode("utf-8")
+            )
+
         else:
             active_client_id = client_repo.fetch_client(available_client_ids[0]).id
 
         active_client = client_repo.fetch_client(active_client_id)
-        
-        config_client = redis_hash_get_or_create(redis_client, f'client_{active_client_id}', active_client.settings, redis_config["redis_timeout"])
+
+        config_client = redis_hash_get_or_create(
+            redis_client,
+            f"client_{active_client_id}",
+            active_client.settings,
+            redis_config["redis_timeout"],
+        )
         (
             active_client_id,
             message,

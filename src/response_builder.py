@@ -1,5 +1,5 @@
-from gpt_api import send_to_gpt
-from helpers.vars import (
+from src.gpt_api import send_to_gpt
+from src.helpers.vars import (
     general_menu,
     intent_prompt,
     sorry_instruction,
@@ -9,7 +9,7 @@ from helpers.vars import (
     farewell,
 )
 
-from helpers.utils import (
+from src.helpers.utils import (
     edit_response,
     edit_prompt,
     get_formatted_intent,
@@ -17,11 +17,13 @@ from helpers.utils import (
     strip_message,
     redis_hash_get_or_create,
 )
-from helpers.DatabaseChain import get_db_session
+from src.DatabaseChain import get_db_session
+from src.helpers.vars import gpt_sql_prompt
+from src.update_variables import update_keys
+
+
 from langchain.prompts.prompt import PromptTemplate
-from helpers.vars import gpt_sql_prompt
 import time
-from update_variables import update_keys
 
 
 def prepare_response(
@@ -40,14 +42,16 @@ def prepare_response(
     if not bool(redis_client.hexists(phone_number, "context")):
         user_context = "first_time_user"
 
-
     if not bool(redis_client.hexists(phone_number, "active_client")):
         active_client_context = available_client_ids[0]
-        
 
-    if bool(redis_client.hexists(phone_number, "active_client")) and bool(redis_client.hexists(phone_number, "context")):
+    if bool(redis_client.hexists(phone_number, "active_client")) and bool(
+        redis_client.hexists(phone_number, "context")
+    ):
         user_context = redis_client.hget(phone_number, "context").decode("utf-8")
-        active_client_context = redis_client.hget(phone_number, "active_client").decode("utf-8")
+        active_client_context = redis_client.hget(phone_number, "active_client").decode(
+            "utf-8"
+        )
 
     (
         message,
@@ -76,7 +80,7 @@ def prepare_response(
     )
 
     redis_client.hset(phone_number, "context", updated_context)
-    redis_client.hset(phone_number, "active_client",updated_active_client)
+    redis_client.hset(phone_number, "active_client", updated_active_client)
     redis_client.expire(phone_number, redis_config["redis_timeout"])
     print("$$$$$$$$$$$$$$$$$$$$$")
     print(active_client_context)
@@ -117,16 +121,19 @@ def process_message(
     intent = None
 
     def switch_message(available_client_ids, client_repo):
-        message = 'You have the following clients:\n'
+        message = "You have the following clients:\n"
         i = 1
         for client in available_client_ids:
             client_name = client_repo.fetch_client(client).name
-            message += f'{i} - {client_name}\n'
+            message += f"{i} - {client_name}\n"
             i += 1
-        message += 'Please enter the number of the client you want to switch to:'
+        message += "Please enter the number of the client you want to switch to:"
         return message
 
-    if strip_message(incoming_msg.lower()) in ["switch", 'تغيير'] or incoming_msg.isdigit():
+    if (
+        strip_message(incoming_msg.lower()) in ["switch", "تغيير"]
+        or incoming_msg.isdigit()
+    ):
         intent = "user_input"
 
     if intent != "user_input":
@@ -134,9 +141,13 @@ def process_message(
             incoming_msg, language_map, translate_ar_prompt_
         )
         incoming_msg = strip_message(incoming_msg)
-        
+
     if intent is None:
-        intent_prompt_ = intent_prompt(incoming_msg=incoming_msg, client_name=config_client['client_name'], client_type=config_client['client_type'])
+        intent_prompt_ = intent_prompt(
+            incoming_msg=incoming_msg,
+            client_name=config_client["client_name"],
+            client_type=config_client["client_type"],
+        )
         intent = strip_message(send_to_gpt(intent_prompt_))
 
         intent = intent.lower()
@@ -148,22 +159,27 @@ def process_message(
     response = ""
 
     if intent == "user_input":
-
-        if incoming_msg.lower() in ["switch", 'تغيير']:
+        if incoming_msg.lower() in ["switch", "تغيير"]:
             response = switch_message(available_client_ids, client_repo)
-            user_context = 'switch_client'
-    
-        if incoming_msg.isdigit() and user_context == 'switch_client':
+            user_context = "switch_client"
+
+        if incoming_msg.isdigit() and user_context == "switch_client":
             # get the client name from the client id
             active_client_context = available_client_ids[int(incoming_msg) - 1]
-            user_context = 'first_time_user'
+            user_context = "first_time_user"
             client = client_repo.fetch_client(int(incoming_msg))
-            response = f'You have switched to {client.name}'
-            _ = redis_hash_get_or_create(redis_client, f'client_{int(incoming_msg)}', client.settings, redis_timeout)
-            
+            response = f"You have switched to {client.name}"
+            _ = redis_hash_get_or_create(
+                redis_client,
+                f"client_{int(incoming_msg)}",
+                client.settings,
+                redis_timeout,
+            )
 
     elif "greeting" in intent:
-        response = general_menu(username=username, client_name=config_client['client_name'])
+        response = general_menu(
+            username=username, client_name=config_client["client_name"]
+        )
 
     elif "farewell" in intent:
         response = farewell(username=username)
@@ -228,7 +244,7 @@ def process_send_gpt(
     sql_cmd,
     sql_result,
     is_gpt_answer,
-    config_client
+    config_client,
 ):
     is_gpt_answer = True
 
@@ -250,16 +266,24 @@ def process_send_gpt(
         # Record the start time
         start_time = time.time()
         PROMPT_SQL = PromptTemplate(
-            input_variables=["input"], template=gpt_sql_prompt(user_language=user_language,client_branches=config_client['client_branches'], client_type=config_client['client_type'], 
-                                                               client_name=config_client['client_name'], client_currency_full=config_client['client_currency_full'], 
-                                                               client_currency_short=config_client['client_currency_short'], 
-                                                               client_country=config_client['client_country'], client_timezone=config_client['client_timezone'],
-                                                               client_categories=config_client['client_categories'], client_order_types=config_client['client_order_types'], 
-                                                               client_order_sources=config_client['client_order_sources'], client_order_statuses=config_client['client_order_statuses'], 
-                                                               client_id=active_client_context))
-        db_chain_session = get_db_session(
-            sql_engine, include_tables, llm, PROMPT_SQL
+            input_variables=["input"],
+            template=gpt_sql_prompt(
+                user_language=user_language,
+                client_branches=config_client["client_branches"],
+                client_type=config_client["client_type"],
+                client_name=config_client["client_name"],
+                client_currency_full=config_client["client_currency_full"],
+                client_currency_short=config_client["client_currency_short"],
+                client_country=config_client["client_country"],
+                client_timezone=config_client["client_timezone"],
+                client_categories=config_client["client_categories"],
+                client_order_types=config_client["client_order_types"],
+                client_order_sources=config_client["client_order_sources"],
+                client_order_statuses=config_client["client_order_statuses"],
+                client_id=active_client_context,
+            ),
         )
+        db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL)
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("Time taken for db_session:", elapsed_time, "seconds")
