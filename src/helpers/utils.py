@@ -88,6 +88,7 @@ def get_from_redis(redis_client, key, object_to_store, expiration_time):
 
 
 def redis_hash_get_or_create(redis_client, key, object_to_store, expiration_time):
+    print(object_to_store)
     for key_inner, value in object_to_store.items():
         if type(value) == list:
             object_to_store[key_inner] = ",".join(value)

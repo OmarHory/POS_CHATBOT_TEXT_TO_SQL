@@ -180,6 +180,7 @@ def bot():
             active_client.settings,
             redis_config["redis_timeout"],
         )
+        print(config_client)
         (
             active_client_id,
             message,
