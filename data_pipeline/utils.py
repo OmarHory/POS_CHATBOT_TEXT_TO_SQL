@@ -72,9 +72,9 @@ def call_foodics(
                 )
                 retries -= 1
                 time.sleep(70)  # wait 70 seconds before retrying
-        if do_checkpoint and counter == checkpoint_every and resource == "orders":
+        if do_checkpoint and counter == (checkpoint_every-1) and resource == "orders":
             print("check it")
-            checkpoint_path = f"data/{client_id}/raw/partitions/pull_orders_{page}.csv"
+            checkpoint_path = f"data/{client_id}/raw/pull_orders_{page}.csv"
             print("Writing to path.")
             df = pd.DataFrame(
                 [item for sublist in list_responses for item in sublist]

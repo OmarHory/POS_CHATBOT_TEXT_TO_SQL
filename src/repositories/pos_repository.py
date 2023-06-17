@@ -17,9 +17,9 @@ class PosRepository:
     def close_session(self):
         self.session.close()
     
-    def insert_data(self, client_id, csv_name, table_name):
+    def insert_data(self, client_id, csv_name, table_name, path):
         dirname = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        filename = os.path.join(dirname, f"data/{client_id}/processed/{csv_name}")
+        filename = os.path.join(dirname, f"{path}/{csv_name}")
         print(filename)
         ##query Client where slug = blk
         client = self.session.query(Client).filter(Client.id == client_id).first()

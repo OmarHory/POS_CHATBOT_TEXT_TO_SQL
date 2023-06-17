@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import uuid
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from src.helpers.utils import list_csv_files_in_directory
 from src.repositories.client_repository import ClientRepository
 from utils import call_foodics, generate_slug
 from dotenv import load_dotenv
@@ -48,9 +49,9 @@ def fetch_categories(client_id, token, category_name_col):
     df_categories.name = df_categories.name.apply(lambda x: x.capitalize())
     return df_categories
 
-def fetch_orders(client_id, token, client_timezone_offset):
+def fetch_orders(client_id, token, client_timezone_offset, path):
     filter = {}
-    path = f"data/{client_id}/raw/orders.csv"
+    # path = f"data/{client_id}/raw/orders.csv"
     if os.path.exists(path):
         df_orders = pd.read_csv(path)
         df_orders.reset_index(drop=True, inplace=True)
@@ -61,7 +62,6 @@ def fetch_orders(client_id, token, client_timezone_offset):
         list_responses = call_foodics("orders", last_page, client_id, token, includables=includables, filter=filter, do_checkpoint=False)
         df_orders = pd.DataFrame([item for sublist in list_responses for item in sublist])
         df_orders.to_csv(path, index=False)
-    df_orders = pd.read_csv(path)
     df_orders.reset_index(drop=True, inplace=True)
     df_orders.created_at = pd.to_datetime(df_orders.created_at)
     df_orders['branch'] = df_orders['branch'].astype(str)
@@ -80,10 +80,10 @@ def fetch_order_details(df_orders,df_products, client_id):
     list_order_details = []
     for index, row in df_orders.iterrows():
         order_header_id = row["id"]
-        branch_id = eval(row["branch"])["id"]
+        # branch_id = eval(row["branch"])["id"]
         created_at = row["created_at"]
         updated_at = row["updated_at"]
-        total_price = row["total_price"]
+        # total_price = row["total_price"]
         for order_product in eval(row["products"]):
             order_details_id = str(uuid.uuid4())
             product_id = order_product["product"]["id"]
@@ -161,26 +161,52 @@ def main():
     client_timezone_offset = int(client_settings["client_timezone_offset"])
     category_name_col = str(client_settings["category_name_col"])
 
+    orders_types = {1:'Dine In', 2:'Pick Up', 3:'Delivery', '4':'Drive Thru'}
+    orders_sources = {1:'Cashier', 2:'API', 3:'Call Center'}
+    orders_statuses = {1:'Pending', 2:'Active', 3:'Declined', 4:'Closed', 5:'Returned', 6:'Joined', 7:'Void'}
+
+    # Fetch one time data.
     df_branches = fetch_branches(client_id, token)
     df_products = fetch_products(client_id, token, category_name_col)
     df_categories = fetch_categories(client_id, token, category_name_col)
-    df_orders, orders_header = fetch_orders(client_id, token, client_timezone_offset)
-    orders_details = fetch_order_details(df_orders, df_products, client_id)
-    df_options = fetch_order_options(df_orders, orders_details)
 
-    df_products.to_csv(f"data/{client_id}/raw/products.csv", index=False)
-    orders_details.to_csv(f"data/{client_id}/raw/order_details.csv", index=False)
-    orders_header.to_csv(f"data/{client_id}/raw/order_header.csv", index=False)
-    df_categories.to_csv(f"data/{client_id}/raw/categories.csv", index=False)
-    df_branches.to_csv(f"data/{client_id}/raw/branches.csv", index=False)
-    df_options.to_csv(f"data/{client_id}/raw/options.csv", index=False)
+    df_branches['opening_from'] = pd.to_datetime(df_branches['opening_from'])
+    df_branches['opening_to'] = pd.to_datetime(df_branches['opening_to'])
+    
+    df_categories.to_csv(f"data/{client_id}/processed/categories.csv", index=False)
+    df_branches.to_csv(f"data/{client_id}/processed/branches.csv", index=False)
+    df_products.to_csv(f"data/{client_id}/processed/products.csv", index=False)
 
-    df_products.head()
-    orders_details.head()
-    orders_header.head()
-    df_branches.head()
-    df_categories.head()
-    df_options.head()
+
+    csv_files = list_csv_files_in_directory(f'data/{client_id}/raw')
+    if len(csv_files) == 0:
+        raise Exception('No CSV files found to be prepared.')
+    i = 1
+    for file in csv_files:
+        path = f"data/{client_id}/raw/{file}"
+        print("Preparing Path: ", path)
+        df_orders, orders_header = fetch_orders(client_id, token, client_timezone_offset, path)
+        orders_details = fetch_order_details(df_orders, df_products, client_id)
+        df_options = fetch_order_options(df_orders, orders_details)
+
+        # tiny processing
+        
+        orders_header['type'] = orders_header['type'].map(orders_types)
+        orders_header['source'] = orders_header['source'].map(orders_sources)
+        orders_header['status'] = orders_header['status'].map(orders_statuses)
+        orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
+        orders_header.drop_duplicates(inplace=True)
+        orders_header['status'].fillna('Void', inplace=True)
+        df_options['option_name_localized'].fillna('-', inplace=True)
+
+        
+        orders_details.to_csv(f"data/{client_id}/processed/order_details_{i}.csv", index=False)
+        orders_header.to_csv(f"data/{client_id}/processed/order_headers_{i}.csv", index=False)
+        df_options.to_csv(f"data/{client_id}/processed/order_options_{i}.csv", index=False)
+        i+=1
+
+        print("Finished preparing Path: ", path)
+        print("====================================")
 
 if __name__ == "__main__":
     main()
