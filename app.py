@@ -110,7 +110,6 @@ def bot():
 
     recording_url = request.form.get("MediaUrl0")
     if recording_url:
-        pass
         print("in audio")
         response = requests.get(recording_url)
         ogg_bytes = response.content

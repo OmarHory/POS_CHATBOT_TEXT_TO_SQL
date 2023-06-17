@@ -33,6 +33,7 @@ def call_foodics(
     return_last_page=False,
     from_page=1,
     checkpoint_every=4,
+    do_checkpoint=True,
 ):
     # check if token is not null
     if token is None:
@@ -71,7 +72,8 @@ def call_foodics(
                 )
                 retries -= 1
                 time.sleep(70)  # wait 70 seconds before retrying
-        if counter == checkpoint_every and resource == "orders":
+        if do_checkpoint and counter == checkpoint_every and resource == "orders":
+            print("check it")
             checkpoint_path = f"data/{client_id}/raw/partitions/pull_orders_{page}.csv"
             print("Writing to path.")
             df = pd.DataFrame(
