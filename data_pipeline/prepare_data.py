@@ -195,9 +195,12 @@ def main():
         orders_header['source'] = orders_header['source'].map(orders_sources)
         orders_header['status'] = orders_header['status'].map(orders_statuses)
         orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
-        orders_header.drop_duplicates(inplace=True)
         orders_header['status'].fillna('Void', inplace=True)
         df_options['option_name_localized'].fillna('-', inplace=True)
+
+        orders_header.drop_duplicates(subset=['id'], inplace=True)
+        df_options.drop_duplicates(subset=['option_id'], inplace=True)
+        orders_details.drop_duplicates(subset=['id'], inplace=True)
 
         
         orders_details.to_csv(f"data/{client_id}/processed/order_details_{i}.csv", index=False)

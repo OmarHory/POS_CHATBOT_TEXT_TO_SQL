@@ -106,3 +106,24 @@ def redis_hash_get_or_create(redis_client, key, object_to_store, expiration_time
 
 def list_csv_files_in_directory(directory_path):
     return [os.path.basename(f) for f in glob.glob(directory_path + "/*.csv")]
+
+
+def create_directories(client_id):
+
+    if not os.path.exists("data/"):
+        os.makedirs("data/")
+    # Loop through all clients
+    dirs = [
+        f"data/{client_id}",
+        f"data/{client_id}/raw",
+        f"data/{client_id}/processed",
+        f"data/{client_id}/processed/updates",
+        f"data/{client_id}/updates",
+    ]
+
+    for dir in dirs:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
+    os.chmod("data", 0o777)
+

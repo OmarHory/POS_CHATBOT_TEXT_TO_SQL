@@ -7,8 +7,8 @@ from models.models import Client, ClientUser
 class ClientRepository:
     def __init__(self, session):
         self.session = session
-    def create_client(self, name, slug):
-        client = Client(name=name, slug=slug)
+    def create_client(self, name, slug, token, settings, created_at, updated_at, deleted_at):
+        client = Client(name=name, slug=slug, token=token, settings=settings, created_at=created_at, updated_at=updated_at, deleted_at=deleted_at)
         self.session.add(client)
         self.session.commit()
         self.session.close()
