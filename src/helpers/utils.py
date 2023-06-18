@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import os, glob
+from src.gpt_api import send_to_gpt
 
 
 def get_wsd(dd):
