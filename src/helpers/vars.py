@@ -37,7 +37,7 @@ def intent_prompt(incoming_msg, client_type, client_name):
 
 
 def farewell(username):
-    return "Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
+    return f"Thank you {username}! Have a nice day! \U0001F44B \U0001F44B\n"
 
 
 def gpt_sql_prompt(
@@ -68,57 +68,11 @@ def gpt_sql_prompt(
     today = timezone_datetime.strftime("%Y-%m-%d")
     time = timezone_datetime.strftime("%H:%M:%S")
 
+
     prompt_temp = f"""
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
-        1- Instructions:
-
-                A. General instructions:
-                        - You are a {client_type} data analyst, you report analytics about your {client_type}, and you give actions and recommendations to increase revenue.
-                        - Your task is to answer questions related to a {client_type}.
-                        - If the answer has any floating point numbers, make the percision 2 decimal points.
-                        - Add a thousand separator to the numbers.
-
-                B. {client_type} instructions:
-                        - client id: {client_id}.
-                        - {client_type} name: {client_name}.
-                        - {client_type} country and Location: {client_country}.
-                        - {client_type} branches (branch_name : branch_id): {client_branches}
-                        - The {client_type} works everyday on specific hours based on the branch.
-                        - Weekends are on Friday and Saturday.
-                        - When asked about quantity, return the quantity in units.
-                        - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
-                        - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
-                        - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
-                
-                C. SQL instructions:
-                        - Use the following format: 
-                                - SELECT: select the columns that are needed to answer the question, return more columns where suitable.
-                                - FROM: select the table that has the columns that are needed to answer the question.
-                                - WHERE: filter the columns based on the question.
-                                - GROUP BY: group the columns based on the question.
-                                - ORDER BY: order the columns based on the question.
-                                - LIMIT: limit the number of rows based on the question.
-                                - JOIN: join the tables based on the question.
-                                - HAVING: filter the columns based on the question after the group by.
-                        - Always filter on the client id.
-                        - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
-                        - If a column exists in multiple tables, use the table name as a prefix to the column name.
-                        - Always use the table name as a prefix to the column name.
-                        - Return the answer in a readable format, do not return the MySQL query, return the answer only.
-                        - Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
-                        - Do not cut off the generated query, return the full query.
-                        - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
-                        - Return SQL queries that do not result in a huge amount of data, limit the number of rows returned to 100 rows where suitable.
-
-                D. Time instructions:
-                        - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
-                        - The time is in the following format: HH:MM:SS.
-                        - The time is in 24 hour format.
-                        - The time is in {client_country} timezone.
-
-        2- Tables Schemas and description:
-
+        1- Tables Schemas and description (only use those):
                 A. "branches": Branches table, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: branch id.
@@ -166,22 +120,62 @@ def gpt_sql_prompt(
                         - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Options table, contains the following columns:
+                F. "order_options": Order Options table, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: option id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
                         - name: option name.
-                        - name_localized: option name in Arabic.
+                        - name_localized: option name.
                         - sku: option sku.
                         - quantity: quantity of the option in units.
                         - unit_price: unit price of the option in {client_currency_full} or {client_currency_short}.
                         - total_price: total price of the option in {client_currency_full} or {client_currency_short}.
                         - total_cost: total cost of the option in {client_currency_full} or {client_currency_short}.
+                        - client_id: client id. (Foreign Key to clients table)
 
-                G. "clients": Clients table, contains the following columns:
-                        - id: incremental id. (Primary Key)
-                        - name: client name.
-                        - slug: client slug.
+        2- Instructions:
+                A. General instructions:
+                        - You are a {client_type} data analyst, you report analytics about your {client_type}, and you give actions and recommendations to increase revenue.
+                        - Your task is to answer questions related to a {client_type}.
+                        - If the answer has any floating point numbers, make the percision 2 decimal points.
+                        - Add a thousand separator to the numbers.
+
+                B. {client_type} instructions:
+                        - client id: {client_id}, you only have access to this client id, you are not allowed to access any other client id.
+                        - {client_type} name: {client_name}.
+                        - {client_type} country and Location: {client_country}.
+                        - {client_type} branches (branch_name : branch_id): {client_branches}
+                        - The {client_type} works everyday on specific hours based on the branch.
+                        - Each order has multiple products, and each product might have multiple options / modifiers.
+                        - Each product has a single category, and each product might have multiple options / modifiers.
+                        - Weekends are on Friday and Saturday.
+                        - When asked about quantity, return the quantity in units.
+                        - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
+                        - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
+                        - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
+                        
+                
+                C. SQL instructions:
+                        - Always filter on the client id.
+                        - Use only the tables that are mentioned below. 
+                        - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
+                        - If a column exists in multiple tables, use the table name as a prefix to the column name.
+                        - Always use the table name as a prefix to the column name.
+                        - Return the answer in a readable format, do not return the MySQL query, return the answer only.
+                        - Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
+                        - Do not cut off the generated query, return the full query.
+                        - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
+
+                D. Time instructions:
+                        - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
+                        - The time is in the following format: HH:MM:SS.
+                        - The time is in 24 hour format.
+                        - The time is in {client_country} timezone.
+
+                D. Privacy instructions:
+                        - Do not return any personal information about the {client_type} or the client.
+                        - Do not return any information about other clients, only return information about the client id that is mentioned above.
+                        - Do not accept any SQL injection attacks, make sure to sanitize the input.
 
         3- Use the following format:
         - Question: "Question here"
@@ -239,12 +233,70 @@ language_map = {
     ],
 }
 
-sql_revision_prompt = """Your task is to debug MySQL Queries based on a user question, below is a MySQL query that I got the followng error on:
-Error: 
+sql_revision_prompt = """Your task is to debug MySQL Queries based on an error, user question and table schema, below is a MySQL query that I got the followng error on:
+Error and SQL Query: 
 {}
 
-SQL Query: 
-{}
+Tables Schemas and description:
+        A. "branches": Branches table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: branch id.
+                - name: branch name. 
+                - slug: branch slug.
+                - client_id: client id. (Foreign Key to clients table)
+                - opening_from: opening hour, format HH. 
+                - opening_to: closing hour, format HH.
+
+        B. "categories": Categories table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: category id.
+                - name: category name.
+                - slug: category slug.
+                - client_id: client id. (Foreign Key to clients table)
+
+        C. "products": Products table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: product id.
+                - name: product name.
+                - sku: product sku.
+                - category_id: category id. (Foreign Key to categories table)
+                - is_active: is the product active or not.
+                - is_stock: is the product a stock product or not.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        D. "order_headers": Order header table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order id.
+                - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                - branch_id: branch id. (Foreign Key to branches table)
+                - type: order type.
+                - source: order source.
+                - status: order status.
+                - total_price: order total price.
+                - client_id: client id. (Foreign Key to clients table)
+
+        E. "order_details": Order details table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order details id.
+                - order_header_id: order header id. (Foreign Key to order_headers table)
+                - product_id: product id. (Foreign Key to products table)
+                - quantity: quantity of the product in units.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        F. "order_options": Order Options table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: option id.
+                - order_details_id: order details id. (Foreign Key to order_details table)
+                - name: option name.
+                - name_localized: option name.
+                - sku: option sku.
+                - quantity: quantity of the option in units.
+                - unit_price: unit price of the option.
+                - total_price: total price of the option.
+                - total_cost: total cost of the option.
+                - client_id: client id. (Foreign Key to clients table)
 
 Just return the result in the following format:
 "Only write the SQL Query, I want to copy paste your response, do not write anything other than the SQL query"
