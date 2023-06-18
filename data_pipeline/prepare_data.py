@@ -273,7 +273,7 @@ def main():
         orders_header['status'] = orders_header['status'].map(orders_statuses)
         orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
         orders_header['status'].fillna('Void', inplace=True)
-        df_options['option_name_localized'].fillna('-', inplace=True)
+        df_options['name_localized'].fillna('-', inplace=True)
 
         # orders_header.drop_duplicates(subset=['id'], inplace=True)
         # df_options.drop_duplicates(subset=['option_id'], inplace=True)

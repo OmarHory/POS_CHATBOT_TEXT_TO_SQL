@@ -188,7 +188,7 @@ class MessageLog(Base):
     phone_number = Column(String(30))
     input = Column(Text)
     output = Column(Text)
-    user_intent = Column(String(30))
+    user_intent = Column(String(100))
     message_type = Column(Text)
     sql_cmd = Column(Text)
     sql_result = Column(Text)
