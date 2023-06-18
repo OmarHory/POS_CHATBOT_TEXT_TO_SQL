@@ -1,4 +1,6 @@
+from abc import ABC, abstractmethod
 from sqlalchemy import create_engine, func
+from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import IntegrityError,PendingRollbackError
 from sqlalchemy.orm import sessionmaker
@@ -32,11 +34,19 @@ class PosRepository:
 
         df = pd.read_csv(filename)
 
-        if table_name == "branches":
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        Branch(
+        for _, row in df.iterrows():
+            model = self.get_model(table_name)
+            # check if record exists (use exists() method)
+            col = "id"
+            if table_name == "order_options":
+                col = "option_id" # ROG3A: make it id
+            record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
+            if record_exists:
+                print("Record {} already exists.".format(row["id"]))
+                pass
+            else:
+                if table_name == "branches":
+                    obj = Branch(
                             external_id=row["id"],
                             name=row["name"],
                             slug=row["slug"],
@@ -46,19 +56,17 @@ class PosRepository:
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
-                    )
-                    self.session.commit()
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-            
-        
-        if table_name == "products":
-            for index, row in df.iterrows():
-                #self.dd(df.shape)
-                try:
-                    self.session.add(
-                        Product(
+                elif table_name == "categories":
+                    obj = Category(
+                            external_id=row["id"],
+                            name=row["name"],
+                            slug=row["slug"],
+                            client_id=client_id,
+                            created_at=pd.to_datetime(row["created_at"]),
+                            updated_at=pd.to_datetime(row["updated_at"]),
+                        )
+                elif table_name == "products":
+                    obj = Product(
                             external_id=row["id"],
                             name=row["name"],
                             sku=row["sku"],
@@ -70,39 +78,8 @@ class PosRepository:
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
-                    )
-                    self.session.commit()
-                    
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-
-        if table_name == "categories":
-
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        Category(
-                            external_id=row["id"],
-                            name=row["name"],
-                            slug=row["slug"],
-                            client_id=client_id,
-                            created_at=pd.to_datetime(row["created_at"]),
-                            updated_at=pd.to_datetime(row["updated_at"]),
-                        )
-                    )
-                    self.session.commit()
-                    
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-
-        if table_name == "order_headers":
-            for index, row in df.iterrows():
-                print(index)
-                try:
-                    self.session.add(
-                        OrderHeader(
+                elif table_name == "order_headers":
+                    obj = OrderHeader(
                             external_id=row["id"],
                             branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
                             ordered_at=pd.to_datetime(row["ordered_at"]),
@@ -114,19 +91,8 @@ class PosRepository:
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
-                    )
-                    self.session.commit()
-                    
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-                    pass
-        
-        if table_name == "order_details":
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        OrderDetail(
+                elif table_name == "order_details":
+                    obj = OrderDetail(
                             external_id=row["id"],
                             order_header_id=self.query_record_by_uuid(table_name='order_headers', external_id=row["header_id"]),
                             product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
@@ -136,18 +102,8 @@ class PosRepository:
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
-                    )
-                    self.session.commit()
-                    
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-
-        if table_name == 'order_options':
-            for index, row in df.iterrows():
-                try:
-                    self.session.add(
-                        OrderOption(
+                elif table_name == "order_options":
+                    obj = OrderOption(
                             external_id=row["option_id"],
                             order_details_id=self.query_record_by_uuid(table_name='order_details', external_id=row["order_details_id"]),
                             name=row["option_name"],
@@ -159,15 +115,11 @@ class PosRepository:
                             total_cost=row["option_total_cost"],
                             client_id=client_id,
                         )
-                    )
-                    self.session.commit()
+                else:
+                    print("Table name not found.")
+                    return
 
-                    
-                except (IntegrityError, PendingRollbackError) as e:
-                    # Handle the duplicate entry exception here
-                    print("Duplicate entry error:", str(e))
-        
-        # self.session.commit()
+                self.insert_record(obj)
 
 
     def query_record_by_uuid(self, table_name, external_id):
@@ -197,7 +149,10 @@ class PosRepository:
             return Category
         if table_name == "order_options":
             return OrderOption
-        
+    
+    def insert_record(self, model_obj):
+        self.session.add(model_obj)
+        self.session.commit()
 
     def dd(self, obj):
         print(obj)
