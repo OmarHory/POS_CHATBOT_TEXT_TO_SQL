@@ -32,7 +32,11 @@ class PosRepository:
             print("Client {} not found.".format(client_id))
             return
 
-        df = pd.read_csv(filename)
+        try:
+            df = pd.read_csv(filename)
+        except pd.errors.EmptyDataError:
+            print("File {} is empty.".format(filename))
+            return
 
         for _, row in df.iterrows():
             model = self.get_model(table_name)
