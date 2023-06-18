@@ -1,5 +1,12 @@
 """Chain for interacting with SQL Database."""
+
 from __future__ import annotations
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from src.helpers.vars import sql_revision_prompt
+from src.gpt_api import send_to_gpt
+
 
 from typing import Any, Dict, List
 
@@ -12,9 +19,7 @@ from langchain.prompts.base import BasePromptTemplate
 from langchain.schema import BaseLanguageModel
 from langchain.sql_database import SQLDatabase
 
-# from src.helpers.vars import sql_revision_prompt
-# from src.helpers.utils import send_to_gpt
-# from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
+from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 
 
 def get_db_session(engine, include_tables, llm, PROMPT_SQL):

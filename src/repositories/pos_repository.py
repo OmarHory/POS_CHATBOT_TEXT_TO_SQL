@@ -42,7 +42,7 @@ class PosRepository:
                 col = "option_id" # ROG3A: make it id
             record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
             if record_exists:
-                print("Record {} already exists.".format(row["id"]))
+                print("Record {} already exists.".format(row[col]))
                 pass
             else:
                 if table_name == "branches":
