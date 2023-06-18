@@ -275,7 +275,7 @@ def main():
         orders_header['status'].fillna('Void', inplace=True)
         #check size of df_options
         if df_options.shape[0] > 0:
-            df_options['name_localized'].fillna('-', inplace=True)
+            df_options['option_name_localized'].fillna('-', inplace=True)
 
         # orders_header.drop_duplicates(subset=['id'], inplace=True)
         # df_options.drop_duplicates(subset=['option_id'], inplace=True)
