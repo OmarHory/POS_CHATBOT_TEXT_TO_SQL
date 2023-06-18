@@ -6,6 +6,7 @@ test.ipynb
 cron_jobs_logs.txt
 data/
 data_chicks/
+cron_logs/
 
 .env
 export_vars.sh
