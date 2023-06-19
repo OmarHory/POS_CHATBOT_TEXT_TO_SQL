@@ -156,6 +156,14 @@ def gpt_sql_prompt(
                         
                 
                 C. SQL instructions:
+                        - Use the following format: 
+                                - SELECT: select the columns that are needed to answer the question, return more columns where suitable.
+                                - FROM: select the table that has the columns that are needed to answer the question.
+                                - WHERE: filter the columns based on the question.
+                                - GROUP BY: group the columns based on the question.
+                                - ORDER BY: order the columns based on the question.
+                                - JOIN: join the tables based on the question.
+                                - HAVING: filter the columns based on the question after the group by.
                         - Always filter on the client id.
                         - Use only the tables that are mentioned below. 
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
@@ -165,6 +173,8 @@ def gpt_sql_prompt(
                         - Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
                         - Do not cut off the generated query, return the full query.
                         - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
+                        - When you are asked about options, make sure to consult the order_details and order_headers tables.
+                        - ordered_at can be only found in the order_headers table.
 
                 D. Time instructions:
                         - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
