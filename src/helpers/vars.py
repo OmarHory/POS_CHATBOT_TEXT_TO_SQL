@@ -14,7 +14,7 @@ def general_menu(username, client_name):
 def intent_prompt(incoming_msg, client_type, client_name):
     intent_prompt = f"""What is the intent of this sentence:
 
-        "{incoming_msg}"
+        Sentence: "{incoming_msg}"
 
         Work as an intent classifier that works for a {client_type} called [{client_name}]. Classify the intent of the above prompt, return the output without formatting, just the intent.
 
