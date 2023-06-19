@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, and_
 from sqlalchemy import exists
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.exc import IntegrityError,PendingRollbackError
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import os, sys
@@ -44,7 +42,13 @@ class PosRepository:
             col = "id"
             if table_name == "order_options":
                 col = "option_id" # ROG3A: make it id
-            record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
+            
+            if table_name == "order_details":
+                filter_cols = [model.order_header_id == row['header_id'], model.product_id == row['product_id']]
+                filter_condition = and_(*filter_cols)
+                record_exists = self.session.query(exists().where(filter_condition)).scalar()
+            else:
+                record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
             if record_exists:
                 print("Record {} already exists.".format(row[col]))
                 pass
