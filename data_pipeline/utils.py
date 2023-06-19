@@ -1,6 +1,8 @@
 import requests
 import time
 import pandas as pd
+import math
+import re
 
 
 def foodics_api(resource, token, payload={}):
@@ -40,7 +42,11 @@ def call_foodics(
         raise Exception("Token is null. Please provide a valid token.")
 
     list_responses = []
-    counter = 0
+    counter = 1
+
+    total_chunks = math.ceil(last_page / checkpoint_every)
+    chunk_counter = 1
+    checkpoint_list = []
 
     for page in range(from_page, last_page + 1):
         print(f"page {page}")
@@ -72,16 +78,19 @@ def call_foodics(
                 )
                 retries -= 1
                 time.sleep(70)  # wait 70 seconds before retrying
-        if do_checkpoint and counter == (checkpoint_every-1) and resource == "orders":
-            print("check it")
-            checkpoint_path = f"data/{client_id}/raw/pull_orders_{page}.csv"
-            print("Writing to path.")
-            df = pd.DataFrame(
-                [item for sublist in list_responses for item in sublist]
-            )
-            df.to_csv(checkpoint_path, index=False)
-            counter = 0
-            list_responses = []
+
+        if do_checkpoint:
+            if counter == checkpoint_every or page == last_page:
+                checkpoint_path = f"data/{client_id}/raw/pull_orders_{chunk_counter}.csv"
+                print("Writing to path.")
+                df = pd.DataFrame(
+                    [item for sublist in list_responses for item in sublist]
+                )
+                df.to_csv(checkpoint_path, index=False)
+                checkpoint_list.append(checkpoint_path)
+                chunk_counter += 1
+                counter = 1
+                list_responses = []
 
         if not success:
             print(f"Failed to retrieve data for page {page} after 3 retries.")
@@ -89,10 +98,7 @@ def call_foodics(
 
         counter += 1
 
-    return list_responses
-
-
-import re
+    return checkpoint_list
 
 
 def generate_slug(string):
