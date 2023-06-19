@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#activate virtualenv
+cd /home/ubuntu/
+. .venv/bin/activate
+cd /home/ubuntu/bot/foodics_gpt/
+
 # Check if the client ID parameter is provided
 if [ -z "$1" ]; then
     echo "Client ID parameter is missing. Aborting."
@@ -10,7 +15,7 @@ fi
 CLIENT_ID="$1"
 
 # Set the log directory path
-LOG_DIR="../../cron_logs/$CLIENT_ID"
+LOG_DIR="cron_logs/$CLIENT_ID"
 
 echo "Log directory: $LOG_DIR"
 
