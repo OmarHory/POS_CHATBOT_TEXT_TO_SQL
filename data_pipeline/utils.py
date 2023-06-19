@@ -98,7 +98,7 @@ def call_foodics(
 
         counter += 1
 
-    return checkpoint_list
+    return list_responses
 
 
 def generate_slug(string):

@@ -56,6 +56,7 @@ def fetch_orders(client_id, token, client_timezone_offset, path):
     filter = {}
     # path = f"data/{client_id}/raw/orders.csv"
     if os.path.exists(path):
+        print("Exists")
         df_orders = pd.read_csv(path)
         df_orders.reset_index(drop=True, inplace=True)
     else:
@@ -233,8 +234,8 @@ def main():
             path = f"data/{client_id}/raw/{file}"
             print("Preparing Path:", path)
             df_orders, orders_header = fetch_orders(client_id, token, client_timezone_offset, path)
-            orders_details, df_categories = fetch_order_details(orders_header, df_products, df_categories, client_id)
-            df_options = fetch_order_options(orders_header, orders_details)
+            orders_details, df_categories = fetch_order_details(df_orders, df_products, df_categories, client_id)
+            df_options = fetch_order_options(df_orders, orders_details)
 
             # Perform additional processing...
             
