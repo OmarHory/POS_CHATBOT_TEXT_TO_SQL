@@ -41,6 +41,8 @@ if method == 'upload':
     csv_files = list_csv_files_in_directory(f'data/{client_id}/{local_data_folder}')
     if len(csv_files) == 0:
         raise Exception('No CSV files found')
+    if files is not None:
+        csv_files = [os.path.basename(file) for file in files]
     handler.upload_files(bucket_name, aws_folder_path, local_path, csv_files)
 
 elif method == 'download':
