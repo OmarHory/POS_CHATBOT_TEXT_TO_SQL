@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import os, glob
-from src.gpt_api import send_to_gpt
 
 
 def get_wsd(dd):
@@ -58,6 +57,7 @@ def get_formatted_intent(intent):
 
 def translate_message(incoming_msg, language_map, prompt):
     # lang = detect(incoming_msg)
+    from src.gpt_api import send_to_gpt
     user_language = "English"
     for letter in language_map["Arabic"]:
         if letter in incoming_msg:
