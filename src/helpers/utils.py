@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import os, glob
+import re
+
 
 
 def get_wsd(dd):
@@ -129,3 +131,8 @@ def create_directories(client_id):
 
     os.chmod("data", 0o777)
 
+
+
+def sql_check_value_filter(sql_query, column, value):
+    value_pattern = re.compile(r'\b{}\s*=\s*{}'.format(column,value), re.IGNORECASE)
+    return bool(value_pattern.search(sql_query))

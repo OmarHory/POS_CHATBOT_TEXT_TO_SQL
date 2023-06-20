@@ -5,6 +5,7 @@ from src.helpers.vars import (
     sorry_instruction,
     language_map,
     translate_ar_prompt_,
+    sql_add_filter_prompt,
     sorry_words,
     farewell,
 )
@@ -16,6 +17,7 @@ from src.helpers.utils import (
     translate_message,
     strip_message,
     redis_hash_get_or_create,
+    sql_check_value_filter,
 )
 from src.DatabaseChain import get_db_session
 from src.helpers.vars import gpt_sql_prompt
@@ -282,8 +284,8 @@ def process_send_gpt(
                 client_order_statuses=config_client["client_order_statuses"],
                 client_id=active_client_context,
             ),
-        )
-        db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL)
+        );
+        db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL, {"active_client": int(active_client_context)})
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("Time taken for db_session:", elapsed_time, "seconds")
@@ -292,6 +294,7 @@ def process_send_gpt(
             response = dict_response["result"]
             sql_dict = dict_response["intermediate_steps"]
             sql_cmd = sql_dict[0]
+            sql_result = sql_dict[1]
             sql_result = sql_dict[1]
 
             message_type = "main_response"

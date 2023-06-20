@@ -312,6 +312,147 @@ Just return the result in the following format:
 "Only write the SQL Query, I want to copy paste your response, do not write anything other than the SQL query"
 """
 
+sql_revision_prompt = """Your task is to add MySQL Queries based on an error, user question and table schema, below is a MySQL query that I got the followng error on:
+Error and SQL Query: 
+{}
+
+Tables Schemas and description:
+        A. "branches": Branches table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: branch id.
+                - name: branch name. 
+                - slug: branch slug.
+                - client_id: client id. (Foreign Key to clients table)
+                - opening_from: opening hour, format HH. 
+                - opening_to: closing hour, format HH.
+
+        B. "categories": Categories table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: category id.
+                - name: category name.
+                - slug: category slug.
+                - client_id: client id. (Foreign Key to clients table)
+
+        C. "products": Products table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: product id.
+                - name: product name.
+                - sku: product sku.
+                - category_id: category id. (Foreign Key to categories table)
+                - is_active: is the product active or not.
+                - is_stock: is the product a stock product or not.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        D. "order_headers": Order header table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order id.
+                - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                - branch_id: branch id. (Foreign Key to branches table)
+                - type: order type.
+                - source: order source.
+                - status: order status.
+                - total_price: order total price.
+                - client_id: client id. (Foreign Key to clients table)
+
+        E. "order_details": Order details table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order details id.
+                - order_header_id: order header id. (Foreign Key to order_headers table)
+                - product_id: product id. (Foreign Key to products table)
+                - quantity: quantity of the product in units.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        F. "order_options": Order Options table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: option id.
+                - order_details_id: order details id. (Foreign Key to order_details table)
+                - name: option name.
+                - name_localized: option name.
+                - sku: option sku.
+                - quantity: quantity of the option in units.
+                - unit_price: unit price of the option.
+                - total_price: total price of the option.
+                - total_cost: total cost of the option.
+                - client_id: client id. (Foreign Key to clients table)
+
+Just return the result in the following format:
+"Only write the SQL Query, I want to copy paste your response, do not write anything other than the SQL query"
+"""
+
+
+sql_add_filter_prompt = """Your task is to modify to the below MySQL query a filter client_id=2  (handle the aliasing correctly and prefixes if exist.)
+
+SQL Query: {}
+
+Tables Schemas and description:
+        A. "branches": Branches table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: branch id.
+                - name: branch name. 
+                - slug: branch slug.
+                - client_id: client id. (Foreign Key to clients table)
+                - opening_from: opening hour, format HH. 
+                - opening_to: closing hour, format HH.
+
+        B. "categories": Categories table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: category id.
+                - name: category name.
+                - slug: category slug.
+                - client_id: client id. (Foreign Key to clients table)
+
+        C. "products": Products table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: product id.
+                - name: product name.
+                - sku: product sku.
+                - category_id: category id. (Foreign Key to categories table)
+                - is_active: is the product active or not.
+                - is_stock: is the product a stock product or not.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        D. "order_headers": Order header table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order id.
+                - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                - branch_id: branch id. (Foreign Key to branches table)
+                - type: order type.
+                - source: order source.
+                - status: order status.
+                - total_price: order total price.
+                - client_id: client id. (Foreign Key to clients table)
+
+        E. "order_details": Order details table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: order details id.
+                - order_header_id: order header id. (Foreign Key to order_headers table)
+                - product_id: product id. (Foreign Key to products table)
+                - quantity: quantity of the product in units.
+                - price: price of the product.
+                - client_id: client id. (Foreign Key to clients table)
+
+        F. "order_options": Order Options table, contains the following columns:
+                - id: incremental id. (Primary Key)
+                - external_id: option id.
+                - order_details_id: order details id. (Foreign Key to order_details table)
+                - name: option name.
+                - name_localized: option name.
+                - sku: option sku.
+                - quantity: quantity of the option in units.
+                - unit_price: unit price of the option.
+                - total_price: total price of the option.
+                - total_cost: total cost of the option.
+                - client_id: client id. (Foreign Key to clients table)
+
+
+Return the result in the following format:
+SQL Query: [The Modified SQL Query]
+
+"""
+
 
 sorry_words = [
     "sorry",

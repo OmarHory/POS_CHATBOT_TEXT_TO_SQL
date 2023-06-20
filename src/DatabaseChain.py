@@ -4,7 +4,8 @@ from __future__ import annotations
 import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from src.helpers.vars import sql_revision_prompt
+from src.helpers.vars import sql_revision_prompt, sql_add_filter_prompt
+from src.helpers.utils import sql_check_value_filter
 from src.gpt_api import send_to_gpt
 
 
@@ -22,10 +23,10 @@ from langchain.sql_database import SQLDatabase
 from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 
 
-def get_db_session(engine, include_tables, llm, PROMPT_SQL):
+def get_db_session(engine, include_tables, llm, PROMPT_SQL, properties):
     sql_database = SQLDatabase(engine, include_tables=include_tables)
     db_chain_session = SQLDatabaseChain(
-        llm=llm, database=sql_database, prompt=PROMPT_SQL
+        llm=llm, database=sql_database, prompt=PROMPT_SQL, properties=properties
     )
     return db_chain_session
 
@@ -47,6 +48,7 @@ class SQLDatabaseChain(Chain, BaseModel):
     """SQL Database to connect to."""
     prompt: BasePromptTemplate = PROMPT
     """Prompt to use to translate natural language to SQL."""
+    properties: Dict[str, Any] = {}
     top_k: int = 5
     """Number of results to return from the query"""
     input_key: str = "query"  #: :meta private:
@@ -82,6 +84,7 @@ class SQLDatabaseChain(Chain, BaseModel):
             return [self.output_key, "intermediate_steps"]
 
     def _call(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        print("properties:", self.properties)
         llm_chain = LLMChain(llm=self.llm, prompt=self.prompt)
         input_text = f"{inputs[self.input_key]} \nSQLQuery:"
         self.callback_manager.on_text(input_text, verbose=self.verbose)
@@ -98,6 +101,12 @@ class SQLDatabaseChain(Chain, BaseModel):
         intermediate_steps = []
 
         sql_cmd = llm_chain.predict(**llm_inputs)
+        if not sql_check_value_filter(sql_cmd, 'client_id', self.properties['active_client']):
+            prompt_modify_sql = sql_add_filter_prompt.format(sql_cmd)
+            print("\nPrompt Add Client ID filter :\n", prompt_modify_sql, "\n")
+            sql_cmd = send_to_gpt(prompt_modify_sql)
+            print("New sql_cmd:\n", sql_cmd)
+
         print("\nsql_cmd:\n", sql_cmd)
         intermediate_steps.append(sql_cmd)
         self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
