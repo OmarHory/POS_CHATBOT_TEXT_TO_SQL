@@ -97,7 +97,6 @@ def gpt_sql_prompt(
                         - category_id: category id. (Foreign Key to categories table)
                         - is_active: is the product active or not.
                         - is_stock: is the product a stock product or not.
-                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 D. "order_headers": Order header table, contains the following columns:
@@ -108,7 +107,6 @@ def gpt_sql_prompt(
                         - type: order type, can be one of the following: {client_order_types}.
                         - source: order source, can be one of the following: {client_order_sources}.
                         - status: order status, can be one of the following: {client_order_statuses}.
-                        - total_price: order total price in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 E. "order_details": Order details table, contains the following columns:
