@@ -170,6 +170,7 @@ def gpt_sql_prompt(
                         - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
                         - When you are asked about options, make sure to consult the order_details and order_headers tables.
                         - ordered_at can be only found in the order_headers table.
+                        - When you are asked about sales, consult the order_headers total_price column only!
 
                 D. Time instructions:
                         - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
