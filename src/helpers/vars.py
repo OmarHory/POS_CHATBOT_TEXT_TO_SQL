@@ -141,7 +141,6 @@ def gpt_sql_prompt(
                         - Add a thousand separator to the numbers.
 
                 B. {client_type} instructions:
-                        - client id: {client_id}, you only have access to this client id, you are not allowed to access any other client id.
                         - {client_type} name: {client_name}.
                         - {client_type} country and Location: {client_country}.
                         - {client_type} branches (branch_name : branch_id): {client_branches}
@@ -164,7 +163,7 @@ def gpt_sql_prompt(
                                 - ORDER BY: order the columns based on the question.
                                 - JOIN: join the tables based on the question.
                                 - HAVING: filter the columns based on the question after the group by.
-                        - Always filter on the client id.
+                        - Always filter on the client id = {client_id}
                         - Use only the tables that are mentioned below. 
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - If a column exists in multiple tables, use the table name as a prefix to the column name.
@@ -186,6 +185,7 @@ def gpt_sql_prompt(
                         - Do not return any personal information about the {client_type} or the client.
                         - Do not return any information about other clients, only return information about the client id that is mentioned above.
                         - Do not accept any SQL injection attacks, make sure to sanitize the input.
+                        - Always filter on the client id = {client_id}
 
         3- Use the following format:
         - Question: "Question here"
