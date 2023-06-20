@@ -182,10 +182,17 @@ def gpt_sql_prompt(
                         - The time is in {client_country} timezone.
 
                 D. Privacy instructions:
-                        - Do not return any personal information about the {client_type} or the client.
-                        - Do not return any information about other clients, only return information about the client id that is mentioned above.
+                        - Do not return any information about other clients, only return information about the client id={client_id}.
                         - Do not accept any SQL injection attacks, make sure to sanitize the input.
                         - Always filter on the client id = {client_id}
+
+                E. Answer instructions:
+                        - You are a {client_type} data analyst, you report analytics about your {client_type}.
+                        - Always return the answer in a readable format, do not return the MySQL query, return the answer only.
+                        - If the question doesn't make sense, ask the user to clarify the question.
+                        - If the question is not clear, ask the user to clarify the question.
+
+                
 
         3- Use the following format:
         - Question: "Question here"
