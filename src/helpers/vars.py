@@ -277,7 +277,6 @@ Tables Schemas and description:
                 - category_id: category id. (Foreign Key to categories table)
                 - is_active: is the product active or not.
                 - is_stock: is the product a stock product or not.
-                - price: price of the product.
                 - client_id: client id. (Foreign Key to clients table)
 
         D. "order_headers": Order header table, contains the following columns:
@@ -288,7 +287,6 @@ Tables Schemas and description:
                 - type: order type.
                 - source: order source.
                 - status: order status.
-                - total_price: order total price.
                 - client_id: client id. (Foreign Key to clients table)
 
         E. "order_details": Order details table, contains the following columns:
@@ -346,7 +344,6 @@ Tables Schemas and description:
                 - category_id: category id. (Foreign Key to categories table)
                 - is_active: is the product active or not.
                 - is_stock: is the product a stock product or not.
-                - price: price of the product.
                 - client_id: client id. (Foreign Key to clients table)
 
         D. "order_headers": Order header table, contains the following columns:
@@ -357,7 +354,6 @@ Tables Schemas and description:
                 - type: order type.
                 - source: order source.
                 - status: order status.
-                - total_price: order total price.
                 - client_id: client id. (Foreign Key to clients table)
 
         E. "order_details": Order details table, contains the following columns:
