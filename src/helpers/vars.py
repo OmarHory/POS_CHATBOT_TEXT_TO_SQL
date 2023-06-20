@@ -73,7 +73,7 @@ def gpt_sql_prompt(
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
         1- Tables Schemas and description (only use those):
-                A. "branches": Branches table, contains the following columns:
+                A. "branches": Branches of the {client_type}, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: branch id.
                         - name: branch name. 
@@ -82,14 +82,7 @@ def gpt_sql_prompt(
                         - opening_from: opening hour, format HH. 
                         - opening_to: closing hour, format HH.
 
-                B. "categories": Categories table, contains the following columns:
-                        - id: incremental id. (Primary Key)
-                        - external_id: category id.
-                        - name: category name; can be one of the following: {client_categories}
-                        - slug: category slug.
-                        - client_id: client id. (Foreign Key to clients table)
-
-                C. "products": Products table, contains the following columns:
+                B. "products": A product has a single category and multiple options / modifiers, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: product id.
                         - name: product name.
@@ -97,9 +90,17 @@ def gpt_sql_prompt(
                         - category_id: category id. (Foreign Key to categories table)
                         - is_active: is the product active or not.
                         - is_stock: is the product a stock product or not.
+                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                D. "order_headers": Order header table, contains the following columns:
+                B. "categories": Categories of the products, each product has a single category, contains the following columns:
+                        - id: incremental id. (Primary Key)
+                        - external_id: category id.
+                        - name: category name; can be one of the following: {client_categories}
+                        - slug: category slug.
+                        - client_id: client id. (Foreign Key to clients table)
+
+                D. "order_headers": Order header is the main table, which has general information about the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order id.
                         - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
@@ -109,7 +110,7 @@ def gpt_sql_prompt(
                         - status: order status, can be one of the following: {client_order_statuses}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                E. "order_details": Order details table, contains the following columns:
+                E. "order_details": Order details is the table that contains the products of the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
@@ -118,7 +119,7 @@ def gpt_sql_prompt(
                         - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Order Options table, contains the following columns:
+                F. "order_options": Order Options is the table that contains the options / modifiers on the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: option id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
@@ -189,16 +190,19 @@ def gpt_sql_prompt(
                         - Always return the answer in a readable format, do not return the MySQL query, return the answer only.
                         - If the question doesn't make sense, ask the user to clarify the question.
                         - If the question is not clear, ask the user to clarify the question.
+                        - provide good recommendations and actions for the {client_type} manager to increase revenue.
+                        - If you think the question is not clear. ask the user to clarify the question.
 
                 
 
         3- Use the following format:
-        - Question: "Question here"
-        - SQLQuery: "SQL Query to run"
-        - SQLResult: "Result of the SQLQuery"
-        - Answer: "Final answer here in {user_language} only."
-        - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
+                - Question: "Question here"
+                - SQLQuery: "SQL Query to run"
+                - SQLResult: "Result of the SQLQuery"
+                - Answer: "Final answer here in {user_language} only."
+                
         """
+# - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
 
     prompt_temp += "\n\n\tQuestion: {input}"
     return prompt_temp
