@@ -117,6 +117,7 @@ def gpt_sql_prompt(
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
                         - quantity: quantity of the product in units.
+                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 F. "order_options": Order Options is the table that contains the options / modifiers on the order, contains the following columns:
@@ -127,6 +128,9 @@ def gpt_sql_prompt(
                         - name_localized: option name.
                         - sku: option sku.
                         - quantity: quantity of the option in units.
+                        - unit_price: unit price of the option in {client_currency_full} or {client_currency_short}.
+                        - total_price: total price of the option in {client_currency_full} or {client_currency_short}.
+                        - total_cost: total cost of the option in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
         2- Instructions:
