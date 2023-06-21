@@ -88,12 +88,9 @@ def gpt_sql_prompt(
                         - name: product name.
                         - sku: product sku.
                         - category_id: category id. (Foreign Key to categories table)
-                        - is_active: is the product active or not.
-                        - is_stock: is the product a stock product or not.
-                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                B. "categories": Categories of the products, each product has a single category, contains the following columns:
+                C. "categories": Categories of the products, each product has a single category, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: category id.
                         - name: category name; can be one of the following: {client_categories}
@@ -117,7 +114,6 @@ def gpt_sql_prompt(
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
                         - quantity: quantity of the product in units.
-                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 F. "order_options": Order Options is the table that contains the options / modifiers on the order, contains the following columns:
@@ -152,6 +148,8 @@ def gpt_sql_prompt(
                         - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
+                        - There is no price in the products table, the price is in the order_details table.
+                        - The price in the order_details table is the price of the product + the options / modifiers added to the product.                        
                         
                 
                 C. SQL instructions:
@@ -175,6 +173,7 @@ def gpt_sql_prompt(
                         - When you are asked about options, make sure to consult the order_details and order_headers tables.
                         - ordered_at can be only found in the order_headers table.
                         - When you are asked about sales, consult the order_headers total_price column only!
+                        
 
                 D. Time instructions:
                         - Today's date is {today}, the current time is {time}, use it as a reference to answer the questions where needed.
