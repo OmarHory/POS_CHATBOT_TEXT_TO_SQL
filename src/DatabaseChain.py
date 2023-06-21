@@ -102,7 +102,7 @@ class SQLDatabaseChain(Chain, BaseModel):
 
         sql_cmd = llm_chain.predict(**llm_inputs)
         if not sql_check_value_filter(sql_cmd, 'client_id', self.properties['active_client']):
-            prompt_modify_sql = sql_add_filter_prompt.format(sql_cmd)
+            prompt_modify_sql = sql_add_filter_prompt.format(self.properties['active_client'], sql_cmd)
             print("\nPrompt Add Client ID filter :\n", prompt_modify_sql, "\n")
             sql_cmd = send_to_gpt(prompt_modify_sql)
             print("New sql_cmd:\n", sql_cmd)
