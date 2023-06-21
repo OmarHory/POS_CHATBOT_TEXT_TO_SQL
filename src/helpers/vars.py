@@ -149,7 +149,7 @@ def gpt_sql_prompt(
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
                         - There is no price in the products table, the price is in the order_details table.
-                        - The price in the order_details table is the price of the product + the options / modifiers added to the product.                        
+                        - The price in the order_details table is the price of the product + the options / modifiers added to the product if exists.                      
                         
                 
                 C. SQL instructions:
