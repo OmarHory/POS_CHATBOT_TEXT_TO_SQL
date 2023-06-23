@@ -108,8 +108,7 @@ class SQLDatabaseChain(Chain, BaseModel):
             print("New sql_cmd:\n", sql_cmd)
 
         print("\nsql_cmd:\n", sql_cmd)
-        intermediate_steps.append(sql_cmd)
-        self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
+        
         try:
             result = self.database.run(sql_cmd)
         except Exception as e:
@@ -118,7 +117,9 @@ class SQLDatabaseChain(Chain, BaseModel):
             sql_cmd = send_to_gpt(prompt_revision)
             print("New sql_cmd:\n", sql_cmd)
             result = self.database.run(sql_cmd)
-
+            
+        intermediate_steps.append(sql_cmd)
+        self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
         intermediate_steps.append(result)
         self.callback_manager.on_text("\nSQLResult: ", verbose=self.verbose)
         self.callback_manager.on_text(result, color="yellow", verbose=self.verbose)
