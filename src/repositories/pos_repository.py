@@ -44,7 +44,7 @@ class PosRepository:
                 col = "option_id" # ROG3A: make it id
             
             if table_name == "order_details":
-                filter_cols = [model.order_header_id == row['header_id'], model.product_id == row['product_id']]
+                filter_cols = [model.order_header_id == row['header_id'], model.product_id == row['product_id'], model.created_at == row['created_at']]
                 filter_condition = and_(*filter_cols)
                 record_exists = self.session.query(exists().where(filter_condition)).scalar()
             else:
