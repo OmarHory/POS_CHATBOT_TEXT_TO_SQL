@@ -42,13 +42,13 @@ class PosRepository:
             col = "id"
             if table_name == "order_options":
                 col = "option_id" # ROG3A: make it id
-            
+
             if table_name == "order_details":
-                filter_cols = [model.order_header_id == row['header_id'], model.product_id == row['product_id']]
-                filter_condition = and_(*filter_cols)
-                record_exists = self.session.query(exists().where(filter_condition)).scalar()
+                col = 'signature'
+                record_exists = self.session.query(exists().where(model.signature == row['signature'])).scalar()
             else:
                 record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
+
             if record_exists:
                 print("Record {} already exists.".format(row[col]))
                 pass
@@ -106,6 +106,7 @@ class PosRepository:
                             product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
                             quantity=row["quantity"],
                             price=row["price"],
+                            signature=row['signature'],
                             client_id=client_id,
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),

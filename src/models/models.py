@@ -146,6 +146,7 @@ class OrderDetail(Base):
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     quantity = Column(Integer)
     price = Column(Float(precision=2))
+    signature = Column(String(512))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
@@ -154,7 +155,7 @@ class OrderDetail(Base):
     product = relationship("Product")
     client = relationship("Client")
 
-    __table_args__ = (Index("idx_external_id", external_id, unique=True),)
+    __table_args__ = (Index("idx_external_id", external_id, unique=True), Index("idx_signature", signature, unique=True))
 
 
 class OrderOption(Base):

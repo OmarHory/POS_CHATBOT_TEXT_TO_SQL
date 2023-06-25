@@ -6,8 +6,8 @@ from datetime import date, datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import uuid
-
-
+import hashlib
+os.environ['PYTHONHASHSEED'] = '42'
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.helpers.utils import list_csv_files_in_directory
@@ -141,9 +141,12 @@ def fetch_order_details(df_orders, df_products, df_categories, client_id):
                 "updated_at": updated_at,
             })
     orders_details = pd.DataFrame(list_order_details)
+    orders_details['signature'] = orders_details[['header_id', 'product_id', 'quantity', 'price', 'category_id', 'client_id']].apply(lambda x: str(hash(tuple(x))), axis=1)
+    orders_details["signature"] = orders_details["signature"].apply(lambda x: hashlib.sha256(x.encode()).hexdigest())
+    orders_details['signature'] = orders_details['signature'].astype(str)
 
     if need_unavailable_category:
-        print("Yes, we need to add the unavailable category, make sure to add it in the .env")
+        print("Yes, we need to add the unavailable category, make sure to add it ins the .env")
         new_row = pd.DataFrame({'id': '00000000-0000-0000-0000-000000000000', 'name': 'Not Available', 'slug':"not-available", 'client_id':client_id}, index=[df_categories.index.max()+1])
         df_categories = pd.concat([df_categories, new_row], ignore_index=True)
         df_categories.created_at = df_categories.created_at.fillna(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -192,12 +195,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--client-id', type=int, required=True, help='Client ID')
     parser.add_argument('--mode', type=str, required=True, help='pull or update')
+    parser.add_argument('--files', nargs='+', type=str, help='Specific file names to download or delete')
+
 
     args = parser.parse_args()
 
     # Get environment variables
     client_id = args.client_id
     mode = args.mode
+    files = args.files
+
     if mode not in ['pull', 'update']:
         raise Exception('Mode must be either pull or update.')
 
@@ -225,7 +232,17 @@ def main():
     
 
     if mode == 'pull':
-        csv_files = list_csv_files_in_directory(f'data/{client_id}/raw')
+        if files:
+            files_updated = []
+            for file in files:
+                base = os.path.basename(file)
+                files_updated.append(base)
+            del files
+            csv_files = files_updated
+            print(f"Files were specified: {files_updated}")
+
+        else:
+            csv_files = list_csv_files_in_directory(f'data/{client_id}/raw')
         if len(csv_files) == 0:
             raise Exception('No CSV files found to be prepared.')
         
