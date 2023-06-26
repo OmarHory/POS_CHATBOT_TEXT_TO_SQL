@@ -43,6 +43,7 @@ class PosRepository:
             if table_name == "order_options":
                 col = "option_id" # ROG3A: make it id
                 record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
+                print(row['order_details_id'])
 
             if table_name == "order_details":
                 col = 'signature'
