@@ -114,9 +114,13 @@ class PosRepository:
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
                 elif table_name == "order_options":
+                    od_id = self.query_record_by_uuid(table_name='order_details', external_id=row["order_details_id"])
+                    if not od_id:
+                        print("Order detail {} not found.".format(row["order_details_id"]))
+                        continue
                     obj = OrderOption(
                             external_id=row["option_id"],
-                            order_details_id=self.query_record_by_uuid(table_name='order_details', external_id=row["order_details_id"]),
+                            order_details_id=od_id,
                             name=row["option_name"],
                             name_localized=row["option_name_localized"],
                             sku=row["option_sku"],

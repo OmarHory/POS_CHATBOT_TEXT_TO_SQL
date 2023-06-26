@@ -175,15 +175,15 @@ def fetch_order_options(df_headers, orders_details):
                 order_details_id = orders_details[(orders_details["product_id"] == product_id) & (orders_details["header_id"] == order_header_id)]["id"].values[0]
                 list_order_options.append({
                     "order_details_id": order_details_id,
-                    "option_id": option_id,
-                    "option_name": option_name,
-                    "option_name_localized": option_name_localized,
-                    "option_sku": option_sku,
-                    "option_quantity": option_quantity,
-                    "option_partition": option_partition,
-                    "option_unit_price": option_unit_price,
-                    "option_total_price": option_total_price,
-                    "option_total_cost": option_total_cost,
+                    "id": option_id,
+                    "name": option_name,
+                    "name_localized": option_name_localized,
+                    "sku": option_sku,
+                    "quantity": option_quantity,
+                    "partition": option_partition,
+                    "unit_price": option_unit_price,
+                    "total_price": option_total_price,
+                    "total_cost": option_total_cost,
                 })
     df_options = pd.DataFrame(list_order_options)
     return df_options
