@@ -1,7 +1,7 @@
 import requests
 import time
 import pandas as pd
-import math
+from datetime import datetime
 import re
 
 
@@ -88,6 +88,9 @@ def call_foodics(
                 if not len(postfix_name):
                     postfix_name = str(chunk_counter)
                 checkpoint_path = f"{path_directory}/pull_orders_{postfix_name}_{page}.csv"
+                # add current time to the file name
+                current_dt = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                checkpoint_path = f"{path_directory}/pull_orders_{postfix_name}_{page}_{current_dt}.csv"
                 print("Writing to path.")
                 df = pd.DataFrame(
                     [item for sublist in list_responses for item in sublist]

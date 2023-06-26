@@ -8,6 +8,8 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 
 from src.repositories.client_repository import ClientRepository
+from src.s3_handler import S3Handler
+from src.helpers.utils import list_csv_files_in_directory
 
 from utils import call_foodics
 
@@ -17,10 +19,18 @@ load_dotenv()
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--client-id', type=int, required=True, help='Client ID')
+parser.add_argument('--upload_s3', type=bool, required=False, help='upload or not')
+
 args = parser.parse_args()
 
 # Get environment variables
 client_id = args.client_id
+upload_s3 = args.upload_s3 if args.upload_s3 is not None else False
+aws_access_key = os.getenv("aws_access_key")
+aws_secret_access_key = os.getenv("aws_secret_access_key")
+bucket_name = os.getenv("aws_bucket_name")
+aws_folder_path = f"{client_id}/raw"
+local_path = f"data/{client_id}/raw"
 
 # Get Foodics API token from clients table
 engine = create_engine(os.environ['DATABASE_URI'])
@@ -38,3 +48,9 @@ last_page = call_foodics('orders', 1, client_id, token, includables=includables,
 print('last_page:', last_page)
 
 call_foodics('orders', last_page, client_id, token, includables=includables, filter=filter_, checkpoint_every=300)
+
+#upload to s3
+if upload_s3:
+    handler = S3Handler(aws_access_key, aws_secret_access_key)
+    csv_files = list_csv_files_in_directory(local_path)
+    handler.upload_files(bucket_name, aws_folder_path, local_path, csv_files)
