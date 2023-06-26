@@ -30,13 +30,18 @@ def call_foodics(
     last_page,
     client_id,
     token,
+    path_directory="",
     includables=None,
     filter={},
     return_last_page=False,
     from_page=1,
     checkpoint_every=300,
     do_checkpoint=True,
+    postfix_name="",
 ):
+    if path_directory == "":
+        path_directory = f"data/{client_id}/raw"
+        
     # check if token is not null
     if token is None:
         raise Exception("Token is null. Please provide a valid token.")
@@ -44,7 +49,6 @@ def call_foodics(
     list_responses = []
     counter = 1
 
-    total_chunks = math.ceil(last_page / checkpoint_every)
     chunk_counter = 1
     checkpoint_list = []
 
@@ -81,7 +85,9 @@ def call_foodics(
 
         if do_checkpoint:
             if (counter == checkpoint_every or page == last_page) and (resource == "orders"):
-                checkpoint_path = f"data/{client_id}/raw/pull_orders_{chunk_counter}.csv"
+                if not len(postfix_name):
+                    postfix_name = str(chunk_counter)
+                checkpoint_path = f"{path_directory}/pull_orders_{postfix_name}_{page}.csv"
                 print("Writing to path.")
                 df = pd.DataFrame(
                     [item for sublist in list_responses for item in sublist]

@@ -39,16 +39,9 @@ class PosRepository:
         for _, row in df.iterrows():
             model = self.get_model(table_name)
             # check if record exists (use exists() method)
-            col = "id"
-            if table_name == "order_options":
-                col = "option_id" # ROG3A: make it id
-                record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
 
-            if table_name == "order_details":
-                col = 'signature'
-                record_exists = self.session.query(exists().where(model.signature == row['signature'])).scalar()
-            else:
-                record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
+            col = "id"
+            record_exists = self.session.query(exists().where(model.external_id == row[col])).scalar()
 
             if record_exists:
                 print("Record {} already exists.".format(row[col]))
@@ -107,25 +100,24 @@ class PosRepository:
                             product_id=self.query_record_by_uuid(table_name='products', external_id = row["product_id"]),
                             quantity=row["quantity"],
                             price=row["price"],
-                            signature=row['signature'],
                             client_id=client_id,
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
                         )
                 elif table_name == "order_options":
                     od_id = self.query_record_by_uuid(table_name='order_details', external_id=row["order_details_id"])
-                    if not od_id:
-                        continue
+                    # if not od_id:
+                    #     continue
                     obj = OrderOption(
-                            external_id=row["option_id"],
+                            external_id=row["id"],
                             order_details_id=od_id,
-                            name=row["option_name"],
-                            name_localized=row["option_name_localized"],
-                            sku=row["option_sku"],
-                            quantity=row["option_quantity"],
-                            unit_price=row["option_unit_price"],
-                            total_price=row["option_total_price"],
-                            total_cost=row["option_total_cost"],
+                            name=row["name"],
+                            name_localized=row["name_localized"],
+                            sku=row["sku"],
+                            quantity=row["quantity"],
+                            unit_price=row["unit_price"],
+                            total_price=row["total_price"],
+                            total_cost=row["total_cost"],
                             client_id=client_id,
                         )
                 else:

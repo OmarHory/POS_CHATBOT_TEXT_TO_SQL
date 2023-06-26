@@ -79,8 +79,8 @@ def gpt_sql_prompt(
                         - name: branch name. 
                         - slug: branch slug.
                         - client_id: client id. (Foreign Key to clients table)
-                        - opening_from: opening hour, format HH. 
-                        - opening_to: closing hour, format HH.
+                        - opening_from: opening hour, format HH:MM. 
+                        - opening_to: closing hour, format HH:MM.
 
                 B. "products": A product has a single category and multiple options / modifiers, contains the following columns:
                         - id: incremental id. (Primary Key)
@@ -140,6 +140,7 @@ def gpt_sql_prompt(
                         - {client_type} name: {client_name}.
                         - {client_type} country and Location: {client_country}.
                         - {client_type} branches (branch_name : branch_id): {client_branches}
+                        - A business day is from the branch opening hour to the branch closing hour.
                         - The {client_type} works everyday on specific hours based on the branch.
                         - Each order has multiple products, and each product might have multiple options / modifiers.
                         - Each product has a single category, and each product might have multiple options / modifiers.

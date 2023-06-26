@@ -52,62 +52,45 @@ def fetch_categories(client_id, token, category_name_col):
     df_categories.name = df_categories.name.apply(lambda x: x.capitalize())
     return df_categories
 
-def fetch_orders(client_id, token, client_timezone_offset, path):
-    filter = {}
-    # path = f"data/{client_id}/raw/orders.csv"
+def fetch_orders(client_id, client_timezone_offset, path):
     if os.path.exists(path):
         print("Exists")
         df_orders = pd.read_csv(path)
         df_orders.reset_index(drop=True, inplace=True)
     else:
-        includables = "branch,products.product,products.options.modifier_option"
-        last_page = call_foodics("orders", 1, client_id, token, includables=includables, filter=filter, return_last_page=True)
-        list_responses = call_foodics("orders", last_page, client_id, token, includables=includables, filter=filter, do_checkpoint=False)
-        df_orders = pd.DataFrame([item for sublist in list_responses for item in sublist])
-        df_orders.to_csv(path, index=False)
+        raise Exception("File does not exist")
+    
+    df_orders = process_orders(df_orders, client_timezone_offset, client_id)
+
+    return df_orders
+
+def update_orders(client_id, client_timezone_offset, csv_files, path):
+    df_orders = pd.DataFrame()
+    print(csv_files)
+    for file in csv_files:
+        path_file = f"{path}/{file}"
+        print("Preparing Path:", path_file)
+        df_orders = pd.concat([df_orders, pd.read_csv(path_file)], ignore_index=True)
+    print(df_orders.shape)
+    print(df_orders.head())
+    df_orders = process_orders(df_orders, client_timezone_offset, client_id)
+
+    return df_orders
+
+
+def process_orders(df_orders, client_timezone_offset, client_id):
     df_orders.reset_index(drop=True, inplace=True)
     df_orders.created_at = pd.to_datetime(df_orders.created_at)
     df_orders['branch'] = df_orders['branch'].astype(str)
     df_orders['branch_id'] = df_orders['branch'].apply(lambda x: eval(x)['id'])
     df_orders['client_id'] = client_id
     
-    orders_header = df_orders[["id", "client_id", "branch_id", "source", "type", "status", "total_price", "created_at", "updated_at"]]
-    orders_header = orders_header.assign(ordered_at=orders_header.created_at)
-    orders_header["ordered_at"] = pd.to_datetime(orders_header["ordered_at"])
+    df_orders = df_orders[df_orders.status !=5] # remove the returned quantity
+    df_orders = df_orders.assign(ordered_at=df_orders.created_at)
+    df_orders["ordered_at"] = pd.to_datetime(df_orders["ordered_at"])
     time_difference = timedelta(hours=client_timezone_offset)
-    orders_header["ordered_at"] += time_difference
-
-    return df_orders, orders_header
-
-def update_orders(client_id, token, client_timezone_offset, path):
-    load_dotenv()
-    db_uri = os.getenv("DATABASE_URI")
-    pos_repo = PosRepository(db_uri)
-    business_datetime = pos_repo.get_max_order_date(client_id)
-    
-    business_date_after = (pd.to_datetime(business_datetime.strftime("%Y-%m-%d")) - timedelta(days=1)).strftime("%Y-%m-%d")
-    business_datetime = str(business_datetime).replace(" ", '_')
-    print(business_date_after)
-    filter = {"business_date_after":business_date_after}
-    includables = "branch,products.product,products.options.modifier_option"
-    last_page = call_foodics("orders", 1, client_id, token, includables=includables, filter=filter, return_last_page=True)
-    list_responses = call_foodics("orders", last_page, client_id, token, includables=includables, filter=filter, do_checkpoint=False)
-    df_orders = pd.DataFrame([item for sublist in list_responses for item in sublist])
-    df_orders.to_csv(f"{path}/{business_datetime}.csv", index=False)
-    df_orders.reset_index(drop=True, inplace=True)
-    df_orders.created_at = pd.to_datetime(df_orders.created_at)
-    df_orders['products'] = df_orders['products'].astype(str)
-    df_orders['branch'] = df_orders['branch'].astype(str)
-    df_orders['branch_id'] = df_orders['branch'].apply(lambda x: eval(x)['id'])
-    df_orders['client_id'] = client_id
-    
-    orders_header = df_orders[["id", "client_id", "branch_id", "source", "type", "status", "total_price", "created_at", "updated_at"]]
-    orders_header = orders_header.assign(ordered_at=orders_header.created_at)
-    orders_header["ordered_at"] = pd.to_datetime(orders_header["ordered_at"])
-    time_difference = timedelta(hours=client_timezone_offset)
-    orders_header["ordered_at"] += time_difference
-
-    return df_orders, orders_header
+    df_orders["ordered_at"] += time_difference
+    return df_orders
 
 def fetch_order_details(df_orders, df_products, df_categories, client_id):
     need_unavailable_category = False
@@ -118,8 +101,12 @@ def fetch_order_details(df_orders, df_products, df_categories, client_id):
         created_at = row["created_at"]
         updated_at = row["updated_at"]
         # total_price = row["total_price"]
-        for order_product in eval(row["products"]):
-            order_details_id = str(uuid.uuid4())
+        try:
+            products = eval(row["products"])
+        except:
+            products = row["products"]
+
+        for order_product in products:
             product_id = order_product["product"]["id"]
             try:
                 category_id = df_products[df_products["id"] == product_id]["category_id"].values[0]
@@ -130,7 +117,6 @@ def fetch_order_details(df_orders, df_products, df_categories, client_id):
             quantity = order_product["quantity"]
             price = order_product["total_price"]
             list_order_details.append({
-                "id": order_details_id,
                 "header_id": order_header_id,
                 "product_id": product_id,
                 "category_id": category_id,
@@ -141,9 +127,12 @@ def fetch_order_details(df_orders, df_products, df_categories, client_id):
                 "updated_at": updated_at,
             })
     orders_details = pd.DataFrame(list_order_details)
-    orders_details['signature'] = orders_details[['header_id', 'product_id', 'quantity', 'price', 'category_id', 'client_id']].apply(lambda x: str(hash(tuple(x))), axis=1)
-    orders_details["signature"] = orders_details["signature"].apply(lambda x: hashlib.sha256(x.encode()).hexdigest())
-    orders_details['signature'] = orders_details['signature'].astype(str)
+    
+    #Hash Generation
+    cols=['created_at', 'header_id', 'product_id', 'quantity', 'price', 'category_id', 'client_id']
+    concatenated_strings = orders_details[cols].astype(str).apply(''.join, axis=1)
+    orders_details['id'] = concatenated_strings.apply(lambda x: hashlib.sha256(x.encode()).hexdigest())
+    orders_details['id'] = orders_details['id'].astype(str)
 
     if need_unavailable_category:
         print("Yes, we need to add the unavailable category, make sure to add it ins the .env")
@@ -159,31 +148,35 @@ def fetch_order_options(df_headers, orders_details):
     list_order_options = []
     for index, row in df_headers.iterrows():
         order_header_id = row["id"]
-        for order_product in eval(row["products"]):
+        try:
+            products = eval(row["products"])
+        except:
+            products = row["products"]
+        for order_product in products:
             product_id = order_product["product"]["id"]
             for order_option in order_product["options"]:
                 modifer_option = order_option["modifier_option"]
-                option_name = modifer_option["name"]
-                option_name_localized = modifer_option["name_localized"]
-                option_sku = modifer_option["sku"]
-                option_id = order_option["id"]
-                option_quantity = order_option["quantity"]
-                option_partition = order_option["partition"]
-                option_unit_price = order_option["unit_price"]
-                option_total_price = order_option["total_price"]
-                option_total_cost = order_option["total_cost"]
+                name = modifer_option["name"]
+                name_localized = modifer_option["name_localized"]
+                sku = modifer_option["sku"]
+                id = order_option["id"]
+                quantity = order_option["quantity"]
+                partition = order_option["partition"]
+                unit_price = order_option["unit_price"]
+                total_price = order_option["total_price"]
+                total_cost = order_option["total_cost"]
                 order_details_id = orders_details[(orders_details["product_id"] == product_id) & (orders_details["header_id"] == order_header_id)]["id"].values[0]
                 list_order_options.append({
                     "order_details_id": order_details_id,
-                    "option_id": option_id,
-                    "option_name": option_name,
-                    "option_name_localized": option_name_localized,
-                    "option_sku": option_sku,
-                    "option_quantity": option_quantity,
-                    "option_partition": option_partition,
-                    "option_unit_price": option_unit_price,
-                    "option_total_price": option_total_price,
-                    "option_total_cost": option_total_cost,
+                    "id": id,
+                    "name": name,
+                    "name_localized": name_localized,
+                    "sku": sku,
+                    "quantity": quantity,
+                    "partition": partition,
+                    "unit_price": unit_price,
+                    "total_price": total_price,
+                    "total_cost": total_cost,
                 })
     df_options = pd.DataFrame(list_order_options)
     return df_options
@@ -226,11 +219,9 @@ def main():
     df_products = fetch_products(client_id, token, category_name_col)
     df_categories = fetch_categories(client_id, token, category_name_col)
 
-    df_branches['opening_from'] = pd.to_datetime(df_branches['opening_from'])
-    df_branches['opening_to'] = pd.to_datetime(df_branches['opening_to'])
+    df_branches['opening_from'] = pd.to_datetime(df_branches['opening_from'], format='%H:%M')
+    df_branches['opening_to'] = pd.to_datetime(df_branches['opening_to'], format='%H:%M')
     
-    
-
     if mode == 'pull':
         if files:
             files_updated = []
@@ -244,28 +235,33 @@ def main():
         else:
             csv_files = list_csv_files_in_directory(f'data/{client_id}/raw')
         if len(csv_files) == 0:
-            raise Exception('No CSV files found to be prepared.')
+            raise Exception("No CSV files found.")
         
         i = 1
         for file in csv_files:
             path = f"data/{client_id}/raw/{file}"
             print("Preparing Path:", path)
-            df_orders, orders_header = fetch_orders(client_id, token, client_timezone_offset, path)
-            orders_details, df_categories = fetch_order_details(df_orders, df_products, df_categories, client_id)
-            df_options = fetch_order_options(df_orders, orders_details)
+            orders_header = fetch_orders(client_id, client_timezone_offset, path)
+            orders_details, df_categories = fetch_order_details(orders_header, df_products, df_categories, client_id)
+            df_options = fetch_order_options(orders_header, orders_details)
 
             # Perform additional processing...
+            print(orders_header.shape)
+            print(orders_details.shape)
+            print(df_options.shape)
             
             orders_header['type'] = orders_header['type'].map(orders_types)
             orders_header['source'] = orders_header['source'].map(orders_sources)
             orders_header['status'] = orders_header['status'].map(orders_statuses)
             orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
             orders_header['status'].fillna('Void', inplace=True)
-            df_options['option_name_localized'].fillna('-', inplace=True)
+            df_options['name_localized'].fillna('-', inplace=True)
 
-            # orders_header.drop_duplicates(subset=['id'], inplace=True)
-            # df_options.drop_duplicates(subset=['option_id'], inplace=True)
-            # orders_details.drop_duplicates(subset=['id'], inplace=True)
+            orders_header.drop_duplicates(subset=['id'], inplace=True)
+            df_options.drop_duplicates(subset=['id'], inplace=True)
+            orders_details.drop_duplicates(subset=['id'], inplace=True)
+
+            #orders_header = orders_header[["id", 'products', "client_id", "branch_id", "source", "type", "status", 'discount_amount', "total_price", 'subtotal_price', 'business_date', "created_at", "updated_at"]]
 
             df_categories.to_csv(f"data/{client_id}/processed/categories.csv", index=False)
             df_branches.to_csv(f"data/{client_id}/processed/branches.csv", index=False)
@@ -279,10 +275,11 @@ def main():
             print("====================================")
     
     elif mode == 'update':
-        path = f'data/{client_id}/raw/updates/'
-        df_orders, orders_header = update_orders(client_id, token, client_timezone_offset, path)
-        orders_details, df_categories = fetch_order_details(df_orders, df_products,df_categories, client_id)
-        df_options = fetch_order_options(df_orders, orders_details)
+        path = f'data/{client_id}/raw/updates'
+        csv_files = list_csv_files_in_directory(path)
+        orders_header = update_orders(client_id, client_timezone_offset, csv_files, path)
+        orders_details, df_categories = fetch_order_details(orders_header, df_products,df_categories, client_id)
+        df_options = fetch_order_options(orders_header, orders_details)
 
         # Perform additional processing...
 
@@ -293,11 +290,14 @@ def main():
         orders_header['status'].fillna('Void', inplace=True)
         #check size of df_options
         if df_options.shape[0] > 0:
-            df_options['option_name_localized'].fillna('-', inplace=True)
+            df_options['name_localized'].fillna('-', inplace=True)
 
-        # orders_header.drop_duplicates(subset=['id'], inplace=True)
-        # df_options.drop_duplicates(subset=['option_id'], inplace=True)
-        # orders_details.drop_duplicates(subset=['id'], inplace=True)
+        orders_header.drop_duplicates(subset=['id'], inplace=True)
+        df_options.drop_duplicates(subset=['id'], inplace=True)
+        orders_details.drop_duplicates(subset=['id'], inplace=True)
+
+        #orders_header = orders_header[["id", 'products', "client_id", "branch_id", "source", "type", "status", 'discount_amount', "total_price", 'subtotal_price', 'business_date', "created_at", "updated_at"]]
+
 
         df_categories.to_csv(f"data/{client_id}/processed/updates/categories.csv", index=False)
         df_branches.to_csv(f"data/{client_id}/processed/updates/branches.csv", index=False)

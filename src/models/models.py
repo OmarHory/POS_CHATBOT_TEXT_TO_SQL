@@ -83,8 +83,8 @@ class Branch(Base):
     name = Column(String(255), nullable=False)
     slug = Column(String(255), nullable=False)
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
-    opening_from = Column(DateTime)
-    opening_to = Column(DateTime)
+    opening_from = Column(Time)
+    opening_to = Column(Time)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
@@ -141,12 +141,11 @@ class OrderDetail(Base):
     __tablename__ = "order_details"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    external_id = Column(String(255), nullable=False)
+    external_id = Column(String(512), nullable=False)
     order_header_id = Column(Integer, ForeignKey("order_headers.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     quantity = Column(Integer)
     price = Column(Float(precision=2))
-    signature = Column(String(512))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
@@ -155,7 +154,7 @@ class OrderDetail(Base):
     product = relationship("Product")
     client = relationship("Client")
 
-    __table_args__ = (Index("idx_external_id", external_id, unique=True), Index("idx_signature", signature, unique=True))
+    __table_args__ = (Index("idx_external_id", external_id, unique=True),)
 
 
 class OrderOption(Base):
