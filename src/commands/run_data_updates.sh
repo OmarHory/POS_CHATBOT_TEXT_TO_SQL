@@ -28,6 +28,8 @@ DATE_TIME=$(date +"%Y-%m-%d_%H-%M-%S")
 # Log file path
 LOG_FILE="$LOG_DIR/$DATE_TIME.log"
 
+python data_pipeline/update_orders.py --client-id 2 --upload_s3 True
+
 # Command 1: Run the first script
 python data_pipeline/prepare_data.py --client-id "$CLIENT_ID" --mode update >> "$LOG_FILE" 2>&1
 
