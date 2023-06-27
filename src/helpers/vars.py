@@ -100,12 +100,14 @@ def gpt_sql_prompt(
                 D. "order_headers": Order header is the main table, which has general information about the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order id.
-                        - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                        - order_date: order date (business date), format YYYY-MM-DD.
+                        - order_time: order time, format HH:MM:SS.
                         - branch_id: branch id. (Foreign Key to branches table)
                         - type: order type, can be one of the following: {client_order_types}.
                         - source: order source, can be one of the following: {client_order_sources}.
                         - status: order status, can be one of the following: {client_order_statuses}.
                         - total_price: order total price in {client_currency_full} or {client_currency_short}.
+                        - discount_amount: order discount amount in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
                 E. "order_details": Order details is the table that contains the products of the order, contains the following columns:

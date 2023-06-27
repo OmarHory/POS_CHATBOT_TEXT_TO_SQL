@@ -126,8 +126,10 @@ class OrderHeader(Base):
     source = Column(String(255))
     status = Column(String(255))
     total_price = Column(Float(precision=2))
+    discount_amount = Column(Float(precision=2))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
-    ordered_at = Column(DateTime)
+    order_date = Column(Date)
+    order_time = Column(Time)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
