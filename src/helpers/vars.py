@@ -152,11 +152,11 @@ def gpt_sql_prompt(
                         - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
-                        - There is no price in the products table, the price is in the order_details table.
-                        - The price in the order_details table is the price of the product + the options / modifiers added to the product if exists.                      
+                        - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
                         
                 
                 C. SQL instructions:
+                        - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - Use the following format: 
                                 - SELECT: select the columns that are needed to answer the question, return more columns where suitable.
                                 - FROM: select the table that has the columns that are needed to answer the question.
@@ -167,16 +167,12 @@ def gpt_sql_prompt(
                                 - HAVING: filter the columns based on the question after the group by.
                         - Always filter on the client id = {client_id}
                         - Use only the tables that are mentioned below. 
-                        - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - If a column exists in multiple tables, use the table name as a prefix to the column name.
                         - Always use the table name as a prefix to the column name.
                         - Return the answer in a readable format, do not return the MySQL query, return the answer only.
-                        - Generate a full MySQL query, do not use any predefined queries, generate the query based on the question.
                         - Do not cut off the generated query, return the full query.
-                        - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
                         - When you are asked about options, make sure to consult the order_details and order_headers tables.
                         - ordered_at can be only found in the order_headers table.
-                        - When you are asked about sales, consult the order_headers total_price column only!
                         
 
                 D. Time instructions:
