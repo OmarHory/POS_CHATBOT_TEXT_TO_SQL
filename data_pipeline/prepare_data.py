@@ -92,6 +92,8 @@ def process_orders(df_orders, client_timezone_offset, client_id):
     time_difference = timedelta(hours=client_timezone_offset)
     print(df_orders["ordered_at"])
     df_orders["ordered_at"] += time_difference
+    df_orders = df_orders[~df_orders.business_date.isna()]
+    df_orders.business_date = pd.to_datetime(df_orders.business_date)
     return df_orders
 
 def fetch_order_details(df_orders, df_products, df_categories, client_id):

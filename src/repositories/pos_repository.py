@@ -85,7 +85,7 @@ class PosRepository:
                             external_id=row["id"],
                             branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
                             order_date=pd.to_datetime(row["business_date"], format="%Y-%m-%d"),
-                            order_time=row["ordered_at"],
+                            order_time=pd.to_datetime(row["ordered_at"]),
                             type=row["type"],
                             source=row["source"],
                             status=row["status"],
