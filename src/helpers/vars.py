@@ -100,34 +100,36 @@ def gpt_sql_prompt(
                 D. "order_headers": Order header is the main table, which has general information about the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order id.
-                        - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                        - order_date: order date (business date), format YYYY-MM-DD.
+                        - order_time: order time, format HH:MM:SS.
                         - branch_id: branch id. (Foreign Key to branches table)
                         - type: order type, can be one of the following: {client_order_types}.
                         - source: order source, can be one of the following: {client_order_sources}.
                         - status: order status, can be one of the following: {client_order_statuses}.
                         - total_price: order total price in {client_currency_full} or {client_currency_short}.
+                        - discount_amount: order discount amount in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                E. "order_details": Order details is the table that contains the products of the order, contains the following columns:
+                E. "order_details": Order details is the table that contains the information of the ordered products, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
-                        - quantity: quantity of the ordered product in units.
-                        - price: price of the ordered product in {client_currency_full} or {client_currency_short}.
+                        - quantity: quantity of the product in units.
+                        - price: price of the product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Order Options is the table that contains the options / modifiers on the product, contains the following columns:
+                F. "order_options": Order Options is the table that contains the options / modifiers on the ordered products, contains the following columns:
                         - id: incremental id. (Primary Key)
-                        - external_id: option id.
+                        - external_id: option or modifier id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
-                        - name: option name.
-                        - name_localized: option name.
-                        - sku: option sku.
-                        - quantity: quantity of the option in units.
-                        - unit_price: unit price of the option in {client_currency_full} or {client_currency_short}.
-                        - total_price: total price of the option in {client_currency_full} or {client_currency_short}.
-                        - total_cost: total cost of the option in {client_currency_full} or {client_currency_short}.
+                        - name: option or modifier name.
+                        - name_localized: option or modifier name.
+                        - sku: option or modifier sku.
+                        - quantity: quantity of the option or modifier in units.
+                        - unit_price: unit price of the option or modifier in {client_currency_full} or {client_currency_short}.
+                        - price: price of the option or modifier in {client_currency_full} or {client_currency_short}.
+                        - cost: cost of the option or modifier in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
         2- Instructions:
@@ -283,34 +285,36 @@ Tables Schemas and description:
                 D. "order_headers": Order header is the main table, which has general information about the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order id.
-                        - ordered_at: order date and time, format YYYY-MM-DD HH:MM:SS.
+                        - order_date: order date (business date), format YYYY-MM-DD.
+                        - order_time: order time, format HH:MM:SS.
                         - branch_id: branch id. (Foreign Key to branches table)
                         - type: order type.
                         - source: order source.
                         - status: order status.
                         - total_price: order total price.
+                        - discount_amount: order discount amount.
                         - client_id: client id. (Foreign Key to clients table)
 
-                E. "order_details": Order details is the table that contains the products of the order, contains the following columns:
+                E. "order_details": Order details is the table that contains the information of the ordered products, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
-                        - quantity: quantity of the product in units.
-                        - price: price of the ordered product.
+                        - quantity: quantity of the ordered product with options in units.
+                        - price: price of the ordered product with options.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Order Options is the table that contains the options / modifiers on the product, contains the following columns:
+                F. "order_options": Order Options is the table that contains the options / modifiers on the ordered products, contains the following columns:
                         - id: incremental id. (Primary Key)
-                        - external_id: option id.
+                        - external_id: option or modifier id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
-                        - name: option name.
-                        - name_localized: option name.
-                        - sku: option sku.
-                        - quantity: quantity of the option in units.
-                        - unit_price: unit price.
-                        - total_price: total price.
-                        - total_cost: total cost.
+                        - name: option or modifier name.
+                        - name_localized: option or modifier name.
+                        - sku: option or modifier sku.
+                        - quantity: quantity of the option or modifier in units.
+                        - unit_price: unit price of the option or modifier.
+                        - price: price of the option or modifier.
+                        - cost: cost of the option or modifier.
                         - client_id: client id. (Foreign Key to clients table)
 
 

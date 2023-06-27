@@ -88,7 +88,9 @@ def process_orders(df_orders, client_timezone_offset, client_id):
     df_orders = df_orders[df_orders.status !=5] # remove the returned quantity
     df_orders = df_orders.assign(ordered_at=df_orders.created_at)
     df_orders["ordered_at"] = pd.to_datetime(df_orders["ordered_at"])
+    
     time_difference = timedelta(hours=client_timezone_offset)
+    print(df_orders["ordered_at"])
     df_orders["ordered_at"] += time_difference
     return df_orders
 
@@ -165,6 +167,9 @@ def fetch_order_options(df_headers, orders_details):
                 unit_price = order_option["unit_price"]
                 total_price = order_option["total_price"]
                 total_cost = order_option["total_cost"]
+                tax_exclusive_unit_price = order_option["tax_exclusive_unit_price"]
+                tax_exclusive_total_price = order_option["tax_exclusive_total_price"]
+                tax_exclusive_discount_amount = order_option["tax_exclusive_discount_amount"]
                 order_details_id = orders_details[(orders_details["product_id"] == product_id) & (orders_details["header_id"] == order_header_id)]["id"].values[0]
                 list_order_options.append({
                     "order_details_id": order_details_id,
@@ -172,6 +177,9 @@ def fetch_order_options(df_headers, orders_details):
                     "name": name,
                     "name_localized": name_localized,
                     "sku": sku,
+                    "tax_exclusive_unit_price": tax_exclusive_unit_price,
+                    "tax_exclusive_total_price": tax_exclusive_total_price,
+                    "tax_exclusive_discount_amount": tax_exclusive_discount_amount,
                     "quantity": quantity,
                     "partition": partition,
                     "unit_price": unit_price,
@@ -253,9 +261,11 @@ def main():
             orders_header['type'] = orders_header['type'].map(orders_types)
             orders_header['source'] = orders_header['source'].map(orders_sources)
             orders_header['status'] = orders_header['status'].map(orders_statuses)
-            orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
+            orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at']).dt.time
             orders_header['status'].fillna('Void', inplace=True)
+            orders_header['business_date'] = pd.to_datetime(orders_header['business_date'], format="%Y-%m-%d")
             df_options['name_localized'].fillna('-', inplace=True)
+
 
             orders_header.drop_duplicates(subset=['id'], inplace=True)
             df_options.drop_duplicates(subset=['id'], inplace=True)
@@ -286,8 +296,10 @@ def main():
         orders_header['type'] = orders_header['type'].map(orders_types)
         orders_header['source'] = orders_header['source'].map(orders_sources)
         orders_header['status'] = orders_header['status'].map(orders_statuses)
-        orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at'])
+        orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at']).dt.time
         orders_header['status'].fillna('Void', inplace=True)
+        orders_header['business_date'] = pd.to_datetime(orders_header['business_date'], format="%Y-%m-%d")
+
         #check size of df_options
         if df_options.shape[0] > 0:
             df_options['name_localized'].fillna('-', inplace=True)

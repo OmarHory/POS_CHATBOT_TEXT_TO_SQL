@@ -84,11 +84,13 @@ class PosRepository:
                     obj = OrderHeader(
                             external_id=row["id"],
                             branch_id=self.query_record_by_uuid(table_name='branches', external_id=row["branch_id"]),
-                            ordered_at=pd.to_datetime(row["ordered_at"]),
+                            order_date=pd.to_datetime(row["business_date"], format="%Y-%m-%d"),
+                            order_time=row["ordered_at"],
                             type=row["type"],
                             source=row["source"],
                             status=row["status"],
                             total_price=row["total_price"],
+                            discount_amount=row["discount_amount"],
                             client_id=client_id,
                             created_at=pd.to_datetime(row["created_at"]),
                             updated_at=pd.to_datetime(row["updated_at"]),
@@ -114,10 +116,13 @@ class PosRepository:
                             name=row["name"],
                             name_localized=row["name_localized"],
                             sku=row["sku"],
+                            tax_exclusive_unit_price = row["tax_exclusive_unit_price"],
+                            tax_exclusive_total_price = row["tax_exclusive_total_price"],
+                            tax_exclusive_discount_amount = row["tax_exclusive_discount_amount"],
                             quantity=row["quantity"],
                             unit_price=row["unit_price"],
-                            total_price=row["total_price"],
-                            total_cost=row["total_cost"],
+                            price=row["total_price"],
+                            cost=row["total_cost"],
                             client_id=client_id,
                         )
                 else:
@@ -135,7 +140,7 @@ class PosRepository:
     
 
     def get_max_order_date(self, client_id):
-        max_date = self.session.query(func.max(OrderHeader.ordered_at)).filter_by(client_id=client_id).scalar()
+        max_date = self.session.query(func.max(OrderHeader.order_date)).filter_by(client_id=client_id).scalar()
         return max_date
 
 
