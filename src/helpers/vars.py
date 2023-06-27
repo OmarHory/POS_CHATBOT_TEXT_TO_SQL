@@ -150,7 +150,7 @@ def gpt_sql_prompt(
                         - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
-                        - There is no price in the products table, the price is in the order_details table.
+                        - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
                         - The price in the order_details table is the price of the product + the options / modifiers added to the product if exists.                      
                         
                 
@@ -174,7 +174,6 @@ def gpt_sql_prompt(
                         - Do the necessary analysis to answer, do the necessary aggregations and calculations to answer the questions.
                         - When you are asked about options, make sure to consult the order_details and order_headers tables.
                         - ordered_at can be only found in the order_headers table.
-                        - When you are asked about sales, consult the order_headers total_price column only!
                         
 
                 D. Time instructions:
