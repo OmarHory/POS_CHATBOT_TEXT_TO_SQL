@@ -113,10 +113,11 @@ def gpt_sql_prompt(
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
-                        - quantity: quantity of the product in units.
+                        - quantity: quantity of the ordered product in units.
+                        - price: price of the ordered product in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Order Options is the table that contains the options / modifiers on the order, contains the following columns:
+                F. "order_options": Order Options is the table that contains the options / modifiers on the product, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: option id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
@@ -300,9 +301,10 @@ Tables Schemas and description:
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
                         - quantity: quantity of the product in units.
+                        - price: price of the ordered product.
                         - client_id: client id. (Foreign Key to clients table)
 
-                F. "order_options": Order Options is the table that contains the options / modifiers on the order, contains the following columns:
+                F. "order_options": Order Options is the table that contains the options / modifiers on the product, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: option id.
                         - order_details_id: order details id. (Foreign Key to order_details table)
