@@ -1,5 +1,4 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import datetime
 import os, sys
 #import models from models/models.py
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -29,7 +28,7 @@ class UserRepository:
     
     def create_user(self, name, email, phone_number):
         
-        user = User(name=name, email=email, phone_number=phone_number)
+        user = User(name=name, email=email, phone_number=phone_number, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
         self.session.add(user)
         self.session.commit()
         self.session.close()
