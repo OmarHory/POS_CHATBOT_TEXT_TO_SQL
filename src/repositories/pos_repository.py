@@ -116,10 +116,13 @@ class PosRepository:
                             name=row["name"],
                             name_localized=row["name_localized"],
                             sku=row["sku"],
+                            tax_exclusive_unit_price = row["tax_exclusive_unit_price"],
+                            tax_exclusive_total_price = row["tax_exclusive_total_price"],
+                            tax_exclusive_discount_amount = row["tax_exclusive_discount_amount"],
                             quantity=row["quantity"],
                             unit_price=row["unit_price"],
-                            total_price=row["total_price"],
-                            total_cost=row["total_cost"],
+                            price=row["total_price"],
+                            cost=row["total_cost"],
                             client_id=client_id,
                         )
                 else:

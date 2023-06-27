@@ -167,6 +167,9 @@ def fetch_order_options(df_headers, orders_details):
                 unit_price = order_option["unit_price"]
                 total_price = order_option["total_price"]
                 total_cost = order_option["total_cost"]
+                tax_exclusive_unit_price = order_option["tax_exclusive_unit_price"]
+                tax_exclusive_total_price = order_option["tax_exclusive_total_price"]
+                tax_exclusive_discount_amount = order_option["tax_exclusive_discount_amount"]
                 order_details_id = orders_details[(orders_details["product_id"] == product_id) & (orders_details["header_id"] == order_header_id)]["id"].values[0]
                 list_order_options.append({
                     "order_details_id": order_details_id,
@@ -174,6 +177,9 @@ def fetch_order_options(df_headers, orders_details):
                     "name": name,
                     "name_localized": name_localized,
                     "sku": sku,
+                    "tax_exclusive_unit_price": tax_exclusive_unit_price,
+                    "tax_exclusive_total_price": tax_exclusive_total_price,
+                    "tax_exclusive_discount_amount": tax_exclusive_discount_amount,
                     "quantity": quantity,
                     "partition": partition,
                     "unit_price": unit_price,
