@@ -257,15 +257,18 @@ sql_revision_prompt = """Your task is to debug MySQL Queries based on an error, 
 Error and SQL Query: 
 {}
 
-Tables Schemas and description:
-        A. "branches": Branches, contains the following columns:
+User Question:
+{}
+
+Tables Schemas and description (only use those):
+                A. "branches": Branches of the {client_type}, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: branch id.
                         - name: branch name. 
                         - slug: branch slug.
                         - client_id: client id. (Foreign Key to clients table)
-                        - opening_from: opening hour, format HH. 
-                        - opening_to: closing hour, format HH.
+                        - opening_from: opening hour, format HH:MM. 
+                        - opening_to: closing hour, format HH:MM.
 
                 B. "products": A product has a single category and multiple options / modifiers, contains the following columns:
                         - id: incremental id. (Primary Key)
@@ -300,8 +303,8 @@ Tables Schemas and description:
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
-                        - quantity: quantity of the ordered product with options in units.
-                        - price: price of the ordered product with options.
+                        - quantity: quantity of the product in units.
+                        - price: price of the ordered product.
                         - client_id: client id. (Foreign Key to clients table)
 
                 F. "order_options": Order Options is the table that contains the options / modifiers on the ordered products, contains the following columns:

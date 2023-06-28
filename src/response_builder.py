@@ -285,7 +285,7 @@ def process_send_gpt(
                 client_id=active_client_context,
             ),
         );
-        db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL, {"active_client": int(active_client_context)})
+        db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL, {"user_question": incoming_msg, "active_client": int(active_client_context)})
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("Time taken for db_session:", elapsed_time, "seconds")
