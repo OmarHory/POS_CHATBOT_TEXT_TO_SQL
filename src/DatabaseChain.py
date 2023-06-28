@@ -112,7 +112,7 @@ class SQLDatabaseChain(Chain, BaseModel):
         try:
             result = self.database.run(sql_cmd)
         except Exception as e:
-            prompt_revision = sql_revision_prompt.format(e)
+            prompt_revision = sql_revision_prompt.format(e, self.properties['user_question'])
             print("\nPrompt revision:\n", prompt_revision, "\n")
             sql_cmd = send_to_gpt(prompt_revision)
             print("New sql_cmd:\n", sql_cmd)
