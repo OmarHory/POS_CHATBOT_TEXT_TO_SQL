@@ -261,7 +261,7 @@ User Question:
 {}
 
 Tables Schemas and description (only use those):
-                A. "branches": Branches of the {client_type}, contains the following columns:
+                A. "branches": Branches table.
                         - id: incremental id. (Primary Key)
                         - external_id: branch id.
                         - name: branch name. 
