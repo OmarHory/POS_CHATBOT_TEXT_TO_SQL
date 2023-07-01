@@ -31,7 +31,6 @@ from src.response_builder import prepare_response
 
 # sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 # langchain
 from langchain.chat_models import ChatOpenAI
@@ -88,12 +87,11 @@ app = Flask(__name__)
 model = whisper.load_model("base")
 
 # repos
-session = sessionmaker(bind=sql_engine)
-session = session()
-user_repo = UserRepository(session)
-client_user_repo = ClientUserRepository(session)
-client_repo = ClientRepository(session)
-log_repo = UserActivityRepository(session)
+
+user_repo = UserRepository(sql_engine)
+client_user_repo = ClientUserRepository(sql_engine)
+client_repo = ClientRepository(sql_engine)
+log_repo = UserActivityRepository(sql_engine)
 
 
 @app.route("/bot", methods=["POST"])

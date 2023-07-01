@@ -3,46 +3,45 @@ import os, sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 from models.models import Client, ClientUser
+from sqlalchemy.orm import sessionmaker
+
 
 class ClientRepository:
-    def __init__(self, session):
-        self.session = session
+    def __init__(self, sql_engine):
+        self.sql_engine = sql_engine
+
     def create_client(self, name, slug, token, settings, created_at, updated_at, deleted_at):
+        session = sessionmaker(bind=self.sql_engine)()
         client = Client(name=name, slug=slug, token=token, settings=settings, created_at=created_at, updated_at=updated_at, deleted_at=deleted_at)
-        self.session.add(client)
-        self.session.commit()
-        self.session.close()
+        session.add(client)
+        session.commit()
+        session.close()
         return client
-    
+
     def fetch_client(self, client_id):
-        client = self.session.query(Client).filter(Client.id == client_id).first()
-        self.session.close()
+        session = sessionmaker(bind=self.sql_engine)()
+        client = session.query(Client).filter(Client.id == client_id).first()
+        session.close()
         return client
 
     def fetch_clients(self):
-        clients = self.session.query(Client).all()
-        self.session.close()
+        session = sessionmaker(bind=self.sql_engine)()
+        clients = session.query(Client).all()
+        session.close()
         return {client.id: client for client in clients}
-    
+
     def delete_client(self, client_id):
-        
-        # Remove associations from client_user table
-        self.session.query(ClientUser).filter(ClientUser.client_id == client_id).delete()
-        
-        # Delete the client
-        client = self.session.query(Client).filter(Client.id == client_id).first()
+        session = sessionmaker(bind=self.sql_engine)()
+        client_user = session.query(ClientUser).filter(ClientUser.client_id == client_id).delete()
+        client = session.query(Client).filter(Client.id == client_id).first()
         if client:
-            self.session.delete(client)
-            self.session.commit()
-        
-        self.session.close()
+            session.delete(client)
+            session.commit()
+        session.close()
 
     def associate_user_to_client(self, user_id, client_id):
-
-            
-            client_user = ClientUser(user_id=user_id, client_id=client_id)
-            self.session.add(client_user)
-            self.session.commit()
-            
-            self.session.close()
-
+        session = sessionmaker(bind=self.sql_engine)()
+        client_user = ClientUser(user_id=user_id, client_id=client_id)
+        session.add(client_user)
+        session.commit()
+        session.close()
