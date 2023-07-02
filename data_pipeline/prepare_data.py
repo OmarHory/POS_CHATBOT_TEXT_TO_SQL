@@ -4,7 +4,6 @@ import sys
 import pandas as pd
 from datetime import date, datetime, timedelta
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import uuid
 import hashlib
 os.environ['PYTHONHASHSEED'] = '42'
@@ -212,8 +211,7 @@ def main():
         raise Exception('Mode must be either pull or update.')
 
     engine = create_engine(os.environ["DATABASE_URI"])
-    session = sessionmaker(bind=engine)
-    client_repo = ClientRepository(session=session())
+    client_repo = ClientRepository(engine)
     client = client_repo.fetch_client(client_id)
     token = client.token
     client_settings = client.settings

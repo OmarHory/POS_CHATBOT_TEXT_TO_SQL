@@ -2,7 +2,6 @@ import os
 import argparse
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
@@ -38,8 +37,7 @@ local_path = f"data/{client_id}/raw/updates"
 
 # Get Foodics API token from clients table
 engine = create_engine(os.environ['DATABASE_URI'])
-session = sessionmaker(bind=engine)
-client_repo = ClientRepository(session=session())
+client_repo = ClientRepository(engine)
 client = client_repo.fetch_client(client_id)
 token = client.token
 
