@@ -195,7 +195,7 @@ def gpt_sql_prompt(
                         - If you think the question is not clear. ask the user to clarify the question.
 
 
-        3- Examples (Add client_id to all the queries, for all the tables):
+        3- Examples:
                 - Question: What is the total sales yesterday?
                 - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = CURDATE() - INTERVAL 1 DAY and client_id={client_id};
 
@@ -206,16 +206,16 @@ def gpt_sql_prompt(
                 - SQLQuery: SELECT branches.name, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 8 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers JOIN branches ON branches.id = order_headers.branch_id WHERE order_date >= CURDATE() - INTERVAL 8 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id} GROUP BY branches.name;
 
                 - Question: What is the top 5 products by sales yesterday?
-                - SQLQuery: SELECT products.name, SUM(order_details.price) AS total_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = 2 GROUP BY products.name ORDER BY total_sales DESC LIMIT 5;
+                - SQLQuery: SELECT products.name, SUM(order_details.price) AS total_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = {client_id} GROUP BY products.name ORDER BY total_sales DESC LIMIT 5;
                 
                 - Question: What is the top 5 products by sales yesterday by branch name?
-                - SQLQuery: SELECT branches.name, products.name, SUM(order_details.price) AS total_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id JOIN branches ON branches.id = order_headers.branch_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = 2 GROUP BY branches.name, products.name ORDER BY total_sales DESC LIMIT 5;
+                - SQLQuery: SELECT branches.name, products.name, SUM(order_details.price) AS total_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id JOIN branches ON branches.id = order_headers.branch_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = {client_id} GROUP BY branches.name, products.name ORDER BY total_sales DESC LIMIT 5;
 
                 - Question: What is the top option by sales yesterday?
-                - SQLQuery: SELECT order_options.name, SUM(order_options.price) AS total_sales FROM order_options JOIN order_details ON order_details.id = order_options.order_details_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = 2 GROUP BY order_options.name ORDER BY total_sales DESC LIMIT 1;
+                - SQLQuery: SELECT order_options.name, SUM(order_options.price) AS total_sales FROM order_options JOIN order_details ON order_details.id = order_options.order_details_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = {client_id} GROUP BY order_options.name ORDER BY total_sales DESC LIMIT 1;
 
                 - Question: What is the top option in sales, and which product it belongs to?
-                - SQLQuery: SELECT products.name, order_options.name, SUM(order_options.price) AS total_sales FROM order_options JOIN order_details ON order_details.id = order_options.order_details_id JOIN order_headers ON order_headers.id = order_details.order_header_id JOIN products ON products.id = order_details.product_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = 2 GROUP BY products.name, order_options.name ORDER BY total_sales DESC LIMIT 1;
+                - SQLQuery: SELECT products.name, order_options.name, SUM(order_options.price) AS total_sales FROM order_options JOIN order_details ON order_details.id = order_options.order_details_id JOIN order_headers ON order_headers.id = order_details.order_header_id JOIN products ON products.id = order_details.product_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = {client_id} GROUP BY products.name, order_options.name ORDER BY total_sales DESC LIMIT 1;
         
                 - Question: Compare the percentage of sales between yesterday and the day before yesterday?
                 - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales, (SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) - SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END)) / SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) * 100 AS percentage_change FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and client_id={client_id};
