@@ -194,9 +194,20 @@ def gpt_sql_prompt(
                         - provide good recommendations and actions for the {client_type} manager to increase revenue.
                         - If you think the question is not clear. ask the user to clarify the question.
 
-                
 
-        3- Use the following format:
+        3- Examples:
+                - Question: What is the total sales yesterday?
+                - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = '2023-07-04';
+
+                - Question: Compare the sales between yesterday and the day before yesterday.
+                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY;
+                
+                - Question: What were my sales yesterday by branch name. And compare the sales to the same day last week? 
+                - SQLQuery: SELECT branches.name, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 8 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers JOIN branches ON branches.id = order_headers.branch_id WHERE order_date >= CURDATE() - INTERVAL 8 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY GROUP BY branches.name;
+
+
+
+        4- Use the following format:
                 - Question: "Question here"
                 - SQLQuery: "SQL Query to run"
                 - SQLResult: "Result of the SQLQuery"
