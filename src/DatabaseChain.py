@@ -22,6 +22,15 @@ from langchain.sql_database import SQLDatabase
 
 from langchain import OpenAI, SQLDatabase, SQLDatabaseChain
 
+def flatten_string(input_string):
+    # Remove leading and trailing whitespace
+    input_string = input_string.strip()
+    
+    # Remove newlines and extra whitespace within the string
+    flattened_string = ' '.join(input_string.split())
+    
+    return flattened_string
+
 
 def get_db_session(engine, include_tables, llm, PROMPT_SQL, properties):
     sql_database = SQLDatabase(engine, include_tables=include_tables)
@@ -110,14 +119,16 @@ class SQLDatabaseChain(Chain, BaseModel):
         print("\nsql_cmd:\n", sql_cmd)
         
         try:
-            result = self.database.run(sql_cmd)
+            print("flattened:", flatten_string(sql_cmd))
+            result = self.database.run(flatten_string(sql_cmd))
         except Exception as e:
             prompt_revision = sql_revision_prompt.format(e, self.properties['user_question'])
             print("\nPrompt revision:\n", prompt_revision, "\n")
             sql_cmd = send_to_gpt(prompt_revision)
             print("New sql_cmd:\n", sql_cmd)
-            result = self.database.run(sql_cmd)
-            
+            print("flattened:", flatten_string(sql_cmd))
+            result = self.database.run(flatten_string(sql_cmd))
+        
         intermediate_steps.append(sql_cmd)
         self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
         intermediate_steps.append(result)
