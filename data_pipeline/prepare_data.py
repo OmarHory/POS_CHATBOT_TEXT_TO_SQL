@@ -37,6 +37,7 @@ def fetch_products(client_id, token, category_name_col):
     df_products.drop("category", axis=1, inplace=True)
     df_products = df_products[["id", "client_id", "sku", "slug", "name", "category_id", "is_active", "is_stock_product", "price", "created_at", "updated_at", "deleted_at"]]
     df_products = df_products.rename(columns={"is_stock_product": "is_stock"})
+    df_products = df_products['price'].fillna(0.0)
     return df_products
 
 def fetch_categories(client_id, token, category_name_col):
