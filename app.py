@@ -1,6 +1,13 @@
 import src.update_variables
 from src.update_variables import update_keys
 
+#bd
+from src.DatabaseChain import get_db_session
+from src.helpers.vars import gpt_sql_prompt
+from langchain.prompts.prompt import PromptTemplate
+
+
+
 import os
 import logging
 import warnings
@@ -92,6 +99,48 @@ user_repo = UserRepository(sql_engine)
 client_user_repo = ClientUserRepository(sql_engine)
 client_repo = ClientRepository(sql_engine)
 log_repo = UserActivityRepository(sql_engine)
+
+@app.route("/test", methods=["POST"])
+def test():
+    incoming_msg = request.values.get("Body", "")
+    client_branches = request.form.get("client_branches")
+    client_type = request.form.get("client_type")
+    client_name = request.form.get("client_name")
+    client_currency_full = request.form.get("client_currency_full")
+    client_currency_short = request.form.get("client_currency_short")
+    client_country = request.form.get("client_country")
+    client_timezone = request.form.get("client_timezone")
+    client_categories = request.form.get("client_categories")
+    client_order_types = request.form.get("client_order_types")
+    client_order_sources = request.form.get("client_order_sources")
+    client_order_statuses = request.form.get("client_order_statuses")
+    client_id = int(request.form.get("client_id"))
+    user_language = request.form.get("user_language")
+    include_tables = request.form.get("include_tables")
+
+    PROMPT_SQL = PromptTemplate(
+            input_variables=["input"],
+            template=gpt_sql_prompt(
+                user_language=user_language,
+                client_branches=client_branches,
+                client_type=client_type,
+                client_name=client_name,
+                client_currency_full=client_currency_full,
+                client_currency_short=client_currency_short,
+                client_country=client_country,
+                client_timezone=client_timezone,
+                client_categories=client_categories,
+                client_order_types=client_order_types,
+                client_order_sources=client_order_sources,
+                client_order_statuses=client_order_statuses,
+                client_id=client_id,
+            ),
+        );
+    db_chain_session = get_db_session(sql_engine, eval(include_tables), llm, PROMPT_SQL, {"user_question": incoming_msg, "active_client": client_id, "test":True})
+    sql_cmd = db_chain_session(incoming_msg)
+    sql_cmd = sql_cmd['intermediate_steps'][0]
+    print("sql_cmd", sql_cmd)
+    return sql_cmd
 
 
 @app.route("/bot", methods=["POST"])

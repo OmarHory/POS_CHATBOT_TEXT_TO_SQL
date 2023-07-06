@@ -115,19 +115,17 @@ class SQLDatabaseChain(Chain, BaseModel):
             print("\nPrompt Add Client ID filter :\n", prompt_modify_sql, "\n")
             sql_cmd = send_to_gpt(prompt_modify_sql)
             print("New sql_cmd:\n", sql_cmd)
-
-        print("\nsql_cmd:\n", sql_cmd)
+        sql_cmd = flatten_string(sql_cmd)
+        if 'test' in self.properties.keys():
+            return {"result": "", 'intermediate_steps': [sql_cmd]}
         
         try:
-            print("flattened:", flatten_string(sql_cmd))
-            result = self.database.run(flatten_string(sql_cmd))
+            result = self.database.run(sql_cmd)
         except Exception as e:
             prompt_revision = sql_revision_prompt.format(e, self.properties['user_question'])
             print("\nPrompt revision:\n", prompt_revision, "\n")
             sql_cmd = send_to_gpt(prompt_revision)
-            print("New sql_cmd:\n", sql_cmd)
-            print("flattened:", flatten_string(sql_cmd))
-            result = self.database.run(flatten_string(sql_cmd))
+            result = self.database.run(sql_cmd)
         
         intermediate_steps.append(sql_cmd)
         self.callback_manager.on_text(sql_cmd, color="green", verbose=self.verbose)
