@@ -110,13 +110,13 @@ def gpt_sql_prompt(
                         - discount_amount: order discount amount in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                E. "order_details": Order details is the table that contains the information of the ordered products, contains the following columns:
+                E. "order_details": Order details is the table that contains the information of the ordered products per order header, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
                         - product_id: product id. (Foreign Key to products table)
                         - quantity: quantity of the product in units.
-                        - price: total price of the product in {client_currency_full} or {client_currency_short}, this price is already multiplied by the quantity.
+                        - price: price of the ordered product in {client_currency_full} or {client_currency_short}, this price is already multiplied by the quantity.
                         - client_id: client id. (Foreign Key to clients table)
 
                 F. "order_options": Order Options is the table that contains the options / modifiers on the ordered products, contains the following columns:
