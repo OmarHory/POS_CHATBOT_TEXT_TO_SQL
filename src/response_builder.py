@@ -150,7 +150,7 @@ def process_message(
             client_name=config_client["client_name"],
             client_type=config_client["client_type"],
         )
-        intent = strip_message(send_to_gpt(intent_prompt_))
+        intent = strip_message(send_to_gpt(intent_prompt_, model_name="gpt-3.5-turbo"))
 
         intent = intent.lower()
         print(intent_prompt_)
@@ -253,7 +253,8 @@ def process_send_gpt(
     response = send_to_gpt(
         "\nIntent: {edited_intent}\n\n"
         + edit_prompt(sorry_instruction.format(user_language, incoming_msg))
-        + "\n"
+        + "\n",
+        model_name="gpt-3.5-turbo",
     )
     print("First GPT response: ", response)
 

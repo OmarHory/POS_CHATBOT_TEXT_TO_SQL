@@ -110,12 +110,13 @@ class SQLDatabaseChain(Chain, BaseModel):
         intermediate_steps = []
 
         sql_cmd = llm_chain.predict(**llm_inputs)
+        print("sql_cmd:\n", sql_cmd)
         if not sql_check_value_filter(sql_cmd, 'client_id', self.properties['active_client']):
             prompt_modify_sql = sql_add_filter_prompt.format(self.properties['active_client'], sql_cmd)
             print("\nPrompt Add Client ID filter :\n", prompt_modify_sql, "\n")
             sql_cmd = send_to_gpt(prompt_modify_sql)
             print("New sql_cmd:\n", sql_cmd)
-        sql_cmd = flatten_string(sql_cmd)
+        sql_cmd = flatten_string(sql_cmd).strip('"').strip("'")
         if 'test' in self.properties.keys():
             return {"result": "", 'intermediate_steps': [sql_cmd]}
         
@@ -124,7 +125,8 @@ class SQLDatabaseChain(Chain, BaseModel):
         except Exception as e:
             prompt_revision = sql_revision_prompt.format(e, self.properties['user_question'])
             print("\nPrompt revision:\n", prompt_revision, "\n")
-            sql_cmd = send_to_gpt(prompt_revision)
+            sql_cmd = send_to_gpt(prompt_revision, model_name='gpt-4')
+            print("revised sql_cmd:\n", sql_cmd)
             result = self.database.run(sql_cmd)
         
         intermediate_steps.append(sql_cmd)
