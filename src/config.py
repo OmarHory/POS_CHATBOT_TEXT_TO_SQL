@@ -52,6 +52,6 @@ config_gpt = dict(
     llm_api_key="",
     llm_name="",
     llm_temperature=0.1,
-    llm_max_tokens=400,
+    llm_max_tokens=None,
     llm_request_timeout=120,
 )

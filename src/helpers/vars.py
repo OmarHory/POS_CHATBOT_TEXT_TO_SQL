@@ -110,7 +110,7 @@ def gpt_sql_prompt(
                         - discount_amount: order discount amount in {client_currency_full} or {client_currency_short}.
                         - client_id: client id. (Foreign Key to clients table)
 
-                E. "order_details": Order details is the table that contains the information of the ordered products per order header, contains the following columns:
+                E. "order_details": Order details is the table that contains the information of the ordered products per order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order details id.
                         - order_header_id: order header id. (Foreign Key to order_headers table)
