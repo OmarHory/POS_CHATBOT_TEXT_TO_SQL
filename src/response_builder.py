@@ -167,16 +167,21 @@ def process_message(
 
         if incoming_msg.isdigit() and user_context == "switch_client":
             # get the client name from the client id
-            active_client_context = available_client_ids[int(incoming_msg) - 1]
+            chosen_client = int(incoming_msg)
+            active_client_context = available_client_ids[chosen_client - 1]
             user_context = "first_time_user"
-            client = client_repo.fetch_client(int(incoming_msg))
-            response = f"You have switched to {client.name}"
-            _ = redis_hash_get_or_create(
-                redis_client,
-                f"client_{int(incoming_msg)}",
-                client.settings,
-                redis_timeout,
-            )
+            if chosen_client not in available_client_ids:
+                response = 'You have entered an incorrect number from the list'
+            else:
+                    
+                client = client_repo.fetch_client(available_client_ids[chosen_client-1])
+                response = f"You have switched to {client.name}"
+                _ = redis_hash_get_or_create(
+                    redis_client,
+                    f"client_{chosen_client}",
+                    client.settings,
+                    redis_timeout,
+                )
 
     elif "greeting" in intent:
         response = general_menu(
