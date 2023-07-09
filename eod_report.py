@@ -67,9 +67,10 @@ for client in clients:
     Given the following SQL Results for the single month sales of a {client_type} ({client_description}) historically until yesterday.
     There are two columns [date, total sales (in {client_currency_short} Currency)].
 
-    Analyse the SQL Results below in order to send a report to the {client_type} owner about yesterday's sales compared to the previous days.
-
+    Analyze the SQL Results below in order to send a report to the {client_type} owner about yesterday's sales compared to the previous days, emphasizing on the following:
     - Make your report understandable and in a format to be sent directly to the {client_type} owner, include numbers and percentage, try to find insights that a human wouldn't find.
+    - Compare yesterday's sales to the same day of the week in the previous weeks.
+    - Do usefull comparisons to the previous days of the week.
     - Provide professional insights in the field of F&B.
     - Add emojis to each paragraph (to be compatible with whatsapp)
     - Make the tone conversational (not an email format).
