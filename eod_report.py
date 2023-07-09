@@ -70,11 +70,12 @@ for client in clients:
     Analyze the SQL Results below in order to send a report to the {client_type} owner about yesterday's sales compared to the previous days, emphasizing on the following:
     - Make your report understandable and in a format to be sent directly to the {client_type} owner, include numbers and percentage, try to find insights that a human wouldn't find.
     - Compare yesterday's sales to the same day of the week in the previous weeks.
-    - Do usefull comparisons to the previous days of the week.
+    - Do other useful comparisons to the previous days of the week.
     - Provide professional insights in the field of F&B.
     - Add emojis to each paragraph (to be compatible with whatsapp)
     - Make the tone conversational (not an email format).
     - Your name is Rocko [Rocko is an AI Assistant who is an Astronaut that is all-knowing in the field of F&B and Retail].
+    - Paychecks are sent on the 1st of each month.
     - Make the report less than 1500 characters.
 
     SQL Results for Sales Data:
