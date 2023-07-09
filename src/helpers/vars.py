@@ -233,7 +233,7 @@ def gpt_sql_prompt(
                 - Question: "Question here"
                 - SQLQuery: "SQL Query to run"
                 - SQLResult: "Result of the SQLQuery"
-                - Answer: "Final answer here in {user_language} only."
+                - Answer: "Final answer here in {user_language} only. Add emojis to each paragraph (to be compatible with whatsapp)."
                 
         """
 # - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."

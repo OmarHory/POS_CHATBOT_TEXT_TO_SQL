@@ -85,10 +85,10 @@ for client in clients:
 
     results = send_to_gpt(prompt, model_name='gpt-4')
 
-    #client_users = client_user_repo.get_by_client_id(client_id)
-    user_ids = [1,2,3,4,5]
-    for user_id in user_ids:
-        # user_id = client_user.user_id
+    client_users = client_user_repo.get_by_client_id(client_id)
+    # user_ids = [1,2,3,4,5]
+    for client_user in client_users:
+        user_id = client_user.user_id
 
         user = user_repo.get_user_by_id(user_id)
         user_name = user.name
@@ -97,4 +97,4 @@ for client in clients:
         final_results = f'A message to {user_name} - {client_name} \n\n' + results
         print(final_results)
         send_to_twilio(twilio_client, user_phone_number, final_results, twilio_phone_number)
-        time.sleep(5)
+        time.sleep(3)
