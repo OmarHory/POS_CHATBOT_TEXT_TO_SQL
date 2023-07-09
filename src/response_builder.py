@@ -264,7 +264,7 @@ def process_send_gpt(
     ):
         # if "undefined" not in edited_intent.lower():
         print("Go to SQL GPT")
-        incoming_msg = edit_prompt(incoming_msg)
+        # incoming_msg = edit_prompt(incoming_msg)
 
         # Record the start time
         start_time = time.time()
