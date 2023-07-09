@@ -86,7 +86,7 @@ for client in clients:
     results = send_to_gpt(prompt, model_name='gpt-4')
 
     #client_users = client_user_repo.get_by_client_id(client_id)
-    user_ids = [1]
+    user_ids = [1,2,3,4,5]
     for user_id in user_ids:
         # user_id = client_user.user_id
 
