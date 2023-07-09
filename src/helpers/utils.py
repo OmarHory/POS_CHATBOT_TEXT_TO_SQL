@@ -70,7 +70,7 @@ def translate_message(incoming_msg, language_map, prompt):
     print("user_language is:", user_language)
 
     if user_language == "Arabic":
-        incoming_msg = send_to_gpt(prompt.format(user_language, incoming_msg))
+        incoming_msg = send_to_gpt(prompt.format(user_language, incoming_msg), model_name="gpt-3.5-turbo")
         print(incoming_msg)
 
     return incoming_msg, user_language

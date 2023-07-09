@@ -85,7 +85,7 @@ if not os.environ.get("ENV"):
 llm = ChatOpenAI(
     model_name=config_gpt["llm_name"],
     request_timeout=config_gpt["llm_request_timeout"],
-    max_tokens=config_gpt["llm_max_tokens"],
+    # max_tokens=config_gpt["llm_max_tokens"],
     temperature=config_gpt["llm_temperature"],
 )
 
