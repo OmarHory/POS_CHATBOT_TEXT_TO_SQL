@@ -94,7 +94,7 @@ for client in clients:
         user_name = user.name
         user_phone_number = user.phone_number
 
-        results = f'A message to {user_name} - {client_name} \n\n' + results
-        print(results)
-        send_to_twilio(twilio_client, user_phone_number, results, twilio_phone_number)
+        final_results = f'A message to {user_name} - {client_name} \n\n' + results
+        print(final_results)
+        send_to_twilio(twilio_client, user_phone_number, final_results, twilio_phone_number)
         time.sleep(5)
