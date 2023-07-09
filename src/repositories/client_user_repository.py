@@ -15,13 +15,13 @@ class ClientUserRepository:
 
     def get_by_user_id(self, user_id):
         session = sessionmaker(bind=self.sql_engine)()
-        result = session.query(ClientUser).filter(ClientUser.user_id == user_id)
+        result = session.query(ClientUser).filter(ClientUser.user_id == user_id).all()
         session.close()
         return result
 
     def get_by_client_id(self, client_id):
         session = sessionmaker(bind=self.sql_engine)()
-        result = session.query(ClientUser).filter(ClientUser.client_id == client_id).first()
+        result = session.query(ClientUser).filter(ClientUser.client_id == client_id).all()
         session.close()
         return result
 

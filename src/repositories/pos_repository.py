@@ -164,6 +164,21 @@ class PosRepository:
         self.session.add(model_obj)
         self.session.commit()
 
+    def execute_query(self, query):
+        try:
+            result = self.session.execute(query)
+            # Fetch all the rows from the result of query
+            rows = result.fetchall()
+            # Return the rows
+            return rows
+        except Exception as e:
+            print("Failed to execute query.")
+            print("Error: ", e)
+            self.session.rollback()
+            return None
+        finally:
+            self.session.close()
+
     def dd(self, obj):
         print(obj)
         sys.exit(1)  # Terminate the program

@@ -136,3 +136,20 @@ def create_directories(client_id):
 def sql_check_value_filter(sql_query, column, value):
     value_pattern = re.compile(r'\b{}\s*=\s*{}'.format(column,value), re.IGNORECASE)
     return bool(value_pattern.search(sql_query))
+
+
+def send_to_twilio(client, phone_number, message, twilio_phone_number):
+    try:
+        client.messages.create(
+            from_=twilio_phone_number,
+            to=f"whatsapp:{phone_number}",
+            # media_url='data:image/jpeg;base64,' + file_like_obj.getvalue().decode('base64'),
+            body=message,
+        )
+    except Exception as e:
+        print('Twilio Error:', e)
+        client.messages.create(
+            from_=twilio_phone_number,
+            to=f"whatsapp:{phone_number}",
+            body="An error has occurred in Twilios message, pleaase try again in a few minutes.",
+        )

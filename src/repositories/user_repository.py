@@ -62,3 +62,9 @@ class UserRepository:
             session.commit()
 
         session.close()
+
+    def fetch_users(self):
+        session = sessionmaker(bind=self.sql_engine)()
+        users = session.query(User).all()
+        session.close()
+        return users

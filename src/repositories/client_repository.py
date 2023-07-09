@@ -28,8 +28,8 @@ class ClientRepository:
         session = sessionmaker(bind=self.sql_engine)()
         clients = session.query(Client).all()
         session.close()
-        return {client.id: client for client in clients}
-
+        return clients
+    
     def delete_client(self, client_id):
         session = sessionmaker(bind=self.sql_engine)()
         client_user = session.query(ClientUser).filter(ClientUser.client_id == client_id).delete()

@@ -6,15 +6,13 @@ from src.DatabaseChain import get_db_session
 from src.helpers.vars import gpt_sql_prompt
 from langchain.prompts.prompt import PromptTemplate
 
-
-
 import os
 import logging
 import warnings
 import datetime
 import time
 
-from src.helpers.utils import redis_hash_get_or_create
+from src.helpers.utils import redis_hash_get_or_create, send_to_twilio
 
 from flask import Flask, request
 import redis
@@ -153,7 +151,7 @@ def bot():
     phone_number = request.form.get("From").split("+")[1]
 
     user = user_repo.get_user_by_phone_number(phone_number)
-    client_user = client_user_repo.get_by_user_id(user_id=user.id).all()
+    client_user = client_user_repo.get_by_user_id(user_id=user.id)
 
     recording_url = request.form.get("MediaUrl0")
     if recording_url:
@@ -278,19 +276,9 @@ def bot():
             )
 
     if os.environ.get("ENV").lower() == "prod":
-        try:
-            client.messages.create(
-                from_=twilio_phone_number,
-                to=f"whatsapp:{phone_number}",
-                # media_url='data:image/jpeg;base64,' + file_like_obj.getvalue().decode('base64'),
-                body=message,
-            )
-        except Exception as e:
-            client.messages.create(
-                from_=twilio_phone_number,
-                to=f"whatsapp:{phone_number}",
-                body="An error has occurred in Twilios message, pleaase try again in a few minutes.",
-            )
+        send_to_twilio(client, phone_number, message, twilio_phone_number)
+
+        
 
     end_time = time.time()
     elapsed_time = end_time - request_timestamp
