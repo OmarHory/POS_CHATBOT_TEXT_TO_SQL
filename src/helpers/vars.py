@@ -55,11 +55,13 @@ def gpt_sql_prompt(
     client_order_statuses,
     client_id,
 ):
-    client_branches = client_branches.split(",")
-    client_order_types = client_order_types.split(",")
-    client_order_sources = client_order_sources.split(",")
-    client_order_statuses = client_order_statuses.split(",")
-    client_categories = client_categories.split(",")
+    #if client_branches is list don't split
+    if type(client_branches) != list:  
+        client_branches = client_branches.split(",")
+        client_order_types = client_order_types.split(",")
+        client_order_sources = client_order_sources.split(",")
+        client_order_statuses = client_order_statuses.split(",")
+        client_categories = client_categories.split(",")
 
     timezone_tz = pytz.timezone(client_timezone)
     timezone_datetime = datetime.now(timezone_tz)

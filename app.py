@@ -100,21 +100,23 @@ log_repo = UserActivityRepository(sql_engine)
 
 @app.route("/test", methods=["POST"])
 def test():
-    incoming_msg = request.values.get("Body", "")
-    client_branches = request.form.get("client_branches")
-    client_type = request.form.get("client_type")
-    client_name = request.form.get("client_name")
-    client_currency_full = request.form.get("client_currency_full")
-    client_currency_short = request.form.get("client_currency_short")
-    client_country = request.form.get("client_country")
-    client_timezone = request.form.get("client_timezone")
-    client_categories = request.form.get("client_categories")
-    client_order_types = request.form.get("client_order_types")
-    client_order_sources = request.form.get("client_order_sources")
-    client_order_statuses = request.form.get("client_order_statuses")
-    client_id = int(request.form.get("client_id"))
-    user_language = request.form.get("user_language")
-    include_tables = request.form.get("include_tables")
+    # Accept form as JSON
+    request_json = request.json
+    incoming_msg = request_json["Body"]
+    client_branches = request_json["client_branches"]
+    client_type = request_json['client_type']
+    client_name = request_json['client_name']
+    client_currency_full = request_json['client_currency_full']
+    client_currency_short = request_json['client_currency_short']
+    client_country = request_json['client_country']
+    client_timezone = request_json['client_timezone']
+    client_categories = request_json['client_categories']
+    client_order_types = request_json['client_order_types']
+    client_order_sources = request_json['client_order_sources']
+    client_order_statuses = request_json['client_order_statuses']
+    client_id = int(request_json['client_id'])
+    user_language = request_json['user_language']
+    include_tables = request_json['include_tables']
 
     PROMPT_SQL = PromptTemplate(
             input_variables=["input"],
@@ -134,7 +136,9 @@ def test():
                 client_id=client_id,
             ),
         );
-    db_chain_session = get_db_session(sql_engine, eval(include_tables), llm, PROMPT_SQL, {"user_question": incoming_msg, "active_client": client_id, "test":True})
+    if type(include_tables) != list:
+        include_tables = include_tables.split(",")
+    db_chain_session = get_db_session(sql_engine, include_tables, llm, PROMPT_SQL, {"user_question": incoming_msg, "active_client": client_id, "test":True})
     sql_cmd = db_chain_session(incoming_msg)
     sql_cmd = sql_cmd['intermediate_steps'][0]
     print("sql_cmd", sql_cmd)
