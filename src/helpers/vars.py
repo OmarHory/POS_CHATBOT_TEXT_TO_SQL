@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 
@@ -65,6 +65,10 @@ def gpt_sql_prompt(
 
     timezone_tz = pytz.timezone(client_timezone)
     timezone_datetime = datetime.now(timezone_tz)
+
+    # check if timezone_datetime is after 12:00 AM, if yes, then subtract 1 day
+    if timezone_datetime.hour >= 0:
+        timezone_datetime = timezone_datetime - timedelta(days=1)
 
     # Extract the date and time components
     today = timezone_datetime.strftime("%Y-%m-%d")
@@ -241,6 +245,7 @@ def gpt_sql_prompt(
 # - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
 
     prompt_temp += "\n\n\tQuestion: {input}"
+    print(prompt_temp)
     return prompt_temp
 
 
