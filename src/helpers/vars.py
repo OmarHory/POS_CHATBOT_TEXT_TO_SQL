@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 
 
@@ -55,20 +55,14 @@ def gpt_sql_prompt(
     client_order_statuses,
     client_id,
 ):
-    #if client_branches is list don't split
-    if type(client_branches) != list:  
-        client_branches = client_branches.split(",")
-        client_order_types = client_order_types.split(",")
-        client_order_sources = client_order_sources.split(",")
-        client_order_statuses = client_order_statuses.split(",")
-        client_categories = client_categories.split(",")
+    client_branches = client_branches.split(",")
+    client_order_types = client_order_types.split(",")
+    client_order_sources = client_order_sources.split(",")
+    client_order_statuses = client_order_statuses.split(",")
+    client_categories = client_categories.split(",")
 
     timezone_tz = pytz.timezone(client_timezone)
     timezone_datetime = datetime.now(timezone_tz)
-
-    # check if timezone_datetime is after 12:00 AM, if yes, then subtract 1 day
-    if timezone_datetime.hour >= 0:
-        timezone_datetime = timezone_datetime - timedelta(days=1)
 
     # Extract the date and time components
     today = timezone_datetime.strftime("%Y-%m-%d")
@@ -245,7 +239,6 @@ def gpt_sql_prompt(
 # - Recommendations: "Always Provide professional recommendations and actions to take based on the data to increase revenue."
 
     prompt_temp += "\n\n\tQuestion: {input}"
-    print(prompt_temp)
     return prompt_temp
 
 
