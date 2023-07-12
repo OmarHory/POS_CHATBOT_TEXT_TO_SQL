@@ -157,7 +157,6 @@ def gpt_sql_prompt(
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
                         - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
-                        - When asked about branches, join with the branches table.
                 
                 C. SQL instructions:
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
