@@ -146,7 +146,7 @@ def gpt_sql_prompt(
                 B. {client_type} instructions:
                         - {client_type} name: {client_name}.
                         - {client_type} country and Location: {client_country}.
-                        - {client_type} branches in the format of ["branch_id_1 : branch_name_1, branch_id_2 : branch_name_2"]': {client_branches}
+                        - {client_type} branches {client_branches}
                         - A business day is from the branch opening hour to the branch closing hour.
                         - The {client_type} works everyday on specific hours based on the branch.
                         - Each order has multiple products, and each product might have multiple options / modifiers.
