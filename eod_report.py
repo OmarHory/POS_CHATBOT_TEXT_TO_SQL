@@ -21,12 +21,6 @@ db_uri = os.getenv("DATABASE_URI")
 
 print("db_uri is:", db_uri)
 
-# # Parse command-line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("--field", type=str, required=True, help="field")
-args = parser.parse_args()
-field = args.field
-
 # twilio settings
 account_sid = config_twilio["twilio_account_sid"]
 auth_token = config_twilio["twilio_auth_token"]
@@ -71,10 +65,10 @@ for client in clients:
     - Make your report understandable and in a format to be sent directly to the {client_type} owner, include numbers and percentage, try to find insights that a human wouldn't find.
     - Compare yesterday's sales to the same day of the week in the previous weeks.
     - Do other useful comparisons to the previous days of the week.
-    - Provide professional insights in the field of {field}.
+    - Provide professional insights for {client_type} industry.
     - Add emojis to each paragraph (to be compatible with whatsapp)
     - Make the tone conversational (not an email format).
-    - Your name is Rocko [Rocko is an AI Assistant who is an Astronaut that is all-knowing in the field of {field}].
+    - Your name is Rocko [Rocko is an AI Assistant who is an Astronaut that is all-knowing in {client_type} industry].
     - Paychecks are sent on the 1st of each month.
     - Make the report less than 1500 characters.
 
