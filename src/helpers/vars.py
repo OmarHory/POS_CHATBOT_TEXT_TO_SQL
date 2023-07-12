@@ -72,6 +72,7 @@ def gpt_sql_prompt(
     print(client_branches)
 
 
+
     prompt_temp = f"""
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
 
@@ -145,7 +146,7 @@ def gpt_sql_prompt(
                 B. {client_type} instructions:
                         - {client_type} name: {client_name}.
                         - {client_type} country and Location: {client_country}.
-                        - {client_type} branches in the format of ['branch_id : branch_name']: {client_branches}
+                        - {client_type} branches in the format of [branch_id : branch_name]: {client_branches}
                         - A business day is from the branch opening hour to the branch closing hour.
                         - The {client_type} works everyday on specific hours based on the branch.
                         - Each order has multiple products, and each product might have multiple options / modifiers.
