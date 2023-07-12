@@ -69,6 +69,7 @@ def gpt_sql_prompt(
     # Extract the date and time components
     today = timezone_datetime.strftime("%Y-%m-%d")
     time = timezone_datetime.strftime("%H:%M:%S")
+    print(client_branches)
 
 
     prompt_temp = f"""
