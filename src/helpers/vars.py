@@ -57,11 +57,11 @@ def gpt_sql_prompt(
 ):
     #if client_branches is list don't split
     if type(client_branches) != list:  
-        client_branches = client_branches.split(",")
-        client_order_types = client_order_types.split(",")
-        client_order_sources = client_order_sources.split(",")
-        client_order_statuses = client_order_statuses.split(",")
-        client_categories = client_categories.split(",")
+        client_branches = str(client_branches.split(","))
+        client_order_types = str(client_order_types.split(","))
+        client_order_sources = str(client_order_sources.split(","))
+        client_order_statuses = str(client_order_statuses.split(","))
+        client_categories = str(client_categories.split(","))
 
     timezone_tz = pytz.timezone(client_timezone)
     timezone_datetime = datetime.now(timezone_tz)
