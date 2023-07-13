@@ -3,7 +3,7 @@ from src.update_variables import update_keys
 
 #bd
 from src.DatabaseChain import get_db_session
-from src.helpers.vars import gpt_sql_prompt
+from src.helpers.vars import gpt_sql_prompt, message_chunker
 from langchain.prompts.prompt import PromptTemplate
 
 import os
@@ -280,7 +280,9 @@ def bot():
             )
 
     if os.environ.get("ENV").lower() == "prod":
-        send_to_twilio(client, phone_number, message, twilio_phone_number)
+        message = message_chunker(message, 1500)
+        for message_chunk in message:
+            send_to_twilio(client, phone_number, message_chunk, twilio_phone_number)
 
         
 

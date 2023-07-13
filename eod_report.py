@@ -115,7 +115,7 @@ for client in clients:
 
         final_results = f'A message to {user_name} - {client_name} \n\n' + results
         print(final_results)
-        final_results = message_chunker(final_results, 1550)
+        final_results = message_chunker(final_results, 1500)
         for message_chunk in final_results:
             print(len(final_results))
             print(message_chunk)
