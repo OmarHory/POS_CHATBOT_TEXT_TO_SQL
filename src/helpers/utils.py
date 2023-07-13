@@ -153,3 +153,46 @@ def send_to_twilio(client, phone_number, message, twilio_phone_number):
             to=f"whatsapp:{phone_number}",
             body="An error has occurred in Twilios message, pleaase try again in a few minutes.",
         )
+
+
+def message_chunker(message, max_length):
+    chunks = []
+    chunk = ''
+    sentences = message.split('. ')
+    
+    for sentence in sentences:
+        if len(chunk + sentence + '. ') <= max_length:
+            chunk += sentence + '. '
+        else:
+            if chunk:
+                chunks.append(chunk)
+            chunk = sentence + '. '
+
+    if chunk:
+        chunks.append(chunk)
+
+    # further split chunks if they contain newlines longer than max_length
+    refined_chunks = []
+    for chunk in chunks:
+        lines = chunk.split('\n')
+        temp_chunk = ''
+        for line in lines:
+            if len(temp_chunk + line + '\n') <= max_length:
+                temp_chunk += line + '\n'
+            else:
+                if temp_chunk:
+                    refined_chunks.append(temp_chunk)
+                temp_chunk = line + '\n'
+        
+        if temp_chunk:
+            refined_chunks.append(temp_chunk)
+            
+    # final pass to ensure no chunks longer than max_length
+    final_chunks = []
+    for chunk in refined_chunks:
+        while len(chunk) > max_length:
+            final_chunks.append(chunk[:max_length])
+            chunk = chunk[max_length:]
+        final_chunks.append(chunk)
+
+    return final_chunks

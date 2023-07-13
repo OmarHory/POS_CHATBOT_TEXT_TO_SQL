@@ -8,7 +8,7 @@ from src.repositories.user_repository import UserRepository
 import os
 from src.gpt_api import send_to_gpt
 from twilio.rest import Client
-from src.helpers.utils import send_to_twilio
+from src.helpers.utils import send_to_twilio, message_chunker
 from sqlalchemy import create_engine
 
 
@@ -79,7 +79,7 @@ for client in clients:
     - Make your report understandable and in a format to be sent directly to the {client_type} owner, include numbers and percentage, try to find insights that a human wouldn't find.
     - Compare yesterday's sales to the same day of the week in the previous weeks.
     - Give insights about the top products.
-    - Do other useful comparisons to the previous days of the week.
+    - Do other useful comparisons to the previous days of the week for sales and products.
     - Provide professional insights for {client_type} industry.
     - Add emojis to each paragraph (to be compatible with whatsapp)
     - Make the tone conversational (not an email format).
@@ -115,5 +115,7 @@ for client in clients:
 
         final_results = f'A message to {user_name} - {client_name} \n\n' + results
         print(final_results)
-        send_to_twilio(twilio_client, user_phone_number, final_results, twilio_phone_number)
-        time.sleep(3)
+        final_results = message_chunker(final_results, 1550)
+        for message_chunk in final_results:
+            send_to_twilio(twilio_client, user_phone_number, message_chunk, twilio_phone_number)
+            time.sleep(3)
