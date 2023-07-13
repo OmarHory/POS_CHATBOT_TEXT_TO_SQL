@@ -56,6 +56,7 @@ def gpt_sql_prompt(
     client_id,
 ):
     #if client_branches is list don't split
+    client_branches = eval(client_branches)
     print(type(client_branches))
     if type(client_branches) != list:  
         client_branches = client_branches.split(",")
