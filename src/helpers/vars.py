@@ -56,15 +56,12 @@ def gpt_sql_prompt(
     client_id,
 ):
     #if client_branches is list don't split
-    client_branches = eval(client_branches)
-    print(type(client_branches))
     if type(client_branches) != list:  
         client_branches = client_branches.split(",")
         client_order_types = client_order_types.split(",")
         client_order_sources = client_order_sources.split(",")
         client_order_statuses = client_order_statuses.split(",")
         client_categories = client_categories.split(",")
-
     timezone_tz = pytz.timezone(client_timezone)
     timezone_datetime = datetime.now(timezone_tz)
 
@@ -75,7 +72,7 @@ def gpt_sql_prompt(
     #adjust branches list in the following format
     # - Branch 1
     # - Branch 2
-    client_branches = "\n".join([f"- {branch}" for branch in client_branches])
+#     client_branches = "\n".join([f"- {branch}" for branch in client_branches])
     print(client_branches)
 
     #adjust branches list in the following format
