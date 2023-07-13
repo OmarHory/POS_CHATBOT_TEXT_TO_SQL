@@ -3,7 +3,7 @@ from src.update_variables import update_keys
 
 #bd
 from src.DatabaseChain import get_db_session
-from src.helpers.vars import gpt_sql_prompt, message_chunker
+from src.helpers.vars import gpt_sql_prompt
 from langchain.prompts.prompt import PromptTemplate
 
 import os
@@ -12,7 +12,7 @@ import warnings
 import datetime
 import time
 
-from src.helpers.utils import redis_hash_get_or_create, send_to_twilio
+from src.helpers.utils import redis_hash_get_or_create, send_to_twilio, message_chunker
 
 from flask import Flask, request
 import redis
