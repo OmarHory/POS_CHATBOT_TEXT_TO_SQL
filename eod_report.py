@@ -117,5 +117,7 @@ for client in clients:
         print(final_results)
         final_results = message_chunker(final_results, 1550)
         for message_chunk in final_results:
+            print(len(final_results))
+            print(message_chunk)
             send_to_twilio(twilio_client, user_phone_number, message_chunk, twilio_phone_number)
             time.sleep(3)
