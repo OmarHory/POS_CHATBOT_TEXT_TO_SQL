@@ -76,6 +76,12 @@ def gpt_sql_prompt(
     client_branches = "\n".join([f"- {branch}" for branch in client_branches])
     print(client_branches)
 
+    #adjust branches list in the following format
+    # - Branch 1
+    # - Branch 2
+    client_branches = "\n".join([f"- {branch}" for branch in client_branches])
+    print(client_branches)
+
 
     prompt_temp = f"""
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
@@ -163,7 +169,6 @@ def gpt_sql_prompt(
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
                         - If the user Asks about a branch name, always adjust the entry to the nearest branch name from the predefined Branches List above.
                         - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
-                        
                 
                 C. SQL instructions:
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
