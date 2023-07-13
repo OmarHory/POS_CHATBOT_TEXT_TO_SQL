@@ -51,7 +51,7 @@ for client in clients:
     sql_sales_results = pos_obj.execute_query(f"SELECT order_date, SUM(total_price) FROM order_headers where client_id = {client_id} and order_date >= CURDATE() - INTERVAL 30 DAY and order_date != CURDATE() GROUP BY order_date ORDER BY order_date ASC;")
     sql_products_results = pos_obj.execute_query(f"SELECT s.order_date as date, s.name as product_name, MAX(s.total_sales) AS product_total_sales FROM (SELECT order_headers.order_date, products.name, SUM(order_details.price) AS total_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE order_headers.order_date >= CURDATE() - INTERVAL 30 DAY AND order_headers.client_id = {client_id} GROUP BY order_headers.order_date, products.name) s GROUP BY s.order_date order by order_date;")
     
-    if not len(sql_sales_results) and len(sql_products_results):
+    if not len(sql_sales_results) and not len(sql_products_results):
         print(f"no sql results for client_id {client_id}.")
         continue
 
