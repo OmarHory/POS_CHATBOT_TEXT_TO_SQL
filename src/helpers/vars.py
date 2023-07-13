@@ -70,6 +70,12 @@ def gpt_sql_prompt(
     today = timezone_datetime.strftime("%Y-%m-%d")
     time = timezone_datetime.strftime("%H:%M:%S")
 
+    #adjust branches list in the following format
+    # - Branch 1
+    # - Branch 2
+    client_branches = "\n".join([f"- {branch}" for branch in client_branches])
+    print(client_branches)
+
 
     prompt_temp = f"""
         Given an input question, first create a syntactically correct MySQL query to run based on the table schema, then look at the results of the query and return the answer based on the following instructions:  
@@ -143,8 +149,9 @@ def gpt_sql_prompt(
 
                 B. {client_type} instructions:
                         - {client_type} name: {client_name}.
-                        - {client_type} country and Location: {client_country}.
-                        - {client_type} branches (branch_name : branch_id): {client_branches}
+                        - Country: {client_type} country and Location: {client_country}.
+                        - Branches: The goal is to map any incoming branch name filter to one of the names in the predefined list:
+                                {client_branches}
                         - A business day is from the branch opening hour to the branch closing hour.
                         - The {client_type} works everyday on specific hours based on the branch.
                         - Each order has multiple products, and each product might have multiple options / modifiers.
@@ -154,6 +161,7 @@ def gpt_sql_prompt(
                         - When asked about sales or price, return the sales or price in {client_currency_full} or {client_currency_short}.
                         - If the user asks about future analysis and promotions, return the analysis based on the current date and time.
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
+                        - If the user Asks about a branch name, always adjust the entry to the nearest branch name from the predefined Branches List above.
                         - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
                         
                 
@@ -199,10 +207,10 @@ def gpt_sql_prompt(
 
         3- Examples:
                 - Question: What is the total sales yesterday?
-                - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = CURDATE() - INTERVAL 1 DAY and client_id={client_id};
+                - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id};
 
                 - Question: Compare the sales between yesterday and the day before yesterday.
-                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and client_id={client_id};
+                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id};
                 
                 - Question: What were my sales yesterday by branch name. And compare the sales to the same day last week? 
                 - SQLQuery: SELECT branches.name, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 8 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers JOIN branches ON branches.id = order_headers.branch_id WHERE order_date >= CURDATE() - INTERVAL 8 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id} GROUP BY branches.name;
@@ -220,7 +228,7 @@ def gpt_sql_prompt(
                 - SQLQuery: SELECT products.name, order_options.name, SUM(order_options.price) AS total_sales FROM order_options JOIN order_details ON order_details.id = order_options.order_details_id JOIN order_headers ON order_headers.id = order_details.order_header_id JOIN products ON products.id = order_details.product_id WHERE order_headers.order_date = CURDATE() - INTERVAL 1 DAY AND order_headers.client_id = {client_id} GROUP BY products.name, order_options.name ORDER BY total_sales DESC LIMIT 1;
         
                 - Question: Compare the percentage of sales between yesterday and the day before yesterday?
-                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales, (SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) - SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END)) / SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) * 100 AS percentage_change FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and client_id={client_id};
+                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) AS day_before_yesterday_sales, (SUM(CASE WHEN order_date = CURDATE() - INTERVAL 1 DAY THEN total_price ELSE 0 END) - SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END)) / SUM(CASE WHEN order_date = CURDATE() - INTERVAL 2 DAY THEN total_price ELSE 0 END) * 100 AS percentage_change FROM order_headers WHERE order_date >= CURDATE() - INTERVAL 2 DAY AND order_date <= CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id};
 
                 - Question: Compare yesterdays sales per item with the average daily sales from June 2023. And highlight some key changes, for example, highest growth item, highest decrease in sales, etc.
                 - SQLQuery: SELECT products.name, SUM(CASE WHEN order_headers.order_date = CURDATE() - INTERVAL 1 DAY THEN order_details.price ELSE 0 END) AS yesterday_sales, SUM(CASE WHEN MONTH(order_headers.order_date) = 6 AND YEAR(order_headers.order_date) = 2023 THEN order_details.price/30 ELSE 0 END) AS average_daily_june_sales FROM order_details JOIN products ON products.id = order_details.product_id JOIN order_headers ON order_headers.id = order_details.order_header_id WHERE (order_headers.order_date = CURDATE() - INTERVAL 1 DAY OR (MONTH(order_headers.order_date) = 6 AND YEAR(order_headers.order_date) = 2023)) AND order_headers.client_id = {client_id} GROUP BY products.name;
