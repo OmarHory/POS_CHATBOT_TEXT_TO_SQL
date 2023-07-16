@@ -264,6 +264,8 @@ def main():
             orders_header['status'] = orders_header['status'].map(orders_statuses)
             orders_header['ordered_at'] = pd.to_datetime(orders_header['ordered_at']).dt.time
             orders_header['status'].fillna('Void', inplace=True)
+            orders_header['type'].fillna('None', inplace=True)
+            orders_header['status'].fillna('None', inplace=True)
             orders_header['business_date'] = pd.to_datetime(orders_header['business_date'], format="%Y-%m-%d")
             df_options['name_localized'].fillna('-', inplace=True)
 
