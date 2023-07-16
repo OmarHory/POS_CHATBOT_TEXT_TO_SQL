@@ -110,7 +110,7 @@ def gpt_sql_prompt(
                         - slug: category slug.
                         - client_id: client id. (Foreign Key to clients table)
 
-                D. "order_headers": Order header is the main table, which has general information about the order, contains the following columns:
+                D. "order_headers": Order header is the main table for different orders at a certain timestamp, which has general information about the order, contains the following columns:
                         - id: incremental id. (Primary Key)
                         - external_id: order id.
                         - order_date: order date (business date), format YYYY-MM-DD.
@@ -168,6 +168,7 @@ def gpt_sql_prompt(
                         - Expect the user to mispell the product name, if not mentioned, then do not filter on the product.
                         - If the user Asks about a branch name, always adjust the entry to the nearest branch name from the predefined Branches List above.
                         - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
+                        - Total sales mean the total daily sales (sum of all orders sales) for a certain day.
                 
                 C. SQL instructions:
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
