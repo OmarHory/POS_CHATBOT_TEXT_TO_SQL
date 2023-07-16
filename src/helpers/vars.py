@@ -242,6 +242,9 @@ def gpt_sql_prompt(
 
                 - Question: Compare today's sales for the average daily sales last may.
                 - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN MONTH(order_date) = 5 AND YEAR(order_date) = 2023 THEN total_price/31 ELSE 0 END) AS average_daily_may_sales FROM order_headers WHERE client_id={client_id};
+
+                - Question: Compare today's sales to same day last week.
+                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 7 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers WHERE order_headers.client_id = 6;
         
         4- Use the following format:
                 - Question: "Question here"
