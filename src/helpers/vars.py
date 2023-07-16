@@ -210,6 +210,9 @@ def gpt_sql_prompt(
 
 
         3- Examples:
+                - Question: What are the minimum and maximum total sales we had this July?
+                - SQLQuery: SELECT MIN(total_sales) AS min_sales, MAX(total_sales) AS max_sales FROM (SELECT order_date, SUM(total_price) AS total_sales FROM order_headers WHERE MONTH(order_date) = 7 AND YEAR(order_date) = 2023 AND order_headers.client_id = 6 GROUP BY order_date) subquery;
+
                 - Question: What is the total sales yesterday?
                 - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id};
 
@@ -245,9 +248,6 @@ def gpt_sql_prompt(
 
                 - Question: Compare today's sales to same day last week.
                 - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 7 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers WHERE order_headers.client_id = 6;
-
-                - Question: What is the minimum and maximum total sales we had this July?
-                - SQLQuery: SELECT MIN(total_sales) AS min_sales, MAX(total_sales) AS max_sales FROM (SELECT order_date, SUM(total_price) AS total_sales FROM order_headers WHERE MONTH(order_date) = 7 AND YEAR(order_date) = 2023 AND client_id = 6 GROUP BY order_date) subquery;
         
         4- Use the following format:
                 - Question: "Question here"
