@@ -28,6 +28,9 @@ DATE_TIME=$(date +"%Y-%m-%d_%H-%M-%S")
 # Log file path
 LOG_FILE="$LOG_DIR/$DATE_TIME.log"
 
+mkdir -p data/$CLIENT_ID/raw/updates
+mkdir -p data/$CLIENT_ID/processed/updates
+
 python data_pipeline/pull_orders.py --client-id "$CLIENT_ID" --upload_s3 True
 
 # Command 1: Run the first script
