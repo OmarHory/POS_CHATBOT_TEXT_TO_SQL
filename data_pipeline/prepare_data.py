@@ -228,8 +228,8 @@ def main():
     df_products = fetch_products(client_id, token, category_name_col)
     df_categories = fetch_categories(client_id, token, category_name_col)
 
-    df_branches['opening_from'] = pd.to_datetime(df_branches['opening_from'], format='%H:%M')
-    df_branches['opening_to'] = pd.to_datetime(df_branches['opening_to'], format='%H:%M')
+    df_branches['opening_from'] = pd.to_datetime(df_branches['opening_from'])
+    df_branches['opening_to'] = pd.to_datetime(df_branches['opening_to'])
     
     if mode == 'pull':
         if files:

@@ -307,7 +307,7 @@ def process_send_gpt(
             error_description = e
 
             print("Exception in db_chain_session.run: ", e)
-            response = "Thank you for taking the time to ask this question, can you be specific? I am not able to answer your question."
+            response = "Thank you for taking the time to ask this question, can you be specific? I am not able to answer your question. \n\nIf this issue persists, please contact your administrator. \n\nThank you for your patience."
             if "MySQLdb.ProgrammingError" in str(e):
                 message_type = "SQL_Syntax_Error"
             elif "MySQLdb.OperationalError" in str(e):
