@@ -269,6 +269,10 @@ def main():
             orders_header['business_date'] = pd.to_datetime(orders_header['business_date'], format="%Y-%m-%d")
             df_options['name_localized'].fillna('-', inplace=True)
 
+            df_options['tax_exclusive_unit_price'] = df_options['tax_exclusive_unit_price'].fillna(0.0)
+            df_options['tax_exclusive_total_price'] = df_options['tax_exclusive_total_price'].fillna(0.0)
+            df_options['tax_exclusive_discount_amount'] = df_options['tax_exclusive_discount_amount'].fillna(0.0)
+
 
             orders_header.drop_duplicates(subset=['id'], inplace=True)
             df_options.drop_duplicates(subset=['id'], inplace=True)
@@ -309,9 +313,15 @@ def main():
         if df_options.shape[0] > 0:
             df_options['name_localized'].fillna('-', inplace=True)
 
+        df_options['tax_exclusive_unit_price'] = df_options['tax_exclusive_unit_price'].fillna(0.0)
+        df_options['tax_exclusive_total_price'] = df_options['tax_exclusive_total_price'].fillna(0.0)
+        df_options['tax_exclusive_discount_amount'] = df_options['tax_exclusive_discount_amount'].fillna(0.0)
+
         orders_header.drop_duplicates(subset=['id'], inplace=True)
         df_options.drop_duplicates(subset=['id'], inplace=True)
         orders_details.drop_duplicates(subset=['id'], inplace=True)
+
+        
 
         #orders_header = orders_header[["id", 'products', "client_id", "branch_id", "source", "type", "status", 'discount_amount', "total_price", 'subtotal_price', 'business_date', "created_at", "updated_at"]]
 
