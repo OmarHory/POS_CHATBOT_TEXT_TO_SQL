@@ -212,7 +212,7 @@ def gpt_sql_prompt(
 
         3- Examples:
                 - Question: What are the minimum and maximum total sales we had this July?
-                - SQLQuery: SELECT MIN(total_sales) AS min_sales, MAX(total_sales) AS max_sales FROM (SELECT order_date, SUM(total_price) AS total_sales FROM order_headers WHERE MONTH(order_date) = 7 AND YEAR(order_date) = 2023 AND order_headers.client_id = 6 GROUP BY order_date) subquery;
+                - SQLQuery: SELECT MIN(total_sales) AS min_sales, MAX(total_sales) AS max_sales FROM (SELECT order_date, SUM(total_price) AS total_sales FROM order_headers WHERE MONTH(order_date) = 7 AND YEAR(order_date) = 2023 AND order_headers.client_id = {client_id} GROUP BY order_date) subquery;
 
                 - Question: What is the total sales yesterday?
                 - SQLQuery: SELECT SUM(total_price) FROM order_headers where order_date = CURDATE() - INTERVAL 1 DAY and order_headers.client_id={client_id};
@@ -248,7 +248,11 @@ def gpt_sql_prompt(
                 - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN MONTH(order_date) = 5 AND YEAR(order_date) = 2023 THEN total_price/31 ELSE 0 END) AS average_daily_may_sales FROM order_headers WHERE client_id={client_id};
 
                 - Question: Compare today's sales to same day last week.
-                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 7 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers WHERE order_headers.client_id = 6;
+                - SQLQuery: SELECT SUM(CASE WHEN order_date = CURDATE() THEN total_price ELSE 0 END) AS today_sales, SUM(CASE WHEN order_date = CURDATE() - INTERVAL 7 DAY THEN total_price ELSE 0 END) AS last_week_sales FROM order_headers WHERE order_headers.client_id = {client_id};
+
+                - Question: This Month Sales Compared to Last Month Sales
+                - SQLQuery: SELECT SUM(CASE WHEN MONTH(order_date) = MONTH(CURDATE()) AND YEAR(order_date) = YEAR(CURDATE()) THEN total_price ELSE 0 END) AS this_month_sales, SUM(CASE WHEN MONTH(order_date) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(order_date) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) THEN total_price ELSE 0 END) AS last_month_sales FROM order_headers WHERE order_headers.client_id = {client_id};
+
         
         4- Use the following format:
                 - Question: "Question here"
