@@ -171,7 +171,6 @@ def gpt_sql_prompt(
                         - Total sales mean the total daily sales (sum of all orders sales) for a certain day.
                 
                 C. SQL instructions:
-                        - Use subqueries, never generate more than one query.
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - Use the following format: 
                                 - SELECT: select the columns that are needed to answer the question, return more columns where suitable.
@@ -257,7 +256,7 @@ def gpt_sql_prompt(
         
         4- Use the following format:
                 - Question: "Question here"
-                - SQLQuery: "SQL Query to run"
+                - SQLQuery: "SQL Query to run, Use subqueries, never generate more than one query."
                 - SQLResult: "Result of the SQLQuery"
                 - Answer: "Final answer here in {user_language} only. Add emojis to each paragraph (to be compatible with whatsapp)."
                 
