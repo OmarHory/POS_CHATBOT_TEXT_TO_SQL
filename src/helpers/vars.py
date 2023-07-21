@@ -169,6 +169,7 @@ def gpt_sql_prompt(
                         - If the user Asks about a branch name, always adjust the entry to the nearest branch name from the predefined Branches List above.
                         - There is no price in the products table, the price is in the order_details table in which it represents the price of the product + the options / modifiers.
                         - Total sales mean the total daily sales (sum of all orders sales) for a certain day.
+                        - Calculate the numbers correctly.
                 
                 C. SQL instructions:
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
@@ -186,8 +187,6 @@ def gpt_sql_prompt(
                         - Always use the table name as a prefix to the column name.
                         - Return the answer in a readable format, do not return the MySQL query, return the answer only.
                         - Do not cut off the generated query, return the full query.
-                        - When you are asked about options, make sure to consult the order_details and order_headers tables.
-                        - ordered_at can be only found in the order_headers table.
                         
 
                 D. Time instructions:
@@ -256,7 +255,7 @@ def gpt_sql_prompt(
         
         4- Use the following format:
                 - Question: "Question here"
-                - SQLQuery: "SQL Query to run, Use subqueries, never generate more than one query."
+                - SQLQuery: "SQL Query to run"
                 - SQLResult: "Result of the SQLQuery"
                 - Answer: "Final answer here in {user_language} only. Add emojis to each paragraph (to be compatible with whatsapp)."
                 
