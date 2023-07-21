@@ -171,6 +171,7 @@ def gpt_sql_prompt(
                         - Total sales mean the total daily sales (sum of all orders sales) for a certain day.
                 
                 C. SQL instructions:
+                        - Use subqueries, never generate more than one query.
                         - Read the tables Schemas carefully, do not select columns that are not in the table you are querying.
                         - Use the following format: 
                                 - SELECT: select the columns that are needed to answer the question, return more columns where suitable.
