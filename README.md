@@ -46,13 +46,6 @@ To customize the chatbot, you can modify the code in the `src\response_builder.p
 
 This chatbot is released under the MIT License. See the LICENSE file for more details.
 
-## Contributors
-
-- Omar Alhory (@OmarHory)
-- Zeid Husban ()
-- Wadi Hawi ()
-- Zaid Farekh (@zaidfarekh) 
-
 ## Acknowledgments
 
 - The GPT model is provided by OpenAI (https://openai.com/)
